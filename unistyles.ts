@@ -106,9 +106,7 @@ const appThemes = {
 type AppThemes = typeof appThemes;
 
 declare module "react-native-unistyles" {
-  export interface UnistylesThemes extends AppThemes {
-    readonly __themeBrand?: never;
-  }
+  export interface UnistylesThemes extends AppThemes {}
 }
 
 StyleSheet.configure({
