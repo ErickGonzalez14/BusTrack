@@ -8,9 +8,12 @@ export default function Test() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [nickname, setNickname] = useState("");
+  const [fullName, setFullName] = useState("");
+
   const HandleRegister = () => {
     mutate(
-      { email, password },
+      { email, password, nickname, fullName },
       {
         onSuccess: (userCredential) => {
           console.log(userCredential);
@@ -39,6 +42,16 @@ export default function Test() {
           onChangeText={setPassword}
           secureTextEntry
         />
+        <TextInput
+          placeholder="NickName"
+          value={nickname}
+          onChangeText={setNickname}
+        />
+        <TextInput
+          placeholder="FullName"
+          value={fullName}
+          onChangeText={setFullName}
+        />
 
         <Button
           title={isPending ? "Creando..." : "Registrarse"}
@@ -52,7 +65,7 @@ export default function Test() {
 const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: theme.surface.neutral,
+    backgroundColor: theme.surface.brand,
     alignItems: "center",
     justifyContent: "center",
   },
