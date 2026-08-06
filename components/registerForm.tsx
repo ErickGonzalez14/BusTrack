@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import ButtonPrimary from "./ui/buttons/buttonPrimary";
@@ -20,7 +21,9 @@ export default function RegisterForm() {
       </View>
       <View style={styles.questionContainer}>
         <Text style={styles.question}>Ya Tienes una Cuenta?</Text>
-        <Text style={styles.logIn}>Iniciar Sesión</Text>
+        <Text style={styles.logIn} onPress={() => router.push("/logIn")}>
+          Iniciar Sesión
+        </Text>
       </View>
     </ScrollView>
   );
