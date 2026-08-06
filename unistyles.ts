@@ -30,6 +30,10 @@ export const LightTheme = {
     Secondary: Colors.Colors.base.white,
     contrast: Colors.Colors.BerryBlue[500],
   },
+  fonts: {
+    regular: "ObjectSansRegular",
+    heavy: "ObjectSansHeavy",
+  },
 
   icons: {
     primary: Colors.Colors.blueGray[100],
@@ -77,6 +81,10 @@ export const DarkTheme = {
     placeholder: Colors.Colors.blueGray[600],
     Secondary: Colors.Colors.base.black,
     contrast: Colors.Colors.BerryBlue[300],
+  },
+  fonts: {
+    regular: "ObjectSansRegular",
+    heavy: "ObjectSansHeavy",
   },
 
   icons: {
