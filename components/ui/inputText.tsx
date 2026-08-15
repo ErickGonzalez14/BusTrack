@@ -23,7 +23,8 @@ export default function InputText({
     />
   );
 }
-
+/*Recordar Configurar para cambiar 
+ los props del TextInput como por ejemplo secureTextEntry, keyboardType, etc.*/
 const styles = StyleSheet.create((theme) => ({
   input: {
     backgroundColor: theme.surface.inputs,

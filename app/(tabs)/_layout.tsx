@@ -17,6 +17,13 @@ export default function TabLayout() {
             title: "Test",
           }}
         />
+
+        <Tabs.Screen
+          name="home"
+          options={{
+            title: "Home",
+          }}
+        />
       </Tabs>
     </QueryClientProvider>
   );
