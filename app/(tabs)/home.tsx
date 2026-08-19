@@ -9,7 +9,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 export default function Home() {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.mainContainer}>
       <PrimaryHeader />
       <ScrollView
         horizontal={false}
@@ -114,5 +114,9 @@ export const styles = StyleSheet.create((theme) => ({
   },
   mainTabContainer: {
     marginBottom: 20,
+  },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: theme.surface.neutral,
   },
 }));

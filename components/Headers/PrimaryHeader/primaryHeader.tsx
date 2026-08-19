@@ -30,18 +30,24 @@ export default function PrimaryHeader() {
               console.log("Pressed");
             }}
             icon={Bell}
+            width={20}
+            height={20}
           />
           <IconButton
             onPress={() => {
               console.log("Pressed");
             }}
             icon={HeartSolid}
+            width={20}
+            height={20}
           />
           <IconButton
             onPress={() => {
               console.log("Pressed");
             }}
             icon={CrownCircle}
+            width={20}
+            height={20}
           />
         </View>
       </View>

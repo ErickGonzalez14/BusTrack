@@ -2,17 +2,24 @@ import type { ComponentType } from "react";
 import { Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 type IconButtonProps = {
-  onPress: () => void;
+  onPress?: () => void;
   icon: ComponentType<any>;
+  width?: number;
+  height?: number;
 };
 
-export default function IconButton({ onPress, icon: Icon }: IconButtonProps) {
+export default function IconButton({
+  onPress,
+  icon: Icon,
+  width,
+  height,
+}: IconButtonProps) {
   const { theme } = useUnistyles();
   return (
     <Pressable onPress={onPress} style={styles.container}>
       <Icon
-        width={20}
-        height={20}
+        width={width}
+        height={height}
         color={theme.text.Secondary}
         style={{ margin: 5 }}
       />
