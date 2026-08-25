@@ -30,8 +30,8 @@ export const styles = StyleSheet.create((theme) => ({
     width: 130,
     height: 130,
     alignSelf: "center",
-    marginTop: 100,
-    marginBottom: 20,
+    marginTop: 65,
+    marginBottom: 15,
   },
   RegisterForm: {
     flex: 1,

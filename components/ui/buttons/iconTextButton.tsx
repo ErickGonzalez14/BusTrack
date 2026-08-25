@@ -27,7 +27,7 @@ export const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     gap: 10,
     borderWidth: 1,
-    borderColor: theme.text.placeholder,
+    borderColor: theme.text.placeHolderLight,
   },
   text: {
     fontFamily: theme.fonts.heavy,

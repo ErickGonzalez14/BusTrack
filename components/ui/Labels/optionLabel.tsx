@@ -44,7 +44,11 @@ export default function Settings({
       {isToggle ? (
         <SwitchButton value={toggleValue} onValueChange={onToggleChange!} />
       ) : (
-        <NavArrowRight width={24} height={24} color={theme.text.placeholder} />
+        <NavArrowRight
+          width={24}
+          height={24}
+          color={theme.text.placeHolderLight}
+        />
       )}
     </Pressable>
   );
@@ -71,11 +75,12 @@ export const styles = StyleSheet.create((theme) => ({
   },
   text: {
     fontFamily: theme.fonts.heavy,
-    fontSize: 18,
+    fontSize: 16,
     color: theme.text.Body,
+    width: "67%",
   },
   separator: {
     borderBottomWidth: 1,
-    borderBottomColor: theme.text.placeholder,
+    borderBottomColor: theme.text.placeHolderLight,
   },
 }));

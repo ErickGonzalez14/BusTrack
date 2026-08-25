@@ -1,6 +1,7 @@
 import { Image, ImageBackground, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import LogInForm from "../components/logInForm";
+
 export default function LogIn() {
   return (
     <ImageBackground

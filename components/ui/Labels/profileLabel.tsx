@@ -6,15 +6,17 @@ type ProfileLabelProps = {
   userName: string;
   greeting: string;
   imageUrl: string;
+  onTouch?: () => void;
 };
 
 export default function ProfileLabel({
   userName,
   greeting,
   imageUrl,
+  onTouch,
 }: ProfileLabelProps) {
   return (
-    <Pressable style={styles.container}>
+    <Pressable style={styles.container} onPress={onTouch}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: imageUrl }} style={styles.userImage} />
       </View>
@@ -54,7 +56,7 @@ export const styles = StyleSheet.create((theme) => ({
     fontFamily: theme.fonts.heavy,
   },
   greeting: {
-    color: theme.text.placeholder,
+    color: theme.text.placeHolderLight,
     fontSize: 16,
     fontFamily: "Roboto_400Regular",
     marginTop: -3,

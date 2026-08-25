@@ -26,7 +26,8 @@ export const LightTheme = {
   text: {
     Body: Colors.Colors.blueGray[800],
     Primary: Colors.Colors.base.black,
-    placeholder: Colors.Colors.blueGray[400],
+    placeHolderLight: Colors.Colors.blueGray[400],
+    placeholder: Colors.Colors.blueGray[500],
     Secondary: Colors.Colors.base.white,
     contrast: Colors.Colors.BerryBlue[500],
   },
@@ -78,6 +79,7 @@ export const DarkTheme = {
   text: {
     Body: Colors.Colors.blueGray[100],
     Primary: Colors.Colors.base.white,
+    placeHolderLight: Colors.Colors.blueGray[400],
     placeholder: Colors.Colors.blueGray[600],
     Secondary: Colors.Colors.base.black,
     contrast: Colors.Colors.BerryBlue[300],

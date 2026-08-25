@@ -1,22 +1,66 @@
+import { useSignUp } from "@/hooks/useSignUp";
 import { router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import ButtonPrimary from "./ui/buttons/buttonPrimary";
 import IconTextButton from "./ui/buttons/iconTextButton";
 import InputText from "./ui/inputText";
+
 export default function RegisterForm() {
+  const { mutate, isPending, error } = useSignUp();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [fullName, setFullName] = useState("");
+
+  const HandleRegister = () => {
+    mutate(
+      { email, password, nickname, fullName },
+      {
+        onSuccess: (userCredential) => {
+          console.log(userCredential);
+          console.log(userCredential.user.uid);
+          alert(
+            `UID: ${userCredential.user.uid} - ${"Usuario creado exitosamente"}`,
+          );
+        },
+      },
+    );
+  };
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <KeyboardAwareScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      bottomOffset={20}
+    >
       <Text style={styles.text}>Nombre Completo</Text>
-      <InputText placeholder="Nombre Completo" />
+      <InputText
+        placeholder="Nombre Completo"
+        value={fullName}
+        onChangeText={setFullName}
+      />
       <Text style={styles.text}>Nombre de Usuario</Text>
-      <InputText placeholder="Nombre de Usuario" />
+      <InputText
+        placeholder="Nombre de Usuario"
+        value={nickname}
+        onChangeText={setNickname}
+      />
       <Text style={styles.text}>Email</Text>
-      <InputText placeholder="Email" />
+      <InputText placeholder="Email" value={email} onChangeText={setEmail} />
       <Text style={styles.text}>Contraseña</Text>
-      <InputText placeholder="Contraseña" />
+      <InputText
+        placeholder="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+      />
       <View style={styles.buttonContainer}>
-        <ButtonPrimary text="Registrarse" />
+        <ButtonPrimary
+          text={isPending ? "Creando..." : "Registrarse"}
+          onPress={HandleRegister}
+        />
         <IconTextButton text="Registrarse con Google" />
       </View>
       <View style={styles.questionContainer}>
@@ -25,7 +69,7 @@ export default function RegisterForm() {
           Iniciar Sesión
         </Text>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -38,9 +82,10 @@ export const styles = StyleSheet.create((theme) => ({
   content: {
     width: "100%",
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 30,
     paddingBottom: 25,
     justifyContent: "flex-end",
+    flexGrow: 1,
   },
   title: {
     color: theme.text.Body,

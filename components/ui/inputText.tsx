@@ -17,7 +17,7 @@ export default function InputText({
     <TextInput
       placeholder={placeholder}
       value={value}
-      placeholderTextColor={theme.text.placeholder}
+      placeholderTextColor={theme.text.placeHolderLight}
       onChangeText={onChangeText}
       style={styles.input}
     />
@@ -38,6 +38,6 @@ const styles = StyleSheet.create((theme) => ({
     fontSize: 16,
     marginBottom: 30,
     borderWidth: 0.5,
-    borderColor: theme.text.placeholder,
+    borderColor: theme.text.placeHolderLight,
   },
 }));

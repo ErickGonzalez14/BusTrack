@@ -27,6 +27,14 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "BusTrack necesita acceso a tus fotos para actualizar tu imagen de perfil.",
+          "cameraPermission": "BusTrack necesita acceso a la cámara para tomar tu foto de perfil.",
+          "microphonePermission": false
+        }
+      ],
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       [

@@ -1,6 +1,7 @@
 import SecundaryHeader from "@/components/Headers/secundaryHeader";
 import OptionLabel from "@/components/ui/Labels/optionLabel";
 import ProfileLabel from "@/components/ui/Labels/profileLabel";
+import { router } from "expo-router";
 import {
   Bell,
   CreditCard,
@@ -28,6 +29,7 @@ export default function Settings() {
             userName="Roberto Díaz"
             greeting="Buenos Días"
             imageUrl="https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png"
+            onTouch={() => router.push("/Settings/editProfile")}
           />
         </View>
 
@@ -79,6 +81,7 @@ export default function Settings() {
               iconColor="#091540"
               isToggle={false}
               separator={false}
+              onPress={() => router.push("/Settings/UserRequests/requests")}
             />
           </View>
         </View>

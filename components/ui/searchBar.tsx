@@ -22,7 +22,7 @@ export default function SearchBar({
         placeholder={placeHolder}
         onChangeText={onSearch}
         value={value}
-        placeholderTextColor={theme.text.placeholder}
+        placeholderTextColor={theme.text.placeHolderLight}
         style={styles.input}
       />
     </View>
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create((theme) => ({
     paddingVertical: 4,
     gap: 5,
     borderWidth: 1,
-    borderColor: theme.text.placeholder,
+    borderColor: theme.text.placeHolderLight,
   },
   icon: {
     width: 23,

@@ -68,7 +68,7 @@ export const styles = StyleSheet.create((theme) => ({
   secundaryText: {
     fontFamily: "Roboto_400Regular",
     fontSize: 13,
-    color: theme.text.placeholder,
+    color: theme.text.placeHolderLight,
     marginTop: -3,
   },
   textContainer: {
