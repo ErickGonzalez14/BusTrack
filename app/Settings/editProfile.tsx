@@ -1,12 +1,25 @@
 import EditPhoto from "@/components/editPhoto";
 import AlternativeHeader from "@/components/Headers/alternativeHeader";
 import OptionLabel from "@/components/ui/Labels/optionLabel";
+import { useAuth } from "@/contexts/authContext";
 import { router } from "expo-router";
-import { Lock, ShieldCheck, Translate, User } from "iconoir-react-native";
-import { ScrollView, Text, View } from "react-native";
+import {
+  Lock,
+  LogOut,
+  ShieldCheck,
+  Translate,
+  User,
+} from "iconoir-react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function EditProfile() {
+  const { logOut } = useAuth();
+
+  const handleLogOut = async () => {
+    await logOut();
+    router.replace("/logIn");
+  };
   return (
     <View style={styles.container}>
       <AlternativeHeader
@@ -62,10 +75,19 @@ export default function EditProfile() {
               icon={Translate}
               iconColor="#FF9500"
               isToggle={false}
+              separator={true}
+            />
+            <OptionLabel
+              settingsName="Cerrar sesión"
+              icon={LogOut}
+              iconColor="#FF3B30"
+              isToggle={false}
               separator={false}
+              onPress={handleLogOut}
             />
           </View>
         </View>
+        <Pressable></Pressable>
       </ScrollView>
     </View>
   );

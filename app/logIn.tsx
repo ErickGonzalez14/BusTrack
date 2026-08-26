@@ -32,6 +32,7 @@ export const styles = StyleSheet.create((theme) => ({
     marginTop: 150,
   },
   LogInForm: {
-    marginTop: "auto",
+    marginTop: 50,
+    flex: 1,
   },
 }));

@@ -1,3 +1,4 @@
+import { AuthProvider, useAuth } from "@/contexts/authContext";
 import { queryClient } from "@/lib/queryClient";
 import {
   Roboto_300Light,
@@ -15,6 +16,55 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+function RootNavigator() {
+  const { user, hasProfile, isAuthLoading, isAuthFlowInProgress } = useAuth();
+
+  if (isAuthLoading) {
+    return null;
+  }
+
+  return (
+    <Stack>
+      <Stack.Protected guard={!user || isAuthFlowInProgress}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="logIn" options={{ headerShown: false }} />
+        <Stack.Screen name="register" options={{ headerShown: false }} />
+      </Stack.Protected>
+
+      <Stack.Protected
+        guard={
+          Boolean(user) && (hasProfile === false || isAuthFlowInProgress)
+        }
+      >
+        <Stack.Screen
+          name="completeProfile"
+          options={{ headerShown: false }}
+        />
+      </Stack.Protected>
+
+      <Stack.Protected guard={Boolean(user) && hasProfile === true}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Settings/editProfile"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/UserRequests/requests"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/UserRequests/driverRequest"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/UserRequests/businessRequest"
+          options={{ headerShown: false }}
+        />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   const [loaded] = useFonts({
     ObjectSansHeavy: require("@/Fonts/ObjectSansHeavy.otf"),
@@ -28,27 +78,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <KeyboardProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="register" options={{ headerShown: false }} />
-            <Stack.Screen name="logIn" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="Settings/editProfile"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Settings/UserRequests/requests"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Settings/UserRequests/driverRequest"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Settings/UserRequests/businessRequest"
-              options={{ headerShown: false }}
-            />
-          </Stack>
+          <AuthProvider>
+            <RootNavigator />
+          </AuthProvider>
           <StatusBar style="auto" />
         </GestureHandlerRootView>
       </KeyboardProvider>

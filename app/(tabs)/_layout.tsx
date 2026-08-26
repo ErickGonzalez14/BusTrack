@@ -25,13 +25,6 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name="test"
-          options={{
-            title: "Test",
-          }}
-        />
-
-        <Tabs.Screen
           name="home"
           options={{
             title: "Inicio",

@@ -4,7 +4,6 @@ import {
   signInWithEmailAndPassword,
 } from "@react-native-firebase/auth";
 
-
 const auth = getAuth();
 
 export const signUp = async (data: { email: string; password: string }) => {
@@ -17,7 +16,7 @@ export const signUp = async (data: { email: string; password: string }) => {
   return userCredential;
 };
 
-export const SignIn = async (data: { email: string; password: string }) => {
+export const signIn = async (data: { email: string; password: string }) => {
   const userCredential = await signInWithEmailAndPassword(
     auth,
     data.email,

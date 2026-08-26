@@ -49,8 +49,8 @@
           }
         }
       ],
-
-      "expo-font"
+      "expo-font",
+      "react-native-nitro-google-signin"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -1,5 +1,6 @@
 import {
     doc,
+    getDoc,
     getFirestore,
     serverTimestamp,
     setDoc,
@@ -11,12 +12,14 @@ export interface CreateUserProfileData {
   uid: string;
   nickname: string;
   fullName: string;
+  photoUrl?: string;
 }
 
 export const createUserProfile = async ({
   uid,
   nickname,
   fullName,
+  photoUrl = "",
 }: CreateUserProfileData) => {
   await setDoc(doc(db, "Users", uid), {
     nickname,
@@ -24,7 +27,13 @@ export const createUserProfile = async ({
     role: "passenger",
     isPremium: false,
     premiumExpireAt: null,
-    photoUrl: "",
+    photoUrl,
     createdAt: serverTimestamp(),
   });
+};
+
+export const userProfileExists = async (uid: string) => {
+  const profileSnapshot = await getDoc(doc(db, "Users", uid));
+
+  return profileSnapshot.exists();
 };

@@ -2,7 +2,6 @@ import * as React from "react";
 import Svg, { Path, SvgProps } from "react-native-svg";
 const GoogleIcon = (props: SvgProps) => (
   <Svg
-    xmlns="http://www.w3.org/2000/svg"
     width={33}
     height={33}
     fill="none"

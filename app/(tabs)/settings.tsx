@@ -1,6 +1,7 @@
 import SecundaryHeader from "@/components/Headers/secundaryHeader";
 import OptionLabel from "@/components/ui/Labels/optionLabel";
 import ProfileLabel from "@/components/ui/Labels/profileLabel";
+import { useAuth } from "@/contexts/authContext";
 import { router } from "expo-router";
 import {
   Bell,
@@ -8,13 +9,19 @@ import {
   GitCompare,
   Heart,
   Palette,
-  PrivacyPolicy,
+  PrivacyPolicy
 } from "iconoir-react-native";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 export default function Settings() {
+  const { logOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  const handleLogOut = async () => {
+    await logOut();
+    router.replace("/logIn");
+  };
 
   return (
     <View style={styles.mainContainer}>
