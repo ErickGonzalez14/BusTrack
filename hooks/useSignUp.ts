@@ -9,20 +9,31 @@ export const useSignUp = () => {
     mutationFn: async (data: SignUpInput) => {
       const validated = signUpSchema.parse(data);
 
-      const credential = await signUp(validated);
+      const credential = await signUp({
+        email: validated.email,
+        password: validated.password,
+      });
 
       try {
         await createUserProfile({
           uid: credential.user.uid,
           nickname: validated.nickname,
           fullName: validated.fullName,
+          photoUrl: credential.user.photoURL ?? "",
         });
+        return credential;
       } catch (profileError) {
-        await deleteUser(credential.user);
+        //esto es para en caso de que falle se borre el registro de un usuario incompleto
+        try {
+          await deleteUser(credential.user);
+        } catch (rollbackError) {
+          console.error(
+            "No se pudo revertir la cuenta incompleta:",
+            rollbackError,
+          );
+        }
         throw profileError;
       }
-
-      return credential;
     },
   });
 };

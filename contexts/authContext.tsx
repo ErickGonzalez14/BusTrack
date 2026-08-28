@@ -8,8 +8,8 @@ import {
 import {
   createContext,
   type PropsWithChildren,
-  useContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -56,7 +56,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
           setHasProfile(profileExists);
         }
       } catch (profileError) {
-        console.error("No se pudo consultar el perfil del usuario:", profileError);
+        console.error(
+          "No se pudo consultar el perfil del usuario:",
+          profileError,
+        );
 
         if (currentRevision === authRevision) {
           setHasProfile(false);
@@ -86,17 +89,38 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
 
   const logOut = useCallback(async () => {
-    const isGoogleUser = getAuth().currentUser?.providerData.some(
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    // Ya no existe una sesión activa.
+    if (!currentUser) {
+      setUser(null);
+      setHasProfile(null);
+      return;
+    }
+
+    const isGoogleUser = currentUser.providerData.some(
       ({ providerId }) => providerId === "google.com",
     );
 
-    try {
-      if (isGoogleUser) {
+    if (isGoogleUser) {
+      try {
         await GoogleOneTapSignIn.signOut();
+      } catch (googleError) {
+        console.warn(
+          "No se pudo cerrar la sesión local de Google:",
+          googleError,
+        );
       }
-    } finally {
-      await signOut(getAuth());
     }
+
+    // Google Sign-In pudo tardar y la sesión pudo cambiar.
+    if (auth.currentUser) {
+      await signOut(auth);
+    }
+
+    setUser(null);
+    setHasProfile(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(

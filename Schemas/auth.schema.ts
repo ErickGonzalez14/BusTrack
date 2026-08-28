@@ -3,7 +3,13 @@ import { z } from "zod";
 export const signUpSchema = z.object({
   email: z.email("Correo inválido"),
   password: z.string().min(8, "La contraseña debe tener mínimo 8 caracteres"),
-  nickname: z.string().min(3, "El nickname debe tener mínimo 3 caracteres"),
+  nickname: z
+    .string()
+    .min(3, "El nickname debe tener mínimo 3 caracteres")
+    .regex(
+      /^[a-zA-Z0-9_áéíóúÁÉÍÓÚñÑ]+$/,
+      "Solo puede contener letras, números y guion bajo",
+    ),
   fullName: z
     .string()
     .min(3, "El nombre completo debe tener mínimo 3 caracteres"),
@@ -26,7 +32,12 @@ export const completeProfileSchema = z.object({
     .string()
     .trim()
     .min(3, "El nombre de usuario debe tener mínimo 3 caracteres")
-    .max(30, "El nombre de usuario debe tener máximo 30 caracteres"),
+    .max(30, "El nombre de usuario debe tener máximo 30 caracteres")
+    .regex(
+      /^[a-zA-Z0-9_áéíóúÁÉÍÓÚñÑ]+$/,
+      "Solo puede contener letras, números y guion bajo",
+    ),
+
   fullName: z
     .string()
     .trim()

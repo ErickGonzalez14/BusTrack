@@ -17,8 +17,11 @@ export default function EditProfile() {
   const { logOut } = useAuth();
 
   const handleLogOut = async () => {
-    await logOut();
-    router.replace("/logIn");
+    try {
+      await logOut();
+    } catch (error) {
+      console.error("No se pudo cerrar sesión:", error);
+    }
   };
   return (
     <View style={styles.container}>
