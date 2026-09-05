@@ -1,4 +1,5 @@
-import { userProfileExists } from "@/Services/user.service";
+import { UserProfile } from "@/interfaces/user.type";
+import { getUserProfile } from "@/Services/user.service";
 import {
   getAuth,
   onAuthStateChanged,
@@ -18,6 +19,7 @@ import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
 
 type AuthContextValue = {
   user: User | null;
+  profile: UserProfile | null;
   hasProfile: boolean | null;
   isAuthLoading: boolean;
   isAuthFlowInProgress: boolean;
@@ -31,9 +33,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User | null>(null);
-  const [hasProfile, setHasProfile] = useState<boolean | null>(null);
+
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isAuthFlowInProgress, setIsAuthFlowInProgress] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     let authRevision = 0;
@@ -42,18 +45,24 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const currentRevision = ++authRevision;
 
       setUser(currentUser);
-      setHasProfile(null);
+      setProfile(null);
 
       if (!currentUser) {
         setIsAuthLoading(false);
+        setProfile(null);
+        setUser(null);
         return;
       }
+      const currentProfile = await getUserProfile(currentUser.uid);
+      setUser(currentUser);
+      setProfile(currentProfile);
+      setIsAuthLoading(false);
 
       try {
-        const profileExists = await userProfileExists(currentUser.uid);
+        const profileExists = await getUserProfile(currentUser.uid);
 
         if (currentRevision === authRevision) {
-          setHasProfile(profileExists);
+          setProfile(profileExists);
         }
       } catch (profileError) {
         console.error(
@@ -62,7 +71,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         );
 
         if (currentRevision === authRevision) {
-          setHasProfile(false);
+          setProfile(null);
         }
       } finally {
         if (currentRevision === authRevision) {
@@ -74,18 +83,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return unsubscribe;
   }, []);
 
-  const refreshUserProfile = useCallback(async () => {
+  const refreshUserProfile = useCallback(async (): Promise<boolean> => {
     const currentUser = getAuth().currentUser;
 
     if (!currentUser) {
-      setHasProfile(null);
+      setProfile(null);
       return false;
     }
 
-    const profileExists = await userProfileExists(currentUser.uid);
-    setHasProfile(profileExists);
+    const currentProfile = await getUserProfile(currentUser.uid);
 
-    return profileExists;
+    setProfile(currentProfile);
+
+    return currentProfile !== null;
   }, []);
 
   const logOut = useCallback(async () => {
@@ -95,7 +105,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     // Ya no existe una sesión activa.
     if (!currentUser) {
       setUser(null);
-      setHasProfile(null);
+      setProfile(null);
       return;
     }
 
@@ -120,13 +130,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     setUser(null);
-    setHasProfile(null);
+    setProfile(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
-      hasProfile,
+      profile,
+      hasProfile: profile !== null,
       isAuthLoading,
       isAuthFlowInProgress,
       beginAuthFlow: () => setIsAuthFlowInProgress(true),
@@ -135,7 +146,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       logOut,
     }),
     [
-      hasProfile,
+      profile,
       isAuthFlowInProgress,
       isAuthLoading,
       logOut,

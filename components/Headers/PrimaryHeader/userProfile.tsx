@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/authContext";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -7,17 +8,21 @@ type UserProfileProps = {
 };
 
 export default function UserProfile({ userName }: UserProfileProps) {
+  const { profile } = useAuth();
   return (
     <View style={styles.Profile}>
       <View style={styles.imageContainer}>
         <Image
-          source="https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png"
+          source={
+            profile?.photoUrl ||
+            "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+          }
           style={styles.userImage}
         />
       </View>
       <View style={styles.userInformation}>
         <Text style={styles.greeting}>Buenos Días</Text>
-        <Text style={styles.userName}>{userName}</Text>
+        <Text style={styles.userName}>{profile?.fullName || userName}</Text>
       </View>
     </View>
   );

@@ -19,8 +19,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "googleServicesFile": "./google-services.json",
-      "package": "$EAS_PROYECT_PACKAGE",
-      "googleMapsApiKey": "$GOOGLE_MAPS_API_KEY"
+      "package": "com.erick12.BusTrack"
     },
     "web": {
       "output": "static",

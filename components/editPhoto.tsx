@@ -1,3 +1,4 @@
+import { useAuth } from "@/contexts/authContext";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -25,6 +26,7 @@ export default function EditPhoto({
   email = "Roberto@gmail.com",
   onPhotoChange,
 }: EditPhotoProps) {
+  const { profile } = useAuth();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["34%"], []);
   const [photoUri, setPhotoUri] = useState(initialPhotoUrl);
@@ -101,8 +103,8 @@ export default function EditPhoto({
           </View>
         </Pressable>
 
-        <Text style={styles.name}>{userName}</Text>
-        <Text style={styles.email}>{email}</Text>
+        <Text style={styles.name}>{profile?.fullName || userName}</Text>
+        <Text style={styles.email}>{profile?.email || email}</Text>
       </View>
 
       <BottomSheet

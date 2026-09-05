@@ -9,12 +9,14 @@ import {
   GitCompare,
   Heart,
   Palette,
-  PrivacyPolicy
+  PrivacyPolicy,
 } from "iconoir-react-native";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+
 export default function Settings() {
+  const { profile } = useAuth();
   const { logOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -33,9 +35,12 @@ export default function Settings() {
         <SecundaryHeader headerName="Ajustes" />
         <View style={{ paddingHorizontal: 15 }}>
           <ProfileLabel
-            userName="Roberto Díaz"
+            userName={profile?.fullName || "Usuario"}
             greeting="Buenos Días"
-            imageUrl="https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png"
+            imageUrl={
+              profile?.photoUrl ||
+              "https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png"
+            }
             onTouch={() => router.push("/Settings/editProfile")}
           />
         </View>

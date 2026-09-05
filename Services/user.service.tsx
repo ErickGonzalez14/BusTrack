@@ -1,3 +1,5 @@
+import { UserProfile } from "@/interfaces/user.type";
+import { getAuth } from "@react-native-firebase/auth";
 import {
   doc,
   getDoc,
@@ -5,6 +7,7 @@ import {
   runTransaction,
   serverTimestamp,
 } from "@react-native-firebase/firestore";
+const auth = getAuth();
 
 const db = getFirestore();
 
@@ -93,4 +96,43 @@ export const userProfileExists = async (uid: string) => {
   const profileSnapshot = await getDoc(doc(db, "Users", uid));
 
   return profileSnapshot.exists();
+};
+
+export const getUserProfile = async (
+  uid: string,
+): Promise<UserProfile | null> => {
+  const snapshot = await getDoc(doc(db, "Users", uid));
+  const email = auth.currentUser?.email ?? null;
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+  const data = snapshot.data();
+  return {
+    uid: snapshot.id,
+    fullName: data.fullName ?? "",
+    nickname: data.nickname ?? "",
+    normalizedNickname: data.normalizedNickname ?? "",
+    email: email ?? "",
+    photoUrl: data.photoUrl ?? "",
+    accountStatus: data.accountStatus ?? "active",
+
+    roles: {
+      passenger: data.roles?.passenger ?? true,
+      driver: data.roles?.driver ?? false,
+      companyOwner: data.roles?.companyOwner ?? false,
+    },
+
+    premium: {
+      active: data.premium?.active ?? false,
+      plan: data.premium?.plan ?? null,
+      expiresAt: data.premium?.expiresAt ?? null,
+    },
+
+    preferences: {
+      notificationsEnabled: data.preferences?.notificationsEnabled ?? true,
+      locationEnabled: data.preferences?.locationEnabled ?? true,
+      theme: data.preferences?.theme ?? "system",
+    },
+  };
 };
