@@ -35,6 +35,12 @@
           "microphonePermission": false
         }
       ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "BusTrack necesita tu ubicación para mostrarte en el mapa y ayudarte a encontrar rutas y paradas cercanas."
+        }
+      ],
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       [

@@ -19,7 +19,6 @@ export const useSignUp = () => {
           uid: credential.user.uid,
           nickname: validated.nickname,
           fullName: validated.fullName,
-          photoUrl: credential.user.photoURL ?? "",
         });
         return credential;
       } catch (profileError) {

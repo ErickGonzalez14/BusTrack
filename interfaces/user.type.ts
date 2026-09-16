@@ -11,9 +11,14 @@ export type UserPremium = {
 };
 
 export type UserPreferences = {
+  language: "es" | "en";
   notificationsEnabled: boolean;
   locationEnabled: boolean;
   theme: "system" | "light" | "dark";
+};
+export type photo = {
+  url: string;
+  publicId: string;
 };
 
 export type UserProfile = {
@@ -22,7 +27,7 @@ export type UserProfile = {
   nickname: string;
   normalizedNickname: string;
   email: string;
-  photoUrl: string;
+  photo: photo | null;
   accountStatus: "active" | "suspended";
   roles: UserRole;
   premium: UserPremium;

@@ -6,6 +6,8 @@ type SearchBarProps = {
   onSearch?: (text: string) => void;
   value?: string;
   icon: ImageSource;
+  onFocus?: () => void;
+  onSubmit?: () => void;
 };
 
 export default function SearchBar({
@@ -13,6 +15,8 @@ export default function SearchBar({
   onSearch,
   value,
   icon,
+  onFocus,
+  onSubmit,
 }: SearchBarProps) {
   const { theme } = useUnistyles();
   return (
@@ -21,7 +25,11 @@ export default function SearchBar({
       <TextInput
         placeholder={placeHolder}
         onChangeText={onSearch}
+        onFocus={onFocus}
+        onSubmitEditing={onSubmit}
         value={value}
+        returnKeyType="search"
+        autoCorrect={false}
         placeholderTextColor={theme.text.placeHolderLight}
         style={styles.input}
       />
@@ -46,6 +54,7 @@ export const styles = StyleSheet.create((theme) => ({
     height: 23,
   },
   input: {
+    flex: 1,
     backgroundColor: theme.surface.inputs,
     fontFamily: theme.fonts.heavy,
     fontSize: 16,

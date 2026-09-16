@@ -16,7 +16,6 @@ export interface CreateUserProfileData {
   nickname: string;
   fullName: string;
   email?: string;
-  photoUrl?: string;
 }
 
 const normalizeNickname = (nickname: string) =>
@@ -32,7 +31,6 @@ export const createUserProfile = async ({
   nickname,
   fullName,
   email = "",
-  photoUrl = "",
 }: CreateUserProfileData) => {
   const cleanNickname = nickname.trim();
   const normalizedNickname = normalizeNickname(cleanNickname);
@@ -63,7 +61,6 @@ export const createUserProfile = async ({
       nickname: cleanNickname,
       normalizedNickname,
       email: email.trim().toLowerCase(),
-      photoUrl,
 
       accountStatus: "active",
 
@@ -83,6 +80,10 @@ export const createUserProfile = async ({
         notificationsEnabled: true,
         locationEnabled: true,
         theme: "system",
+      },
+      photo: {
+        url: "",
+        publicId: "",
       },
 
       createdAt: serverTimestamp(),
@@ -114,8 +115,12 @@ export const getUserProfile = async (
     nickname: data.nickname ?? "",
     normalizedNickname: data.normalizedNickname ?? "",
     email: email ?? "",
-    photoUrl: data.photoUrl ?? "",
     accountStatus: data.accountStatus ?? "active",
+
+    photo: {
+      url: data.photoUrl ?? "",
+      publicId: data.photoPublicId ?? "",
+    },
 
     roles: {
       passenger: data.roles?.passenger ?? true,
@@ -130,6 +135,7 @@ export const getUserProfile = async (
     },
 
     preferences: {
+      language: data.preferences?.language ?? "es",
       notificationsEnabled: data.preferences?.notificationsEnabled ?? true,
       locationEnabled: data.preferences?.locationEnabled ?? true,
       theme: data.preferences?.theme ?? "system",

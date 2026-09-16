@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from "@/contexts/authContext";
+import { useLocationPermission } from "@/hooks/useLocationPermission";
 import { queryClient } from "@/lib/queryClient";
 import {
   Roboto_300Light,
@@ -18,6 +19,15 @@ export const unstable_settings = {
 
 function RootNavigator() {
   const { user, hasProfile, isAuthLoading, isAuthFlowInProgress } = useAuth();
+
+  useLocationPermission({
+    enabled:
+      !isAuthLoading &&
+      !isAuthFlowInProgress &&
+      Boolean(user) &&
+      hasProfile === true,
+    userId: user?.uid,
+  });
 
   if (isAuthLoading) {
     return null;

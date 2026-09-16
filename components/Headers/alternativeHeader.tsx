@@ -17,7 +17,9 @@ export default function AlternativeHeader({
       <View style={styles.buttonContainer}>
         <IconButton icon={ArrowLeft} onPress={onTouch} width={26} height={26} />
       </View>
-      <Text style={styles.text}> {SettingName} </Text>
+      <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+        {SettingName}
+      </Text>
     </View>
   );
 }
@@ -40,5 +42,6 @@ export const styles = StyleSheet.create((theme) => ({
     color: theme.text.Secondary,
     fontSize: 20,
     fontFamily: theme.fonts.heavy,
+    width: "50%",
   },
 }));

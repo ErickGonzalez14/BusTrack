@@ -2,6 +2,10 @@ const appJson = require("./app.json");
 
 module.exports = () => {
   const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const googlePlacesApiKey =
+    process.env.GOOGLE_PLACES_API_KEY || googleMapsApiKey;
+  const googleRoutesApiKey =
+    process.env.GOOGLE_ROUTES_API_KEY || googlePlacesApiKey;
 
   if (!googleMapsApiKey) {
     throw new Error("Falta GOOGLE_MAPS_API_KEY en el archivo .env");
@@ -9,6 +13,18 @@ module.exports = () => {
 
   return {
     ...appJson.expo,
+    extra: {
+      ...appJson.expo.extra,
+      googlePlacesApiKey,
+      googleRoutesApiKey,
+    },
+    ios: {
+      ...appJson.expo.ios,
+      config: {
+        ...appJson.expo.ios?.config,
+        googleMapsApiKey,
+      },
+    },
     android: {
       ...appJson.expo.android,
       config: {

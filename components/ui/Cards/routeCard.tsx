@@ -11,6 +11,7 @@ type RouterCardProps = {
   routeFair: number;
   calification: number;
   timeNearestBus: string;
+  routeDirection: "Ida" | "Regreso";
 };
 
 export default function RouteCard({
@@ -22,6 +23,7 @@ export default function RouteCard({
   routeFair,
   calification,
   timeNearestBus,
+  routeDirection,
 }: RouterCardProps) {
   const { theme } = useUnistyles();
   return (
@@ -30,6 +32,9 @@ export default function RouteCard({
         <View>
           <Text style={styles.plateText}>{busPlate}</Text>
           <Text style={styles.busTypeText}>{busType}</Text>
+        </View>
+        <View style={styles.directionBadge}>
+          <Text style={styles.directionText}>{routeDirection}</Text>
         </View>
         <Pressable style={styles.favoriteButton}>
           <Heart width={25} height={25} color="red" />
@@ -156,6 +161,19 @@ export const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.surface.background,
     borderRadius: theme.size_rounded.full,
     padding: 8,
+  },
+  directionBadge: {
+    marginLeft: "auto",
+    marginRight: 8,
+    borderRadius: theme.size_rounded.full,
+    backgroundColor: theme.surface.brand,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  directionText: {
+    color: "#FFFFFF",
+    fontFamily: theme.fonts.heavy,
+    fontSize: 12,
   },
   secundaryText: {
     fontSize: 16,

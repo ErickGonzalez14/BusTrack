@@ -13,6 +13,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 export type PrimaryBottomSheetRef = {
   open: () => void;
+  collapse: () => void;
   close: () => void;
 };
 
@@ -20,12 +21,18 @@ type PrimaryBottomSheetProps = {
   children: ReactNode;
   ref?: Ref<PrimaryBottomSheetRef>;
   snapPoints?: (number | string)[];
+  showBackdrop?: boolean;
+  enablePanDownToClose?: boolean;
+  onChange?: (index: number) => void;
 };
 
 export default function PrimaryBottomSheet({
   children,
   ref,
   snapPoints = ["34%"],
+  showBackdrop = true,
+  enablePanDownToClose = true,
+  onChange,
 }: PrimaryBottomSheetProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const points = useMemo(() => snapPoints, [snapPoints]);
@@ -34,6 +41,7 @@ export default function PrimaryBottomSheet({
     ref,
     () => ({
       open: () => bottomSheetRef.current?.expand(),
+      collapse: () => bottomSheetRef.current?.snapToIndex(0),
       close: () => bottomSheetRef.current?.close(),
     }),
     [],
@@ -44,15 +52,21 @@ export default function PrimaryBottomSheet({
       index={-1}
       ref={bottomSheetRef}
       snapPoints={points}
-      enablePanDownToClose
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          pressBehavior="close"
-        />
-      )}
+      enableDynamicSizing={true}
+      enablePanDownToClose={enablePanDownToClose}
+      onChange={onChange}
+      backdropComponent={
+        showBackdrop
+          ? (props) => (
+              <BottomSheetBackdrop
+                {...props}
+                appearsOnIndex={0}
+                disappearsOnIndex={-1}
+                pressBehavior="close"
+              />
+            )
+          : undefined
+      }
     >
       <BottomSheetView style={styles.container}>{children}</BottomSheetView>
     </BottomSheet>
@@ -61,7 +75,6 @@ export default function PrimaryBottomSheet({
 
 export const styles = StyleSheet.create((theme) => ({
   container: {
-    flex: 1,
     padding: 20,
     backgroundColor: theme.surface.background,
   },
