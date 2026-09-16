@@ -86,6 +86,7 @@ export default function TransitMap({
           zIndex={2}
         />
       )}
+
       {validStops.map((stop) => {
         const stopId = stop.id.trim();
         const isBoardingStop =
@@ -174,5 +175,12 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.surface.primary,
     borderWidth: 3,
     borderColor: theme.surface.background,
+  },
+  locationButton: {
+    borderRadius: theme.size_rounded.full,
+    backgroundColor: theme.surface.brand,
+    padding: 5,
+    position: "absolute",
+    top: 70,
   },
 }));
