@@ -1,5 +1,6 @@
 export type Stop = {
   id: string;
+  active?: boolean;
   adress: {
     latitude: number;
     longitude: number;

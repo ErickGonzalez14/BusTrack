@@ -30,6 +30,7 @@ export function usePlaceSearch({
   const [isLoadingPlace, setIsLoadingPlace] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchOriginRef = useRef(origin);
+  const placeRequestRevisionRef = useRef(0);
 
   useEffect(() => {
     if (!isSearchInputActive) searchOriginRef.current = origin;
@@ -78,6 +79,7 @@ export function usePlaceSearch({
 
   const openPlace = useCallback(
     async (placeId: string, fallback: Partial<GooglePlace>) => {
+      const requestRevision = ++placeRequestRevisionRef.current;
       const fallbackCoordinate = normalizeCoordinate(fallback.coordinate);
       const fallbackPlace: GooglePlace | null = fallbackCoordinate
         ? {
@@ -99,10 +101,12 @@ export function usePlaceSearch({
 
       try {
         const place = await getPlaceDetails(placeId, fallback);
+        if (requestRevision !== placeRequestRevisionRef.current) return;
         setSelectedPlace(place);
         setSearchText(place.name);
         onFocusPlace(place);
       } catch (placeError) {
+        if (requestRevision !== placeRequestRevisionRef.current) return;
         if (!fallbackPlace) {
           setError((placeError as Error).message);
         } else {
@@ -113,7 +117,9 @@ export function usePlaceSearch({
           onFocusPlace(fallbackPlace);
         }
       } finally {
-        setIsLoadingPlace(false);
+        if (requestRevision === placeRequestRevisionRef.current) {
+          setIsLoadingPlace(false);
+        }
       }
     },
     [onFocusPlace, onOpenSheet],
@@ -146,6 +152,13 @@ export function usePlaceSearch({
     if (suggestions[0]) selectSuggestion(suggestions[0]);
   }, [selectSuggestion, suggestions]);
 
+  const clearSelectedPlace = useCallback(() => {
+    placeRequestRevisionRef.current += 1;
+    setSelectedPlace(null);
+    setIsLoadingPlace(false);
+    setError(null);
+  }, []);
+
   return {
     searchText,
     suggestions,
@@ -157,6 +170,7 @@ export function usePlaceSearch({
     isLoadingPlace,
     error,
     clearError: () => setError(null),
+    clearSelectedPlace,
     hideSuggestions: () => setShowSuggestions(false),
     onSearchTextChange,
     onSearchFocus,

@@ -13,16 +13,26 @@ import {
   GooglePlace,
   RouteRecommendation,
 } from "@/interfaces/transport.type";
-import { getBuses, getRoutes, getStops } from "@/Services/map.service";
+import {
+  addPendingStop,
+  getBuses,
+  getRoutes,
+  getStops,
+} from "@/Services/map.service";
 import { useQuery } from "@tanstack/react-query";
+import * as Location from "expo-location";
 import { useNavigation } from "expo-router";
-import { Position } from "iconoir-react-native";
+import { Plus, Position } from "iconoir-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
   Pressable,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import MapView, { PoiClickEvent } from "react-native-maps";
@@ -42,6 +52,9 @@ export default function Map() {
   const mapRef = useRef<MapView>(null);
   const navigation = useNavigation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isAddingStop, setIsAddingStop] = useState(false);
+  const [isStopNameModalOpen, setIsStopNameModalOpen] = useState(false);
+  const [stopName, setStopName] = useState("");
   const stopsQuery = useQuery({ queryKey: ["stops"], queryFn: getStops });
   const routesQuery = useQuery({ queryKey: ["routes"], queryFn: getRoutes });
   const busesQuery = useQuery({ queryKey: ["buses"], queryFn: getBuses });
@@ -204,6 +217,91 @@ export default function Map() {
     });
   };
 
+  const handleAddStop = useCallback(async () => {
+    const cleanStopName = stopName.trim();
+    if (!activeRoute || isAddingStop || !cleanStopName) return;
+
+    setIsAddingStop(true);
+
+    try {
+      const coordinate = await getFreshUserLocation();
+      const [address] = await Location.reverseGeocodeAsync(coordinate);
+      const city =
+        address?.city?.trim() ||
+        address?.district?.trim() ||
+        address?.subregion?.trim() ||
+        address?.region?.trim() ||
+        "Por confirmar";
+
+      await addPendingStop({
+        coordinate,
+        routeId: activeRoute.route.id,
+        city,
+        name: cleanStopName,
+      });
+
+      setIsStopNameModalOpen(false);
+      setStopName("");
+      Alert.alert(
+        "¡Gracias por colaborar con BusTrack!",
+        "Guardamos la parada para confirmar su posición antes de mostrarla.",
+      );
+    } catch (error) {
+      Alert.alert(
+        "No pudimos agregar la parada",
+        error instanceof Error
+          ? error.message
+          : "Inténtalo nuevamente en unos momentos.",
+      );
+    } finally {
+      setIsAddingStop(false);
+    }
+  }, [activeRoute, getFreshUserLocation, isAddingStop, stopName]);
+
+  const openStopNameModal = useCallback(() => {
+    if (!activeRoute || isAddingStop) return;
+    setStopName("");
+    setIsStopNameModalOpen(true);
+  }, [activeRoute, isAddingStop]);
+
+  const closeStopNameModal = useCallback(() => {
+    if (isAddingStop) return;
+    setIsStopNameModalOpen(false);
+    setStopName("");
+  }, [isAddingStop]);
+
+  const clearRouteAndPlace = useCallback(() => {
+    setIsStopNameModalOpen(false);
+    setStopName("");
+    finishSimulation();
+    passengerJourney.resetJourney();
+    routePlanner.setRecommendation(null);
+    placeSearch.clearSelectedPlace();
+    sheetRef.current?.close();
+  }, [finishSimulation, passengerJourney, placeSearch, routePlanner]);
+
+  const handleRequestSheetClose = useCallback(() => {
+    if (activeRoute) {
+      Alert.alert(
+        "¿Quieres terminar la ruta?",
+        "Si terminas la ruta, se cancelará el viaje que está en curso.",
+        [
+          { text: "No, continuar", style: "cancel" },
+          {
+            text: "Sí, terminar",
+            style: "destructive",
+            onPress: clearRouteAndPlace,
+          },
+        ],
+      );
+      return;
+    }
+
+    routePlanner.setRecommendation(null);
+    placeSearch.clearSelectedPlace();
+    sheetRef.current?.close();
+  }, [activeRoute, clearRouteAndPlace, placeSearch, routePlanner]);
+
   const isLoading =
     stopsQuery.isLoading || routesQuery.isLoading || busesQuery.isLoading;
   const isError =
@@ -249,6 +347,29 @@ export default function Map() {
       >
         <Position width={25} height={25} color="#FFFFFF" />
       </Pressable>
+      {activeRoute && (
+        <Pressable
+          style={[
+            styles.addStopButton,
+            isAddingStop && styles.addStopButtonDisabled,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Agregar parada en mi ubicación"
+          accessibilityState={{ busy: isAddingStop, disabled: isAddingStop }}
+          hitSlop={8}
+          disabled={isAddingStop}
+          onPress={openStopNameModal}
+        >
+          {isAddingStop ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Plus width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
+          )}
+          <Text style={styles.addStopButtonText}>
+            {isAddingStop ? "Guardando" : "Agregar parada"}
+          </Text>
+        </Pressable>
+      )}
       <MapSearchOverlay
         value={placeSearch.searchText}
         suggestions={placeSearch.suggestions}
@@ -293,6 +414,7 @@ export default function Map() {
         onCancelRoute={() => {
           passengerJourney.resetJourney();
           routePlanner.setRecommendation(null);
+          placeSearch.clearSelectedPlace();
           sheetRef.current?.close();
         }}
         onConfirmBoarding={() => {
@@ -303,16 +425,70 @@ export default function Map() {
           passengerJourney.confirmExit();
           finishSimulation();
           routePlanner.setRecommendation(null);
+          placeSearch.clearSelectedPlace();
           sheetRef.current?.close();
         }}
         onFinishRoute={() => {
-          finishSimulation();
-          passengerJourney.resetJourney();
-          routePlanner.setRecommendation(null);
-          sheetRef.current?.close();
+          clearRouteAndPlace();
         }}
+        onRequestClose={handleRequestSheetClose}
         onSheetChange={(index) => setIsSheetOpen(index >= 0)}
       />
+      <Modal
+        visible={isStopNameModalOpen}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={closeStopNameModal}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Nombre de la parada</Text>
+            <Text style={styles.modalDescription}>
+              Escribe un nombre que ayude a reconocer este lugar.
+            </Text>
+            <TextInput
+              autoFocus
+              value={stopName}
+              onChangeText={setStopName}
+              placeholder="Ejemplo: Valdez"
+              placeholderTextColor="#7B8794"
+              maxLength={80}
+              editable={!isAddingStop}
+              returnKeyType="done"
+              style={styles.stopNameInput}
+              onSubmitEditing={() => void handleAddStop()}
+            />
+            <View style={styles.modalActions}>
+              <Pressable
+                style={styles.modalCancelButton}
+                disabled={isAddingStop}
+                onPress={closeStopNameModal}
+              >
+                <Text style={styles.modalCancelText}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.modalSaveButton,
+                  (!stopName.trim() || isAddingStop) &&
+                    styles.addStopButtonDisabled,
+                ]}
+                disabled={!stopName.trim() || isAddingStop}
+                onPress={() => void handleAddStop()}
+              >
+                {isAddingStop ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.modalSaveText}>Guardar parada</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -333,6 +509,98 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.surface.brand,
     alignItems: "center",
     justifyContent: "center",
+  },
+  addStopButton: {
+    position: "absolute",
+    top: 168,
+    right: 16,
+    zIndex: 5,
+    elevation: 5,
+    minHeight: 44,
+    borderRadius: theme.size_rounded.full,
+    backgroundColor: theme.surface.brand,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 7,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  addStopButtonDisabled: {
+    opacity: 0.7,
+  },
+  addStopButtonText: {
+    color: "#FFFFFF",
+    fontFamily: theme.fonts.heavy,
+    fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+    backgroundColor: "rgba(8, 20, 35, 0.55)",
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 420,
+    gap: 12,
+    padding: 20,
+    borderRadius: theme.size_rounded.lg,
+    backgroundColor: theme.surface.background,
+  },
+  modalTitle: {
+    fontFamily: theme.fonts.heavy,
+    fontSize: 22,
+    color: theme.text.Body,
+  },
+  modalDescription: {
+    fontFamily: theme.fonts.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    color: theme.text.placeholder,
+  },
+  stopNameInput: {
+    minHeight: 50,
+    borderWidth: 1,
+    borderColor: theme.text.placeHolderLight,
+    borderRadius: theme.size_rounded.sm,
+    paddingHorizontal: 14,
+    fontFamily: theme.fonts.regular,
+    fontSize: 16,
+    color: theme.text.Body,
+    backgroundColor: theme.surface.inputs,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 4,
+  },
+  modalCancelButton: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+  },
+  modalCancelText: {
+    fontFamily: theme.fonts.heavy,
+    fontSize: 15,
+    color: theme.text.Body,
+  },
+  modalSaveButton: {
+    minHeight: 44,
+    minWidth: 145,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: theme.size_rounded.sm,
+    paddingHorizontal: 16,
+    backgroundColor: theme.components.buttons.primary,
+  },
+  modalSaveText: {
+    fontFamily: theme.fonts.heavy,
+    fontSize: 15,
+    color: "#FFFFFF",
   },
   centered: {
     flex: 1,

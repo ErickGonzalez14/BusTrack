@@ -119,7 +119,7 @@ export default function TransitMap({
             key={stop.id}
             coordinate={stop.adress}
             title={stop.name}
-            description={`${stop.district}, ${stop.city}`}
+            description={stop.city}
           >
             <Image
               source={require("@/assets/images/busStop.png")}

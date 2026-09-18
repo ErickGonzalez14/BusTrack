@@ -1,10 +1,17 @@
 import { Stop } from "@/interfaces/stop.type";
-import { Bus, TransitRoute } from "@/interfaces/transport.type";
+import {
+  Bus,
+  Coordinate,
+  TransitRoute,
+} from "@/interfaces/transport.type";
 import { normalizeCoordinate } from "@/lib/mapRouting";
 import {
+  addDoc,
   collection,
+  GeoPoint,
   getDocs,
   getFirestore,
+  serverTimestamp,
 } from "@react-native-firebase/firestore";
 
 export const getStops = async (): Promise<Stop[]> => {
@@ -16,6 +23,10 @@ export const getStops = async (): Promise<Stop[]> => {
       address?: unknown;
       location?: unknown;
     };
+
+    // Las paradas propuestas permanecen ocultas hasta que se confirme su posición.
+    if (data.active === false) return [];
+
     const coordinate = normalizeCoordinate(
       data.adress ?? data.address ?? data.location,
     );
@@ -35,6 +46,32 @@ export const getStops = async (): Promise<Stop[]> => {
       },
     ];
   });
+};
+
+type PendingStopInput = {
+  coordinate: Coordinate;
+  routeId: string;
+  city: string;
+  name: string;
+};
+
+export const addPendingStop = async ({
+  coordinate,
+  routeId,
+  city,
+  name,
+}: PendingStopInput) => {
+  const db = getFirestore();
+  const stopDocument = await addDoc(collection(db, "stops"), {
+    active: false,
+    adress: new GeoPoint(coordinate.latitude, coordinate.longitude),
+    city,
+    created_at: serverTimestamp(),
+    name,
+    routeId,
+  });
+
+  return stopDocument.id;
 };
 
 export const getRoutes = async (): Promise<TransitRoute[]> => {

@@ -30,6 +30,7 @@ type MapDetailsSheetProps = {
   onConfirmBoarding: () => void;
   onConfirmExit: () => void;
   onFinishRoute: () => void;
+  onRequestClose: () => void;
   onSheetChange: (index: number) => void;
 };
 
@@ -58,6 +59,7 @@ export default function MapDetailsSheet({
   onConfirmBoarding,
   onConfirmExit,
   onFinishRoute,
+  onRequestClose,
   onSheetChange,
 }: MapDetailsSheetProps) {
   return (
@@ -73,20 +75,28 @@ export default function MapDetailsSheet({
           {place?.name}
         </Text>
         <View style={{ flexDirection: "row", gap: 8, marginLeft: "auto" }}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Guardar lugar"
-            hitSlop={8}
-            style={styles.closeButton}
-          >
-            <Bookmark width={15} height={15} color="#FFFFFF" strokeWidth={3} />
-          </Pressable>
+          {place?.address && !recommendation && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Guardar lugar"
+              hitSlop={8}
+              style={styles.closeButton}
+            >
+              <Bookmark
+                width={15}
+                height={15}
+                color="#FFFFFF"
+                strokeWidth={3}
+              />
+            </Pressable>
+          )}
+
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Cerrar panel de detalles"
             hitSlop={8}
             style={styles.closeButton}
-            onPress={() => sheetRef.current?.close()}
+            onPress={onRequestClose}
           >
             <Xmark width={15} height={15} color="#FFFFFF" strokeWidth={3} />
           </Pressable>
