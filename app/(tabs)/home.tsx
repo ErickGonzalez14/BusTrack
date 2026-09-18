@@ -4,10 +4,13 @@ import FavoriteCard from "@/components/ui/Cards/favoriteCard";
 import PrimaryCard from "@/components/ui/Cards/primaryCard";
 import ProductCard from "@/components/ui/Cards/productCard";
 import SearchBar from "@/components/ui/searchBar";
+import { useFavoriteSites } from "@/hooks/useFavoriteSites";
+import { router } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function Home() {
+  const { sites, isLoading, error } = useFavoriteSites();
   return (
     <View style={styles.mainContainer}>
       <PrimaryHeader />
@@ -79,15 +82,37 @@ export default function Home() {
               img="https://th.bing.com/th/id/R.69aa1110083704307653e8457ed59926?rik=W4%2bSdeaQUHmpag&pid=ImgRaw&r=0"
             />
           </ScrollView>
-          <Text style={styles.Titles}>Rutas Favoritas</Text>
+          {/*   Carrucel para Lugares Favoritos */}
+          <Text style={styles.Titles}>Lugares Favoritos</Text>
+          {isLoading && (
+            <Text style={styles.Titles}>Cargando sitios favoritos...</Text>
+          )}
+          {error && <Text style={styles.Titles}>Error: {error}</Text>}
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabContainer}
           >
-            <FavoriteCard routeName="Casa Rosa" />
-            <FavoriteCard routeName="Super 99" />
-            <FavoriteCard routeName="Cocetrab" />
+            {sites.map((site) => (
+              <FavoriteCard
+                key={site.placeId}
+                routeName={site.name}
+                onPress={() => {
+                  router.push({
+                    pathname: "/(tabs)/map",
+                    params: {
+                      favoriteRequest: String(Date.now()),
+                      favoritePlaceId: site.placeId,
+                      favoriteName: site.name,
+                      favoriteAddress: site.address ?? "",
+                      favoriteLatitude: String(site.coordinate.latitude),
+                      favoriteLongitude: String(site.coordinate.longitude),
+                      favoriteType: site.placeType ?? "",
+                    },
+                  });
+                }}
+              />
+            ))}
           </ScrollView>
         </View>
       </ScrollView>

@@ -1,5 +1,5 @@
-import { ClockSolid, Heart, StarSolid } from "iconoir-react-native";
-import { Pressable, Text, View } from "react-native";
+import { ClockSolid, StarSolid } from "iconoir-react-native";
+import { Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 type RouterCardProps = {
@@ -36,9 +36,6 @@ export default function RouteCard({
         <View style={styles.directionBadge}>
           <Text style={styles.directionText}>{routeDirection}</Text>
         </View>
-        <Pressable style={styles.favoriteButton}>
-          <Heart width={25} height={25} color="red" />
-        </Pressable>
       </View>
       <View style={styles.routesContainer}>
         <View style={styles.stopContainer}>

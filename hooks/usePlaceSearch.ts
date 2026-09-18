@@ -152,6 +152,26 @@ export function usePlaceSearch({
     if (suggestions[0]) selectSuggestion(suggestions[0]);
   }, [selectSuggestion, suggestions]);
 
+  const selectPlace = useCallback(
+    (place: GooglePlace) => {
+      placeRequestRevisionRef.current += 1;
+      Keyboard.dismiss();
+      setIsSearchInputActive(false);
+      setSuggestions([]);
+      setShowSuggestions(false);
+      setIsSearching(false);
+      setHasSearched(false);
+      setSearchError(null);
+      setError(null);
+      setIsLoadingPlace(false);
+      setSelectedPlace(place);
+      setSearchText(place.name);
+      onFocusPlace(place);
+      onOpenSheet();
+    },
+    [onFocusPlace, onOpenSheet],
+  );
+
   const clearSelectedPlace = useCallback(() => {
     placeRequestRevisionRef.current += 1;
     setSelectedPlace(null);
@@ -175,6 +195,7 @@ export function usePlaceSearch({
     onSearchTextChange,
     onSearchFocus,
     submitSearch,
+    selectPlace,
     selectSuggestion,
     openPlace,
   };

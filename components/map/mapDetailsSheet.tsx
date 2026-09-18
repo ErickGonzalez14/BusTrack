@@ -5,9 +5,23 @@ import ActiveRouteBadge from "@/components/map/activeRouteBadge";
 import RouteCard from "@/components/ui/Cards/routeCard";
 import type { PassengerJourneyPhase } from "@/hooks/usePassengerJourney";
 import { GooglePlace, RouteRecommendation } from "@/interfaces/transport.type";
+import {
+  getFavoriteSite,
+  saveFavoriteSite,
+} from "@/Services/favoriteSites.service";
 import { Bookmark, Star, Xmark } from "iconoir-react-native";
-import { RefObject } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { RefObject, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 type MapDetailsSheetProps = {
@@ -62,14 +76,89 @@ export default function MapDetailsSheet({
   onRequestClose,
   onSheetChange,
 }: MapDetailsSheetProps) {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteName, setFavoriteName] = useState("");
+  const [savedFavoriteName, setSavedFavoriteName] = useState("");
+  const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
+  const [isSavingFavorite, setIsSavingFavorite] = useState(false);
+
+  useEffect(() => {
+    let isCurrentPlace = true;
+
+    setIsFavorite(false);
+    setSavedFavoriteName("");
+    setIsFavoriteModalOpen(false);
+
+    if (!place?.id) return () => undefined;
+
+    void getFavoriteSite(place.id)
+      .then((favorite) => {
+        if (!isCurrentPlace || !favorite) return;
+        setIsFavorite(true);
+        setSavedFavoriteName(favorite.name);
+      })
+      .catch((favoriteError) => {
+        console.warn("No se pudo consultar el lugar favorito:", favoriteError);
+      });
+
+    return () => {
+      isCurrentPlace = false;
+    };
+  }, [place?.id]);
+
+  const openFavoriteModal = () => {
+    if (!place) return;
+    setFavoriteName(savedFavoriteName || place.name);
+    setIsFavoriteModalOpen(true);
+  };
+
+  const closeFavoriteModal = () => {
+    if (isSavingFavorite) return;
+    setIsFavoriteModalOpen(false);
+    setFavoriteName("");
+  };
+
+  const handleSaveFavorite = async () => {
+    const cleanName = favoriteName.trim();
+    if (!place || !cleanName || isSavingFavorite) return;
+
+    setIsSavingFavorite(true);
+
+    try {
+      await saveFavoriteSite({
+        placeId: place.id,
+        name: cleanName,
+        originalName: place.name,
+        address: place.address,
+        coordinate: place.coordinate,
+        placeType: place.type,
+      });
+      setIsFavorite(true);
+      setSavedFavoriteName(cleanName);
+      setIsFavoriteModalOpen(false);
+      setFavoriteName("");
+      Alert.alert("Lugar guardado", `${cleanName} se agregó a tus favoritos.`);
+    } catch (favoriteError) {
+      Alert.alert(
+        "No pudimos guardar el lugar",
+        favoriteError instanceof Error
+          ? favoriteError.message
+          : "Inténtalo nuevamente en unos momentos.",
+      );
+    } finally {
+      setIsSavingFavorite(false);
+    }
+  };
+
   return (
-    <PrimaryBottomSheet
-      ref={sheetRef}
-      snapPoints={["15%", "35%"]}
-      showBackdrop={false}
-      enablePanDownToClose={false}
-      onChange={onSheetChange}
-    >
+    <>
+      <PrimaryBottomSheet
+        ref={sheetRef}
+        snapPoints={["15%", "35%"]}
+        showBackdrop={false}
+        enablePanDownToClose={false}
+        onChange={onSheetChange}
+      >
       <View style={styles.sheetHeader}>
         <Text style={styles.name} numberOfLines={2} ellipsizeMode="tail">
           {place?.name}
@@ -78,14 +167,20 @@ export default function MapDetailsSheet({
           {place?.address && !recommendation && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Guardar lugar"
+              accessibilityLabel={
+                isFavorite ? "Editar lugar favorito" : "Guardar lugar"
+              }
               hitSlop={8}
               style={styles.closeButton}
+              onPress={openFavoriteModal}
             >
               <Bookmark
                 width={15}
                 height={15}
                 color="#FFFFFF"
+                fill={
+                  isFavorite || isFavoriteModalOpen ? "#FFFFFF" : "none"
+                }
                 strokeWidth={3}
               />
             </Pressable>
@@ -207,7 +302,63 @@ export default function MapDetailsSheet({
       ) : error ? (
         <Text style={styles.error}>{error}</Text>
       ) : null}
-    </PrimaryBottomSheet>
+      </PrimaryBottomSheet>
+      <Modal
+        visible={isFavoriteModalOpen}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={closeFavoriteModal}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Guardar lugar favorito</Text>
+            <Text style={styles.modalDescription}>
+              Ponle un nombre personalizado para encontrarlo fácilmente.
+            </Text>
+            <TextInput
+              autoFocus
+              value={favoriteName}
+              onChangeText={setFavoriteName}
+              placeholder="Ejemplo: Casa de mamá"
+              placeholderTextColor="#7B8794"
+              maxLength={80}
+              editable={!isSavingFavorite}
+              returnKeyType="done"
+              style={styles.favoriteNameInput}
+              onSubmitEditing={() => void handleSaveFavorite()}
+            />
+            <View style={styles.modalActions}>
+              <Pressable
+                style={styles.modalCancelButton}
+                disabled={isSavingFavorite}
+                onPress={closeFavoriteModal}
+              >
+                <Text style={styles.modalCancelText}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.modalSaveButton,
+                  (!favoriteName.trim() || isSavingFavorite) &&
+                    styles.buttonDisabled,
+                ]}
+                disabled={!favoriteName.trim() || isSavingFavorite}
+                onPress={() => void handleSaveFavorite()}
+              >
+                {isSavingFavorite ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.modalSaveText}>Guardar</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+    </>
   );
 }
 
@@ -416,5 +567,73 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.text.Body,
     flexShrink: 1,
     flex: 1,
+  },
+  modalOverlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+    backgroundColor: "rgba(8, 20, 35, 0.55)",
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 420,
+    gap: 12,
+    padding: 20,
+    borderRadius: theme.size_rounded.lg,
+    backgroundColor: theme.surface.background,
+  },
+  modalTitle: {
+    fontFamily: theme.fonts.heavy,
+    fontSize: 22,
+    color: theme.text.Body,
+  },
+  modalDescription: {
+    fontFamily: theme.fonts.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    color: theme.text.placeholder,
+  },
+  favoriteNameInput: {
+    minHeight: 50,
+    borderWidth: 1,
+    borderColor: theme.text.placeHolderLight,
+    borderRadius: theme.size_rounded.sm,
+    paddingHorizontal: 14,
+    fontFamily: theme.fonts.regular,
+    fontSize: 16,
+    color: theme.text.Body,
+    backgroundColor: theme.surface.inputs,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 4,
+  },
+  modalCancelButton: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+  },
+  modalCancelText: {
+    fontFamily: theme.fonts.heavy,
+    fontSize: 15,
+    color: theme.text.Body,
+  },
+  modalSaveButton: {
+    minWidth: 110,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: theme.size_rounded.sm,
+    paddingHorizontal: 16,
+    backgroundColor: theme.components.buttons.primary,
+  },
+  modalSaveText: {
+    fontFamily: theme.fonts.heavy,
+    fontSize: 15,
+    color: "#FFFFFF",
   },
 }));

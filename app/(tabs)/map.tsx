@@ -21,7 +21,7 @@ import {
 } from "@/Services/map.service";
 import { useQuery } from "@tanstack/react-query";
 import * as Location from "expo-location";
-import { useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Plus, Position } from "iconoir-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -40,6 +40,9 @@ import { StyleSheet } from "react-native-unistyles";
 
 const DEFAULT_LOCATION = { latitude: 8.4821, longitude: -82.6178 };
 
+const getSearchParam = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? value[0] : value;
+
 const formatBusArrival = (seconds: number | null) => {
   if (seconds === null) return "Calculando";
   if (seconds <= 0) return "En la parada";
@@ -50,7 +53,17 @@ const formatBusArrival = (seconds: number | null) => {
 export default function Map() {
   const sheetRef = useRef<PrimaryBottomSheetRef>(null);
   const mapRef = useRef<MapView>(null);
+  const handledFavoriteRequest = useRef<string | null>(null);
   const navigation = useNavigation();
+  const favoriteParams = useLocalSearchParams<{
+    favoriteRequest?: string | string[];
+    favoritePlaceId?: string | string[];
+    favoriteName?: string | string[];
+    favoriteAddress?: string | string[];
+    favoriteLatitude?: string | string[];
+    favoriteLongitude?: string | string[];
+    favoriteType?: string | string[];
+  }>();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isAddingStop, setIsAddingStop] = useState(false);
   const [isStopNameModalOpen, setIsStopNameModalOpen] = useState(false);
@@ -158,6 +171,49 @@ export default function Map() {
     onFocusPlace: focusPlace,
     onOpenSheet: openSheet,
   });
+
+  useEffect(() => {
+    if (placeSearch.selectedPlace) {
+      sheetRef.current?.open();
+    }
+  }, [placeSearch.selectedPlace]);
+
+  useEffect(() => {
+    const requestId = getSearchParam(favoriteParams.favoriteRequest);
+    const placeId = getSearchParam(favoriteParams.favoritePlaceId);
+    const name = getSearchParam(favoriteParams.favoriteName);
+    const latitude = Number(getSearchParam(favoriteParams.favoriteLatitude));
+    const longitude = Number(
+      getSearchParam(favoriteParams.favoriteLongitude),
+    );
+
+    if (
+      !requestId ||
+      requestId === handledFavoriteRequest.current ||
+      !placeId ||
+      !name ||
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude)
+    ) {
+      return;
+    }
+
+    handledFavoriteRequest.current = requestId;
+
+    // Dar tiempo al BottomSheet de montarse completamente tras la navegación
+    const timer = setTimeout(() => {
+      placeSearch.selectPlace({
+        id: placeId,
+        name,
+        coordinate: { latitude, longitude },
+        address: getSearchParam(favoriteParams.favoriteAddress) || undefined,
+        type: getSearchParam(favoriteParams.favoriteType) || undefined,
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [favoriteParams, placeSearch.selectPlace]);
+
   const routePlanner = useRoutePlanner({
     stops: stopsQuery.data ?? [],
     routes: routesQuery.data ?? [],

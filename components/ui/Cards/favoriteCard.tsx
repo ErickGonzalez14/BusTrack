@@ -32,7 +32,9 @@ export default function FavoriteCard({
         style={styles.icon}
       />
       <View>
-        <Text style={styles.routeName}>{routeName}</Text>
+        <Text style={styles.routeName} numberOfLines={1} ellipsizeMode="tail">
+          {routeName}
+        </Text>
       </View>
     </Pressable>
   );
@@ -83,6 +85,7 @@ export const styles = StyleSheet.create((theme) => ({
     left: 110,
   },
   routeName: {
+    maxWidth: 140,
     fontFamily: theme.fonts.heavy,
     fontSize: 20,
     color: theme.text.Secondary,
