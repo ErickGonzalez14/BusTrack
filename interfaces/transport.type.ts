@@ -16,9 +16,10 @@ export type RouteDirection = "outbound" | "return";
 export type Bus = {
   id: string;
   active: boolean;
-  busType: string;
-  model: string;
-  plate: string;
+  routeType: string;
+  licensePlate: string;
+  publicTransportPlate: string;
+  ratingCount: number[];
   ratingAverage: number;
   routeId: string;
 };

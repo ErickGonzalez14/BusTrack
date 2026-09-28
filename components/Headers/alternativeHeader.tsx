@@ -42,6 +42,5 @@ export const styles = StyleSheet.create((theme) => ({
     color: theme.text.Secondary,
     fontSize: 20,
     fontFamily: theme.fonts.heavy,
-    width: "50%",
   },
 }));

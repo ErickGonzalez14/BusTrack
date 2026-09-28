@@ -18,7 +18,7 @@ export const styles = StyleSheet.create((theme) => ({
   buttonContainer: {
     backgroundColor: theme.components.buttons.secondary,
     borderRadius: theme.size_rounded.full,
-    paddingVertical: 5,
+    paddingVertical: 10,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 10,

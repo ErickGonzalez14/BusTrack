@@ -37,7 +37,9 @@ export default function ChipButton({
         pressed && styles.pressedContainer,
       ]}
     >
-      <Text style={[styles.text, isSelected && styles.selectedText]}>{name}</Text>
+      <Text style={[styles.text, isSelected && styles.selectedText]}>
+        {name}
+      </Text>
     </Pressable>
   );
 }
@@ -45,7 +47,7 @@ export default function ChipButton({
 export const styles = StyleSheet.create((theme) => ({
   container: {
     backgroundColor: theme.surface.background,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: theme.size_rounded.full,
     borderWidth: 1.5,

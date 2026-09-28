@@ -56,7 +56,7 @@ export const styles = StyleSheet.create((theme) => ({
     flex: 1,
   },
   title: {
-    fontSize: 20,
+    fontSize: 15,
     fontFamily: theme.fonts.heavy,
     color: theme.text.Body,
   },

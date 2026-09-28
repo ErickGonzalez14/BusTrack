@@ -38,7 +38,7 @@ export default function Settings() {
             userName={profile?.fullName || "Usuario"}
             greeting="Buenos Días"
             imageUrl={
-              profile?.photoUrl ||
+              profile?.photo?.url ||
               "https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png"
             }
             onTouch={() => router.push("/Settings/editProfile")}

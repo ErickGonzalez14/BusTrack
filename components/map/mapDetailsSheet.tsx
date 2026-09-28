@@ -159,149 +159,147 @@ export default function MapDetailsSheet({
         enablePanDownToClose={false}
         onChange={onSheetChange}
       >
-      <View style={styles.sheetHeader}>
-        <Text style={styles.name} numberOfLines={2} ellipsizeMode="tail">
-          {place?.name}
-        </Text>
-        <View style={{ flexDirection: "row", gap: 8, marginLeft: "auto" }}>
-          {place?.address && !recommendation && (
+        <View style={styles.sheetHeader}>
+          <Text style={styles.name} numberOfLines={2} ellipsizeMode="tail">
+            {place?.name}
+          </Text>
+          <View style={{ flexDirection: "row", gap: 8, marginLeft: "auto" }}>
+            {place?.address && !recommendation && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  isFavorite ? "Editar lugar favorito" : "Guardar lugar"
+                }
+                hitSlop={8}
+                style={styles.closeButton}
+                onPress={openFavoriteModal}
+              >
+                <Bookmark
+                  width={15}
+                  height={15}
+                  color="#FFFFFF"
+                  fill={isFavorite || isFavoriteModalOpen ? "#FFFFFF" : "none"}
+                  strokeWidth={3}
+                />
+              </Pressable>
+            )}
+
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={
-                isFavorite ? "Editar lugar favorito" : "Guardar lugar"
-              }
+              accessibilityLabel="Cerrar panel de detalles"
               hitSlop={8}
               style={styles.closeButton}
-              onPress={openFavoriteModal}
+              onPress={onRequestClose}
             >
-              <Bookmark
-                width={15}
-                height={15}
-                color="#FFFFFF"
-                fill={
-                  isFavorite || isFavoriteModalOpen ? "#FFFFFF" : "none"
-                }
-                strokeWidth={3}
-              />
+              <Xmark width={15} height={15} color="#FFFFFF" strokeWidth={3} />
             </Pressable>
-          )}
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Cerrar panel de detalles"
-            hitSlop={8}
-            style={styles.closeButton}
-            onPress={onRequestClose}
-          >
-            <Xmark width={15} height={15} color="#FFFFFF" strokeWidth={3} />
-          </Pressable>
-        </View>
-      </View>
-      {activeRoute && (
-        <ActiveRouteBadge
-          route={activeRoute}
-          status={activeRouteStatus}
-          onFinish={onFinishRoute}
-        />
-      )}
-      {isLoadingPlace && !place ? (
-        <ActivityIndicator size="large" />
-      ) : recommendation ? (
-        <View style={styles.content}>
-          {!isRouteActive && (
-            <>
-              <Text style={styles.eyebrow}>RUTA RECOMENDADA</Text>
-              <Text style={styles.title}>{recommendation.route.name}</Text>
-              <Text style={styles.description}>
-                Camina {""}{" "}
-                {formatDistance(recommendation.walkingDistanceMeters)} {""}
-                hasta{""}
-                <Text style={styles.constrastText}>
-                  {` ${recommendation.boardingStop.name}`}
-                </Text>{" "}
-                {""}. Baja en{""}
-                <Text style={styles.constrastText}>
-                  {` ${recommendation.destinationStop.name}`}
-                </Text>{" "}
-                {""}, a {""}
-                {` ${formatDistance(recommendation.destinationDistanceMeters)}`}{" "}
-                {""} de
-                {` ${place?.name ?? "tu destino"}`}.
-              </Text>
-            </>
-          )}
-          <RouteCard
-            busPlate={recommendation.bus.plate}
-            busType={recommendation.bus.busType}
-            startStop={recommendation.boardingStop.name}
-            endStop={recommendation.destinationStop.name}
-            routeTime={`${recommendation.estimatedRideMinutes} min`}
-            routeFair={recommendation.route.fareAprox}
-            calification={recommendation.bus.ratingAverage}
-            timeNearestBus={timeNearestBus}
-            routeDirection={
-              recommendation.direction === "outbound" ? "Ida" : "Regreso"
-            }
-          />
-          {isRouteActive ? (
-            <JourneyStatus
-              phase={passengerPhase}
-              boardingStopName={recommendation.boardingStop.name}
-              destinationStopName={recommendation.destinationStop.name}
-              onConfirmBoarding={onConfirmBoarding}
-              onConfirmExit={onConfirmExit}
-            />
-          ) : (
-            <>
-              <PrimaryAction
-                text={
-                  isLoadingRoad
-                    ? "Calculando recorrido por carretera"
-                    : "Confirmar e iniciar ruta"
-                }
-                onPress={onStartRoute}
-                isLoading={isLoadingRoad}
-                disabled={isLoadingRoad || !canStartRoute}
-              />
-              <Pressable style={styles.cancelButton} onPress={onCancelRoute}>
-                <Text style={styles.cancelButtonText}>Cancelar ruta</Text>
-              </Pressable>
-            </>
-          )}
-          {error && <Text style={styles.error}>{error}</Text>}
-        </View>
-      ) : place ? (
-        <View style={styles.content}>
-          {place.address && (
-            <Text style={styles.description}>{place.address}</Text>
-          )}
-          <View style={styles.facts}>
-            {typeof place.rating === "number" && (
-              <View style={styles.fact}>
-                <Star width={20} height={20} color="#F4B400" />
-                <Text style={styles.factText}>
-                  {place.rating.toFixed(1)}
-                  {place.userRatingCount ? ` (${place.userRatingCount})` : ""}
-                </Text>
-              </View>
-            )}
-            {typeof place.openNow === "boolean" && (
-              <Text style={place.openNow ? styles.open : styles.closed}>
-                {place.openNow ? "Abierto ahora" : "Cerrado ahora"}
-              </Text>
-            )}
           </View>
-          <PrimaryAction
-            text="Ir a este lugar"
-            onPress={onFindRoute}
-            isLoading={isFindingRoute}
-            disabled={isFindingRoute || isLoadingPlace}
-          />
-          {error && <Text style={styles.error}>{error}</Text>}
         </View>
-      ) : error ? (
-        <Text style={styles.error}>{error}</Text>
-      ) : null}
+        {activeRoute && (
+          <ActiveRouteBadge
+            route={activeRoute}
+            status={activeRouteStatus}
+            onFinish={onFinishRoute}
+          />
+        )}
+        {isLoadingPlace && !place ? (
+          <ActivityIndicator size="large" />
+        ) : recommendation ? (
+          <View style={styles.content}>
+            {!isRouteActive && (
+              <>
+                <Text style={styles.eyebrow}>RUTA RECOMENDADA</Text>
+                <Text style={styles.title}>{recommendation.route.name}</Text>
+                <Text style={styles.description}>
+                  Camina {""}{" "}
+                  {formatDistance(recommendation.walkingDistanceMeters)} {""}
+                  hasta{""}
+                  <Text style={styles.constrastText}>
+                    {` ${recommendation.boardingStop.name}`}
+                  </Text>{" "}
+                  {""}. Baja en{""}
+                  <Text style={styles.constrastText}>
+                    {` ${recommendation.destinationStop.name}`}
+                  </Text>{" "}
+                  {""}, a {""}
+                  {` ${formatDistance(recommendation.destinationDistanceMeters)}`}{" "}
+                  {""} de
+                  {` ${place?.name ?? "tu destino"}`}.
+                </Text>
+              </>
+            )}
+            <RouteCard
+              busPlate={recommendation.bus.publicTransportPlate}
+              busType={recommendation.bus.routeType}
+              startStop={recommendation.boardingStop.name}
+              endStop={recommendation.destinationStop.name}
+              routeTime={`${recommendation.estimatedRideMinutes} min`}
+              routeFair={recommendation.route.fareAprox}
+              calification={recommendation.bus.ratingAverage}
+              timeNearestBus={timeNearestBus}
+              routeDirection={
+                recommendation.direction === "outbound" ? "Ida" : "Regreso"
+              }
+            />
+            {isRouteActive ? (
+              <JourneyStatus
+                phase={passengerPhase}
+                boardingStopName={recommendation.boardingStop.name}
+                destinationStopName={recommendation.destinationStop.name}
+                onConfirmBoarding={onConfirmBoarding}
+                onConfirmExit={onConfirmExit}
+              />
+            ) : (
+              <>
+                <PrimaryAction
+                  text={
+                    isLoadingRoad
+                      ? "Calculando recorrido por carretera"
+                      : "Confirmar e iniciar ruta"
+                  }
+                  onPress={onStartRoute}
+                  isLoading={isLoadingRoad}
+                  disabled={isLoadingRoad || !canStartRoute}
+                />
+                <Pressable style={styles.cancelButton} onPress={onCancelRoute}>
+                  <Text style={styles.cancelButtonText}>Cancelar ruta</Text>
+                </Pressable>
+              </>
+            )}
+            {error && <Text style={styles.error}>{error}</Text>}
+          </View>
+        ) : place ? (
+          <View style={styles.content}>
+            {place.address && (
+              <Text style={styles.description}>{place.address}</Text>
+            )}
+            <View style={styles.facts}>
+              {typeof place.rating === "number" && (
+                <View style={styles.fact}>
+                  <Star width={20} height={20} color="#F4B400" />
+                  <Text style={styles.factText}>
+                    {place.rating.toFixed(1)}
+                    {place.userRatingCount ? ` (${place.userRatingCount})` : ""}
+                  </Text>
+                </View>
+              )}
+              {typeof place.openNow === "boolean" && (
+                <Text style={place.openNow ? styles.open : styles.closed}>
+                  {place.openNow ? "Abierto ahora" : "Cerrado ahora"}
+                </Text>
+              )}
+            </View>
+            <PrimaryAction
+              text="Ir a este lugar"
+              onPress={onFindRoute}
+              isLoading={isFindingRoute}
+              disabled={isFindingRoute || isLoadingPlace}
+            />
+            {error && <Text style={styles.error}>{error}</Text>}
+          </View>
+        ) : error ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : null}
       </PrimaryBottomSheet>
       <Modal
         visible={isFavoriteModalOpen}

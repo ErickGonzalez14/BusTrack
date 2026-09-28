@@ -1,9 +1,5 @@
 import { Stop } from "@/interfaces/stop.type";
-import {
-  Bus,
-  Coordinate,
-  TransitRoute,
-} from "@/interfaces/transport.type";
+import { Bus, Coordinate, TransitRoute } from "@/interfaces/transport.type";
 import { normalizeCoordinate } from "@/lib/mapRouting";
 import {
   addDoc,
@@ -13,6 +9,11 @@ import {
   getFirestore,
   serverTimestamp,
 } from "@react-native-firebase/firestore";
+
+export type RouteOption = {
+  id: string;
+  name: string;
+};
 
 export const getStops = async (): Promise<Stop[]> => {
   const db = getFirestore();
@@ -113,4 +114,20 @@ export const getBuses = async (): Promise<Bus[]> => {
       routeId: data.routeId?.trim() ?? "",
     };
   });
+};
+
+//obtener nombre, id de las rutas para DriverRequest
+export const getRouteOptions = async (): Promise<RouteOption[]> => {
+  const db = getFirestore();
+  const snapshot = await getDocs(collection(db, "routes"));
+
+  return snapshot.docs
+    .map((routeDocument) => {
+      const data = routeDocument.data();
+      return {
+        id: routeDocument.id.trim(),
+        name: typeof data.name === "string" ? data.name : "",
+      };
+    })
+    .filter((route) => route.name.length > 0);
 };

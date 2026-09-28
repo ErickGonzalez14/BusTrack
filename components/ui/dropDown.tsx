@@ -3,19 +3,20 @@ import { useRef, useState } from "react";
 import { Dimensions, Modal, Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+type DropDownOption = {
+  id: string;
+  label: string;
+};
+
 type DropDownProps = {
   label: string;
-  options?: string[];
-  onSelect?: (option: string) => void;
+  options?: DropDownOption[];
+  onSelect?: (option: DropDownOption) => void;
 };
 
 const MENU_HORIZONTAL_MARGIN = 16;
 
-export default function DropDown({
-  label,
-  options = ["Internacional", "Bus de Ruta", "Coaster"],
-  onSelect,
-}: DropDownProps) {
+export default function DropDown({ label, options, onSelect }: DropDownProps) {
   const { theme } = useUnistyles();
   const triggerRef = useRef<View>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -46,8 +47,8 @@ export default function DropDown({
     });
   };
 
-  const selectOption = (option: string) => {
-    setSelectedOption(option);
+  const selectOption = (option: DropDownOption) => {
+    setSelectedOption(option.label);
     setIsOpen(false);
     onSelect?.(option);
   };
@@ -94,10 +95,10 @@ export default function DropDown({
               },
             ]}
           >
-            {options.map((option, index) => (
+            {options?.map((option, index) => (
               <Pressable
                 accessibilityRole="menuitem"
-                key={option}
+                key={option.id}
                 onPress={() => selectOption(option)}
                 style={({ pressed }) => [
                   styles.option,
@@ -105,8 +106,8 @@ export default function DropDown({
                   pressed && styles.optionPressed,
                 ]}
               >
-                <Text style={styles.optionText}>{option}</Text>
-                {selectedOption === option && (
+                <Text style={styles.optionText}>{option.label}</Text>
+                {selectedOption === option.label && (
                   <Check
                     width={22}
                     height={22}
