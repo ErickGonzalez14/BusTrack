@@ -1,0 +1,101 @@
+import { ComponentType } from "react";
+import { Pressable, Text, View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
+
+type MiniCardProps = {
+  title: string;
+  subtitle: string;
+  iconColor: string;
+  icon: ComponentType<any>;
+  onPress?: () => void;
+  iconContainerColor?: string;
+  pillText: string;
+};
+
+export default function MiniCard({
+  title,
+  subtitle,
+  pillText,
+  icon: Icon,
+  onPress,
+  iconColor = "#000",
+  iconContainerColor = "#000",
+}: MiniCardProps) {
+  return (
+    <Pressable style={styles.squareBentoCard} onPress={onPress}>
+      <View style={styles.squareTopRow}>
+        <View
+          style={[styles.circleBadge, { backgroundColor: iconContainerColor }]}
+        >
+          <Icon width={22} height={22} color={iconColor} strokeWidth={2} />
+        </View>
+        <View style={styles.miniPill}>
+          <Text style={styles.miniPillText}>{pillText}</Text>
+        </View>
+      </View>
+      <View style={styles.squareContent}>
+        <Text style={styles.squareTitle} numberOfLines={2}>
+          {title}
+        </Text>
+        <Text style={styles.squareSubtitle}>{subtitle}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+export const styles = StyleSheet.create((theme) => ({
+  squareBentoCard: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 16,
+    justifyContent: "space-between",
+    minHeight: 130,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 14,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.03)",
+  },
+
+  circleBadge: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  miniPill: {
+    backgroundColor: "#F8F9FD",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  miniPillText: {
+    fontSize: 10,
+    fontFamily: "Roboto_700Bold",
+    color: "#8E8E93",
+  },
+  squareTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  squareTitle: {
+    fontSize: 15,
+    fontFamily: theme.fonts.heavy,
+    color: "#1C1C1E",
+    flexShrink: 1,
+  },
+  squareSubtitle: {
+    fontSize: 11,
+    fontFamily: "Roboto_400Regular",
+    color: "#8E8E93",
+  },
+  squareContent: {
+    marginTop: 14,
+    gap: 2,
+  },
+}));

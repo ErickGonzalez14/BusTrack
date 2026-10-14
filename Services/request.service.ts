@@ -2,9 +2,14 @@ import { getAuth } from "@react-native-firebase/auth";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   getFirestore,
+  onSnapshot,
+  query,
   serverTimestamp,
+  where,
 } from "@react-native-firebase/firestore";
 
 type SaveDriverRequest = {
@@ -88,4 +93,52 @@ export const getCategories = async (): Promise<Categories[]> => {
     };
   });
   return categories;
+};
+
+export const subscribeToActiveBusiness = (
+  userId: string,
+  onChange: (isActive: boolean) => void,
+) => {
+  const db = getFirestore();
+
+  const businessQuery = query(
+    collection(db, "business"),
+    where("userId", "==", userId),
+  );
+  return onSnapshot(businessQuery, (snapshot) => {
+    const hasActiveBusiness = snapshot.docs.some(
+      (document) => document.data().active === true,
+    );
+    onChange(hasActiveBusiness);
+  });
+};
+
+export const getBusinessId = async (userId: string): Promise<string> => {
+  const db = getFirestore();
+  const businessQuery = query(
+    collection(db, "business"),
+    where("userId", "==", userId),
+  );
+  const snapshot = await getDocs(businessQuery);
+  if (!snapshot.empty) {
+    const businessDoc = snapshot.docs[0];
+    return businessDoc.id;
+  }
+  throw new Error("No business found for the given user ID.");
+};
+
+export const getBusinessCategories = async (
+  businessId: string,
+): Promise<string[]> => {
+  const db = getFirestore();
+  const businessRef = doc(db, "business", businessId);
+  const businessSnapshot = await getDoc(businessRef);
+
+  if (!businessSnapshot.exists()) {
+    throw new Error("No se encontró el negocio.");
+  }
+
+  const data = businessSnapshot.data();
+
+  return Array.isArray(data?.categoryId) ? data.categoryId : [];
 };

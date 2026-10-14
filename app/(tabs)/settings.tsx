@@ -2,8 +2,10 @@ import SecundaryHeader from "@/components/Headers/secundaryHeader";
 import OptionLabel from "@/components/ui/Labels/optionLabel";
 import ProfileLabel from "@/components/ui/Labels/profileLabel";
 import { useAuth } from "@/contexts/authContext";
+import { useActiveBusiness } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import {
+  Barcode,
   Bell,
   CreditCard,
   GitCompare,
@@ -19,6 +21,7 @@ export default function Settings() {
   const { profile } = useAuth();
   const { logOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const { isBusinessActive } = useActiveBusiness();
 
   const handleLogOut = async () => {
     await logOut();
@@ -92,9 +95,19 @@ export default function Settings() {
               icon={GitCompare}
               iconColor="#091540"
               isToggle={false}
-              separator={false}
+              separator={isBusinessActive ? true : false}
               onPress={() => router.push("/Settings/UserRequests/requests")}
             />
+            {isBusinessActive && (
+              <OptionLabel
+                settingsName="Mi Negocio"
+                icon={Barcode}
+                iconColor="#007fef"
+                isToggle={false}
+                separator={false}
+                onPress={() => router.push("/Settings/Business/dashBoard")}
+              />
+            )}
           </View>
         </View>
         {/* Seccion de Legal*/}

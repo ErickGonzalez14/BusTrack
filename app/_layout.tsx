@@ -42,14 +42,9 @@ function RootNavigator() {
       </Stack.Protected>
 
       <Stack.Protected
-        guard={
-          Boolean(user) && (hasProfile === false || isAuthFlowInProgress)
-        }
+        guard={Boolean(user) && (hasProfile === false || isAuthFlowInProgress)}
       >
-        <Stack.Screen
-          name="completeProfile"
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="completeProfile" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected guard={Boolean(user) && hasProfile === true}>
@@ -68,6 +63,22 @@ function RootNavigator() {
         />
         <Stack.Screen
           name="Settings/UserRequests/businessRequest"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/Business/dashBoard"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/Business/productForm"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/Business/serviceForm"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/Business/discountForm"
           options={{ headerShown: false }}
         />
       </Stack.Protected>
