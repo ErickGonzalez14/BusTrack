@@ -1,12 +1,17 @@
 import {
   BusinessRequestInput,
   businessRequestSchema,
+  DiscountRequestInput,
+  DiscountRequestSchema,
   DriverRequestInput,
   driverRequestSchema,
   ProductRequestInput,
   ProductRequestSchema,
 } from "@/Schemas/request.schema";
-import { ProductRequestService } from "@/Services/businessRequest.service";
+import {
+  DiscountRequestService,
+  ProductRequestService,
+} from "@/Services/businessRequest.service";
 import {
   BusinessRequestService,
   type Categories,
@@ -156,4 +161,13 @@ export const useBusinessCategories = () => {
     categoryError,
     fetchBusinessCategories,
   };
+};
+
+export const useDiscountRequest = () => {
+  return useMutation({
+    mutationFn: async (input: DiscountRequestInput) => {
+      const validatedData = DiscountRequestSchema.parse(input);
+      return DiscountRequestService(validatedData);
+    },
+  });
 };

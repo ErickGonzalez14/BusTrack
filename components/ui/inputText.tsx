@@ -1,15 +1,31 @@
 import { TextInput } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
+type keyBoardType =
+  | "default"
+  | "number-pad"
+  | "decimal-pad"
+  | "numeric"
+  | "email-address"
+  | "phone-pad"
+  | "visible-password";
 type InputTextProps = {
   placeholder?: string;
   value?: string;
   onChangeText?: (text: string) => void;
+  passwordText?: boolean;
+  keyboardType?: keyBoardType;
+  multiline?: boolean;
+  numberOfLines?: number;
 };
 export default function InputText({
   placeholder = "Aqui va el placeHolder",
   value,
   onChangeText,
+  passwordText = false,
+  keyboardType = "default",
+  multiline = false,
+  numberOfLines = 1,
 }: InputTextProps) {
   const { theme } = useUnistyles();
 
@@ -20,6 +36,10 @@ export default function InputText({
       placeholderTextColor={theme.text.placeHolderLight}
       onChangeText={onChangeText}
       style={styles.input}
+      secureTextEntry={passwordText}
+      keyboardType={keyboardType}
+      multiline={multiline}
+      numberOfLines={numberOfLines}
     />
   );
 }
@@ -39,5 +59,9 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: 30,
     borderWidth: 0.5,
     borderColor: theme.text.placeHolderLight,
+    width: "100%",
+    maxWidth: "100%",
+    minWidth: 0,
+    flexShrink: 1,
   },
 }));

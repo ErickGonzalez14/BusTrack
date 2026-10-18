@@ -21,7 +21,6 @@ import { StyleSheet } from "react-native-unistyles";
 //Fin de Importaciones
 export default function ProductForm() {
   const [productImage, setProductImage] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
   const { mutate, isPending, error } = useProductRequest();
   //states for product form
@@ -47,7 +46,7 @@ export default function ProductForm() {
   const { mutateAsync: uploadImageAsync, isPending: isUploading } =
     useUploadImage();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedColor) {
       Alert.alert(
         "Color requerido",
@@ -55,7 +54,7 @@ export default function ProductForm() {
       );
       return;
     }
-    if (!imageUrl) {
+    if (!productImage) {
       Alert.alert(
         "Imagen requerida",
         "Selecciona una imagen del producto antes de enviar.",
@@ -68,13 +67,24 @@ export default function ProductForm() {
       Alert.alert("Precio inválido", "Ingresa un precio válido.");
       return;
     }
+    let cloudinaryUrl: string;
+    try {
+      cloudinaryUrl = await uploadImageAsync(productImage);
+    } catch (error) {
+      Alert.alert(
+        "Error al subir la imagen",
+        error instanceof Error ? error.message : "No se pudo subir la imagen.",
+      );
+      return;
+    }
+
     mutate(
       {
         name,
         description,
         price: parsedPrice,
         categoryId: selectedCategories,
-        imageUrl,
+        imageUrl: cloudinaryUrl,
         cardColor: selectedColor?.hex,
       },
       {
@@ -118,25 +128,8 @@ export default function ProductForm() {
       router.replace("/Settings/Business/dashBoard");
     }
   };
-  const handleImageChange = async (uri: string | null) => {
+  const handleImageChange = (uri: string | null) => {
     setProductImage(uri);
-    setImageUrl(null);
-
-    if (!uri) {
-      return;
-    }
-
-    try {
-      const cloudinaryUrl = await uploadImageAsync(uri);
-      setImageUrl(cloudinaryUrl);
-    } catch (error) {
-      setProductImage(null);
-
-      Alert.alert(
-        "Error al subir la imagen",
-        error instanceof Error ? error.message : "No se pudo subir la imagen.",
-      );
-    }
   };
   return (
     <View style={styles.screen}>

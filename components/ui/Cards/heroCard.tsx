@@ -1,9 +1,13 @@
+import { router } from "expo-router";
 import { Flash, NavArrowRight, Spark } from "iconoir-react-native";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 export default function HeroCard() {
   return (
-    <Pressable style={styles.heroBentoCard}>
+    <Pressable
+      style={styles.heroBentoCard}
+      onPress={() => router.push("/Settings/Business/discountForm")}
+    >
       <View style={styles.heroTopRow}>
         <View style={styles.heroTitleGroup}>
           <View style={styles.heroCategoryPill}>
