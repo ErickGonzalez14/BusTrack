@@ -32,11 +32,12 @@ export default function DiscountForm() {
     name: string;
     hex: string;
   } | null>(null);
-  const { mutateAsync: uploadImageAsync, isPending: isUploading } =
-    useUploadImage();
+
   //state for upload image
   const [productImage, setProductImage] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const { mutateAsync: uploadImageAsync, isPending: isUploading } =
+    useUploadImage();
   //state for alert
   const [alert, setAlert] = React.useState<{
     variant: AlertCardVariant;

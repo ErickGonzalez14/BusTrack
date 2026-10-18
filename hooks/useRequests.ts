@@ -7,10 +7,13 @@ import {
   driverRequestSchema,
   ProductRequestInput,
   ProductRequestSchema,
+  ServiceRequestInput,
+  ServiceRequestSchema,
 } from "@/Schemas/request.schema";
 import {
   DiscountRequestService,
   ProductRequestService,
+  ProfesionalServiceRequestService,
 } from "@/Services/businessRequest.service";
 import {
   BusinessRequestService,
@@ -168,6 +171,15 @@ export const useDiscountRequest = () => {
     mutationFn: async (input: DiscountRequestInput) => {
       const validatedData = DiscountRequestSchema.parse(input);
       return DiscountRequestService(validatedData);
+    },
+  });
+};
+
+export const useProfesionalServiceRequest = () => {
+  return useMutation({
+    mutationFn: async (input: ServiceRequestInput) => {
+      const validatedData = ServiceRequestSchema.parse(input);
+      return ProfesionalServiceRequestService(validatedData);
     },
   });
 };

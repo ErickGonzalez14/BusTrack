@@ -21,6 +21,9 @@ import { StyleSheet } from "react-native-unistyles";
 //Fin de Importaciones
 export default function ProductForm() {
   const [productImage, setProductImage] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const { mutateAsync: uploadImageAsync, isPending: isUploading } =
+    useUploadImage();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
   const { mutate, isPending, error } = useProductRequest();
   //states for product form
@@ -43,9 +46,6 @@ export default function ProductForm() {
     hex: string;
   } | null>(null);
 
-  const { mutateAsync: uploadImageAsync, isPending: isUploading } =
-    useUploadImage();
-
   const handleSubmit = async () => {
     if (!selectedColor) {
       Alert.alert(
@@ -67,9 +67,10 @@ export default function ProductForm() {
       Alert.alert("Precio inválido", "Ingresa un precio válido.");
       return;
     }
-    let cloudinaryUrl: string;
+    let cloudinaryUrl = imageUrl;
     try {
       cloudinaryUrl = await uploadImageAsync(productImage);
+      setImageUrl(cloudinaryUrl);
     } catch (error) {
       Alert.alert(
         "Error al subir la imagen",
@@ -130,6 +131,7 @@ export default function ProductForm() {
   };
   const handleImageChange = (uri: string | null) => {
     setProductImage(uri);
+    setImageUrl(null);
   };
   return (
     <View style={styles.screen}>

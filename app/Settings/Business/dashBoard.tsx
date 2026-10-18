@@ -59,6 +59,7 @@ export default function BusinessDashboard() {
             icon={HeadsetHelp}
             iconColor={theme.surface.background}
             iconContainerColor={theme.icons.alternative}
+            onPress={() => router.push("/Settings/Business/serviceForm")}
           />
         </View>
         {/* 3. Últimas Publicaciones (Apple Bento Feed) */}

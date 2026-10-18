@@ -79,3 +79,40 @@ export const DiscountRequestService = async ({
     createdAt: serverTimestamp(),
   });
 };
+
+type saveService = {
+  name: string;
+  description: string;
+  price: number;
+  cardColor: string;
+  imageUrl: string;
+  categoryId: string[];
+  phoneNumber: string;
+};
+
+export const ProfesionalServiceRequestService = async ({
+  name,
+  description,
+  price,
+  cardColor,
+  imageUrl,
+  categoryId,
+  phoneNumber,
+}: saveService) => {
+  const db = getFirestore();
+  const currentUser = getAuth().currentUser;
+  const businessId = await getBusinessId(currentUser?.uid || "");
+  addDoc(collection(db, "publications"), {
+    type: "service",
+    active: false,
+    name: name,
+    description: description,
+    price: price,
+    cardColor: cardColor,
+    imageUrl: imageUrl,
+    businessId: businessId,
+    categoryId: categoryId,
+    phoneNumber: phoneNumber,
+    createdAt: serverTimestamp(),
+  });
+};

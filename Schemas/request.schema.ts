@@ -99,3 +99,16 @@ export const DiscountRequestSchema = z
   });
 
 export type DiscountRequestInput = z.infer<typeof DiscountRequestSchema>;
+
+export const ServiceRequestSchema = z.object({
+  name: z.string().min(1, "El nombre del servicio es requerido"),
+  price: z.number().min(0, "El precio del servicio debe ser mayor o igual a 0"),
+  description: z.string().min(1, "La descripción del servicio es requerida"),
+  categoryId: z
+    .array(z.string())
+    .min(1, "Se debe seleccionar al menos una categoría"),
+  imageUrl: z.string().min(1, "La imagen del servicio es requerida"),
+  cardColor: z.string().min(1, "El color del servicio es requerido"),
+  phoneNumber: z.string().min(1, "El número de teléfono es requerido"),
+});
+export type ServiceRequestInput = z.infer<typeof ServiceRequestSchema>;
