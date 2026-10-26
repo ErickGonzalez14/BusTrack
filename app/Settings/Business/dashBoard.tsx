@@ -3,6 +3,7 @@ import EditPhoto from "@/components/editPhoto";
 import HeroCard from "@/components/ui/Cards/heroCard";
 import MiniCard from "@/components/ui/Cards/miniCard";
 import PublicationCard from "@/components/ui/Cards/publicationCard";
+import { useBusinessPublications } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import { Barcode, HeadsetHelp } from "iconoir-react-native";
 import { ScrollView, Text, View } from "react-native";
@@ -10,7 +11,9 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function BusinessDashboard() {
   const { theme } = useUnistyles();
-
+  //state for publications
+  const { businessPublications, isPublicationLoading, publicationsError } =
+    useBusinessPublications();
   return (
     <View style={styles.container}>
       <AlternativeHeader
@@ -73,14 +76,25 @@ export default function BusinessDashboard() {
         </View>
 
         <View style={styles.publicationsList}>
-          <PublicationCard
-            imageUrl="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80"
-            Title="Producto 1"
-            Description="Descripción del producto 1"
-            PriceOrDiscount="$19.99"
-            Date="Hace 2 días"
-            publicationType="product"
-          />
+          {businessPublications?.map((publication) => (
+            <PublicationCard
+              imageUrl={publication.imageUrl}
+              Title={publication.name}
+              Description={publication.description}
+              PriceOrDiscount={
+                publication.type === "discount"
+                  ? `$${publication.currentPrice ?? 0}`
+                  : `$${publication.price ?? 0}`
+              }
+              Date={
+                publication.createdAt
+                  ? publication.createdAt.toDate().toLocaleDateString("es-CO")
+                  : "Fecha no disponible"
+              }
+              publicationType={publication.type}
+              key={publication.id}
+            />
+          ))}
         </View>
       </ScrollView>
     </View>

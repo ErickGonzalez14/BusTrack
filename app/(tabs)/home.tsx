@@ -5,12 +5,15 @@ import PrimaryCard from "@/components/ui/Cards/primaryCard";
 import ProductCard from "@/components/ui/Cards/productCard";
 import SearchBar from "@/components/ui/searchBar";
 import { useFavoriteSites } from "@/hooks/useFavoriteSites";
+import { useBusinessPublications } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function Home() {
   const { sites, isLoading, error } = useFavoriteSites();
+  const { businessPublications, isPublicationLoading, publicationsError } =
+    useBusinessPublications();
   return (
     <View style={styles.mainContainer}>
       <PrimaryHeader />
@@ -71,16 +74,19 @@ export default function Home() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabContainer}
           >
-            <ProductCard
-              title="Legend Burger"
-              description="Lleva 2 Legends burger por el precio de 1 con papas y un 1 Litro de Soda"
-              img="https://th.bing.com/th/id/R.69aa1110083704307653e8457ed59926?rik=W4%2bSdeaQUHmpag&pid=ImgRaw&r=0"
-            />
-            <ProductCard
-              title="Legend Burger"
-              description="Lleva 2 Legends burger por el precio de 1 con papas y un 1 Litro de Soda"
-              img="https://th.bing.com/th/id/R.69aa1110083704307653e8457ed59926?rik=W4%2bSdeaQUHmpag&pid=ImgRaw&r=0"
-            />
+            {businessPublications.map((publication) => (
+              <ProductCard
+                key={publication.id}
+                title={publication.name}
+                description={publication.description}
+                img={publication.imageUrl}
+                cardType={publication.type}
+                color={publication.cardColor}
+                price={publication.price ?? 0}
+                currentPrice={publication.currentPrice ?? 0}
+                lastPrice={publication.lastPrice ?? 0}
+              />
+            ))}
           </ScrollView>
           {/*   Carrucel para Lugares Favoritos */}
           <Text style={styles.Titles}>Lugares Favoritos</Text>

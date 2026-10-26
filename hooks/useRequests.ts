@@ -12,8 +12,10 @@ import {
 } from "@/Schemas/request.schema";
 import {
   DiscountRequestService,
+  getBusinessPublications,
   ProductRequestService,
   ProfesionalServiceRequestService,
+  type Publication,
 } from "@/Services/businessRequest.service";
 import {
   BusinessRequestService,
@@ -182,4 +184,54 @@ export const useProfesionalServiceRequest = () => {
       return ProfesionalServiceRequestService(validatedData);
     },
   });
+};
+
+export const useBusinessPublications = () => {
+  const [businessPublications, setBusinessPublications] = useState<
+    Publication[]
+  >([]);
+  const [isPublicationLoading, setIsLoading] = useState(false);
+  const [publicationsError, setPublicationsError] = useState<string | null>(
+    null,
+  );
+
+  const userId = getAuth().currentUser?.uid;
+
+  const fetchBusinessPublications = async () => {
+    if (!userId) {
+      setBusinessPublications([]);
+      setPublicationsError("No hay un usuario autenticado.");
+      return;
+    }
+
+    setIsLoading(true);
+    setPublicationsError(null);
+
+    try {
+      const businessId = await getBusinessId(userId);
+      const publications = await getBusinessPublications(businessId);
+
+      setBusinessPublications(publications);
+    } catch (fetchError) {
+      setBusinessPublications([]);
+      setPublicationsError(
+        fetchError instanceof Error
+          ? fetchError.message
+          : "No se pudieron obtener las publicaciones.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBusinessPublications();
+  }, [userId]);
+
+  return {
+    businessPublications,
+    isPublicationLoading,
+    publicationsError,
+    fetchBusinessPublications,
+  };
 };

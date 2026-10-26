@@ -1,5 +1,6 @@
 import { getBusinessId } from "@/Services/request.service";
 import { getAuth } from "@react-native-firebase/auth";
+
 import {
   addDoc,
   collection,
@@ -9,7 +10,7 @@ import {
 type saveProduct = {
   name: string;
   description: string;
-  price: number;
+  price: string;
   cardColor: string;
   imageUrl: string;
   categoryId: string[];
@@ -41,8 +42,8 @@ export const ProductRequestService = async ({
 type saveDiscount = {
   name: string;
   description: string;
-  lastPrice: number;
-  currentPrice: number;
+  lastPrice: string;
+  currentPrice: string;
   startDate: Date;
   endDate: Date;
   cardColor: string;
@@ -83,7 +84,7 @@ export const DiscountRequestService = async ({
 type saveService = {
   name: string;
   description: string;
-  price: number;
+  price: string;
   cardColor: string;
   imageUrl: string;
   categoryId: string[];
@@ -115,4 +116,66 @@ export const ProfesionalServiceRequestService = async ({
     phoneNumber: phoneNumber,
     createdAt: serverTimestamp(),
   });
+};
+
+type FirestoreTimestamp = {
+  toDate: () => Date;
+};
+
+export type Publication = {
+  id: string;
+  type: "product" | "discount" | "service";
+  active: boolean;
+  name: string;
+  description: string;
+  businessId: string;
+  categoryId: string[];
+  imageUrl: string;
+  cardColor: string;
+  price?: string;
+  lastPrice?: string;
+  currentPrice?: string;
+  phoneNumber?: string;
+  createdAt?: FirestoreTimestamp | null;
+  startDate?: FirestoreTimestamp | null;
+  endDate?: FirestoreTimestamp | null;
+};
+export const getBusinessPublications = async (
+  businessId: string,
+): Promise<Publication[]> => {
+  const db = getFirestore();
+  const publicationRef = collection(db, "publications");
+  const snapshot = await publicationRef
+    .where("businessId", "==", businessId)
+    .get();
+  if (snapshot.empty) {
+    return [];
+  }
+  const publications: Publication[] = [];
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    if (!data) {
+      return;
+    }
+    publications.push({
+      id: doc.id,
+      type: data.type,
+      active: data.active,
+      name: data.name,
+      description: data.description,
+      businessId: data.businessId,
+      categoryId: data.categoryId,
+      imageUrl: data.imageUrl,
+      cardColor: data.cardColor,
+      price: data.price,
+      lastPrice: data.lastPrice,
+      currentPrice: data.currentPrice,
+      phoneNumber: data.phoneNumber,
+      createdAt: data.createdAt,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    });
+  });
+  return publications;
 };
