@@ -66,12 +66,13 @@ export default function DiscountForm() {
       Alert.alert("Imagen requerida", "Selecciona una imagen antes de enviar.");
       return;
     }
-
+    const normalizedLastPrice = lastPrice.trim();
+    const normalizedCurrentPrice = currentPrice.trim();
     const parsedLastPrice = Number(lastPrice);
     const parsedCurrentPrice = Number(currentPrice);
 
     if (
-      !lastPrice.trim() ||
+      !normalizedLastPrice ||
       Number.isNaN(parsedLastPrice) ||
       parsedLastPrice < 0
     ) {
@@ -79,7 +80,7 @@ export default function DiscountForm() {
       return;
     }
     if (
-      !currentPrice.trim() ||
+      !normalizedCurrentPrice ||
       Number.isNaN(parsedCurrentPrice) ||
       parsedCurrentPrice < 0
     ) {
@@ -93,6 +94,8 @@ export default function DiscountForm() {
       );
       return;
     }
+    const lasPriceForRequest = String(parsedLastPrice);
+    const currentPriceForRequest = String(parsedCurrentPrice);
     const normalizedStartDate = new Date(startDate);
     const normalizedEndDate = new Date(endDate);
     const now = new Date();
@@ -135,8 +138,8 @@ export default function DiscountForm() {
       {
         name,
         description,
-        lastPrice: parsedLastPrice,
-        currentPrice: parsedCurrentPrice,
+        lastPrice: lasPriceForRequest,
+        currentPrice: currentPriceForRequest,
         startDate: normalizedStartDate,
         endDate: normalizedEndDate,
         cardColor: selectedColor?.hex,

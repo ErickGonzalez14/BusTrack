@@ -61,12 +61,15 @@ export default function ProductForm() {
       );
       return;
     }
+    const normalizedPrice = price.trim();
     const parsedPrice = Number(price);
 
-    if (!price.trim() || Number.isNaN(parsedPrice) || parsedPrice < 0) {
+    if (!normalizedPrice || !Number.isFinite(parsedPrice) || parsedPrice < 0) {
       Alert.alert("Precio inválido", "Ingresa un precio válido.");
       return;
     }
+
+    const priceForRequest = String(parsedPrice);
     let cloudinaryUrl = imageUrl;
     try {
       cloudinaryUrl = await uploadImageAsync(productImage);
@@ -83,7 +86,7 @@ export default function ProductForm() {
       {
         name,
         description,
-        price: parsedPrice,
+        price: priceForRequest,
         categoryId: selectedCategories,
         imageUrl: cloudinaryUrl,
         cardColor: selectedColor?.hex,

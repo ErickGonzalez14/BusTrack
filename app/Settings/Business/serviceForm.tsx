@@ -111,7 +111,7 @@ export default function ServiceForm() {
       {
         name: serviceName,
         description: serviceDescription,
-        price: parseFloat(servicePrice),
+        price: servicePrice,
         phoneNumber: servicePhone,
         categoryId: selectedCategories,
         cardColor: selectedColor.hex,
