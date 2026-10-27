@@ -40,7 +40,7 @@ export type BusinessRequestInput = z.infer<typeof businessRequestSchema>;
 
 export const ProductRequestSchema = z.object({
   name: z.string().min(1, "El nombre del producto es requerido"),
-  price: z.number().min(0, "El precio del producto debe ser mayor o igual a 0"),
+  price: z.string().min(1, "El precio del producto debe ser mayor o igual a 0"),
   description: z.string().min(1, "La descripción del producto es requerida"),
   categoryId: z
     .array(z.string())
@@ -56,11 +56,11 @@ export const DiscountRequestSchema = z
       .string()
       .min(1, "El nombre del Producto con Descuento es requerido"),
     lastPrice: z
-      .number()
-      .min(0, "El precio anterior del producto debe ser mayor o igual a 0"),
+      .string()
+      .min(1, "El precio anterior del producto debe ser mayor o igual a 0"),
     currentPrice: z
-      .number()
-      .min(0, "El precio actual del producto debe ser mayor o igual a 0"),
+      .string()
+      .min(1, "El precio actual del producto debe ser mayor o igual a 0"),
     description: z.string().min(1, "La descripción del producto es requerida"),
     startDate: z.date(),
     endDate: z.date(),
@@ -102,7 +102,7 @@ export type DiscountRequestInput = z.infer<typeof DiscountRequestSchema>;
 
 export const ServiceRequestSchema = z.object({
   name: z.string().min(1, "El nombre del servicio es requerido"),
-  price: z.number().min(0, "El precio del servicio debe ser mayor o igual a 0"),
+  price: z.string().min(1, "El precio del servicio debe ser mayor o igual a 0"),
   description: z.string().min(1, "La descripción del servicio es requerida"),
   categoryId: z
     .array(z.string())
@@ -112,3 +112,14 @@ export const ServiceRequestSchema = z.object({
   phoneNumber: z.string().min(1, "El número de teléfono es requerido"),
 });
 export type ServiceRequestInput = z.infer<typeof ServiceRequestSchema>;
+
+export const RoutineRequestSchema = z.object({
+  name: z.string().min(1, "El nombre de la rutina es requerido"),
+  route: z.string().min(1, "La ruta de la rutina es requerida"),
+  days: z.array(z.string()).min(1, "Se debe seleccionar al menos un día"),
+  time: z.string().min(1, "La hora de la rutina es requerida"),
+  recordatory: z
+    .number()
+    .min(0, "El recordatorio de la rutina debe ser mayor o igual a 0"),
+});
+export type RoutineRequestInput = z.infer<typeof RoutineRequestSchema>;

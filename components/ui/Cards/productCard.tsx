@@ -9,9 +9,9 @@ type ProductCardProps = {
   img: string;
   cardType: "product" | "discount" | "service";
   color: string;
-  price: number;
-  currentPrice?: number;
-  lastPrice?: number;
+  price: string;
+  currentPrice?: string;
+  lastPrice?: string;
 };
 type ColorAdjustment = {
   saturation?: number;
