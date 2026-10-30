@@ -172,7 +172,13 @@ export default function ProductCard({
             <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
               {title}
             </Text>
-            <Text style={styles.description}> {description} </Text>
+            <Text
+              style={styles.description}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {description}
+            </Text>
             {cardType === "product" || cardType === "service" ? (
               <Text style={styles.price}>{price}</Text>
             ) : cardType === "discount" ? (
@@ -184,7 +190,11 @@ export default function ProductCard({
           </View>
           <View>
             {/* Se debe poner el url que viene del cloudinary*/}
-            <Image source={{ uri: img }} style={{ width: 100, height: 100 }} />
+            <Image
+              source={{ uri: img }}
+              style={styles.productImage}
+              contentFit="contain"
+            />
           </View>
         </View>
       </LinearGradient>
@@ -264,5 +274,9 @@ export const styles = StyleSheet.create((theme) => ({
   },
   infoContainer: {
     flex: 1,
+  },
+  productImage: {
+    width: 120,
+    height: 120,
   },
 }));

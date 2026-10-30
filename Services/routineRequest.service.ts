@@ -7,20 +7,27 @@ import {
   serverTimestamp,
 } from "@react-native-firebase/firestore";
 export type Routines = {
+  id: string;
   name: string;
   route: string;
   days: string[];
   time: string;
   recordatory: number;
 };
-
+type saveRoutines = {
+  name: string;
+  route: string;
+  days: string[];
+  time: string;
+  recordatory: string;
+};
 export const RoutineRequestService = async ({
   name,
   route,
   days,
   time,
   recordatory,
-}: Routines) => {
+}: saveRoutines) => {
   const db = getFirestore();
   const currentUser = getAuth().currentUser;
   addDoc(collection(db, "routines"), {
@@ -51,6 +58,7 @@ export const getRoutinesService = async (
       return;
     }
     routines.push({
+      id: doc.id,
       name: data.name,
       route: data.route,
       days: data.days,

@@ -89,6 +89,7 @@ export default function Settings() {
               iconColor="#FF2D55"
               isToggle={false}
               separator={true}
+              onPress={() => router.push("/Settings/Favorites/favorite")}
             />
             <OptionLabel
               settingsName="Solicitudes"

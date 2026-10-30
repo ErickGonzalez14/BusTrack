@@ -81,6 +81,14 @@ function RootNavigator() {
           name="Settings/Business/discountForm"
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Settings/Favorites/favorite"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings/Favorites/createRoutine"
+          options={{ headerShown: false }}
+        />
       </Stack.Protected>
     </Stack>
   );

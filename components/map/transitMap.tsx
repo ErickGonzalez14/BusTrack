@@ -142,7 +142,7 @@ export default function TransitMap({
       {busCoordinate && isValidCoordinate(busCoordinate) && displayedRoute && (
         <Marker
           coordinate={busCoordinate}
-          title={displayedRoute.bus.plate}
+          title={displayedRoute.bus.licensePlate}
           description={`Simulación · ${displayedRoute.route.name} · ${
             displayedRoute.direction === "outbound" ? "Ida" : "Regreso"
           }`}

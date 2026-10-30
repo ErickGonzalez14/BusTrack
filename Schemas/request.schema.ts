@@ -119,7 +119,7 @@ export const RoutineRequestSchema = z.object({
   days: z.array(z.string()).min(1, "Se debe seleccionar al menos un día"),
   time: z.string().min(1, "La hora de la rutina es requerida"),
   recordatory: z
-    .number()
-    .min(0, "El recordatorio de la rutina debe ser mayor o igual a 0"),
+    .string()
+    .min(1, "El recordatorio de la rutina debe ser mayor o igual a 0"),
 });
 export type RoutineRequestInput = z.infer<typeof RoutineRequestSchema>;

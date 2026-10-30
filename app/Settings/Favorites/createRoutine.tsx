@@ -117,7 +117,7 @@ export default function CreateRoutine() {
 
   return (
     <View style={styles.screen}>
-      <AlternativeHeader SettingName="Crear rutina" />
+      <AlternativeHeader SettingName="Crear rutina" onTouch={router.back} />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.viewContainer}

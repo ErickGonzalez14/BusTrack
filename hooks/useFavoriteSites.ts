@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/authContext";
 import {
-  type FavoriteSite,
-  getAllFavoriteSites,
+    type FavoriteSite,
+    getAllFavoriteSites,
 } from "@/Services/favoriteSites.service";
 import { useCallback, useEffect, useState } from "react";
 

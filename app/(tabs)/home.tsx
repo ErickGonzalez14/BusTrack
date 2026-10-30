@@ -82,9 +82,9 @@ export default function Home() {
                 img={publication.imageUrl}
                 cardType={publication.type}
                 color={publication.cardColor}
-                price={publication.price ?? 0}
-                currentPrice={publication.currentPrice ?? 0}
-                lastPrice={publication.lastPrice ?? 0}
+                price={publication.price ?? ""}
+                currentPrice={publication.currentPrice}
+                lastPrice={publication.lastPrice}
               />
             ))}
           </ScrollView>
