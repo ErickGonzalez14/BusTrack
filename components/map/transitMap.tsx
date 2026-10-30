@@ -1,3 +1,4 @@
+import { UserSimulationStatus } from "@/hooks/useUserSimulation";
 import { Stop } from "@/interfaces/stop.type";
 import {
   Coordinate,
@@ -9,7 +10,7 @@ import {
   isValidCoordinate,
   normalizeCoordinate,
 } from "@/lib/mapRouting";
-import { Bus } from "iconoir-react-native";
+import { Bus, User, Walking } from "iconoir-react-native";
 import { RefObject, useMemo } from "react";
 import { Image, View } from "react-native";
 import MapView, {
@@ -28,6 +29,8 @@ type TransitMapProps = {
   routeCoordinates: Coordinate[];
   routeProgress: number;
   busCoordinate: Coordinate | null;
+  userCoordinate?: Coordinate | null;
+  userSimulationStatus?: UserSimulationStatus;
   defaultLocation: Coordinate;
   onPoiClick: (event: PoiClickEvent) => void;
   onMapPress: () => void;
@@ -42,6 +45,8 @@ export default function TransitMap({
   routeCoordinates,
   routeProgress,
   busCoordinate,
+  userCoordinate,
+  userSimulationStatus,
   defaultLocation,
   onPoiClick,
   onMapPress,
@@ -59,7 +64,7 @@ export default function TransitMap({
       ref={mapRef}
       style={styles.map}
       provider={PROVIDER_GOOGLE}
-      showsUserLocation
+      showsUserLocation={!userCoordinate}
       showsMyLocationButton={false}
       onPoiClick={onPoiClick}
       onPress={onMapPress}
@@ -74,6 +79,19 @@ export default function TransitMap({
         longitudeDelta: 0.08,
       }}
     >
+      {userSimulationStatus === "walking" &&
+        userCoordinate &&
+        isValidCoordinate(userCoordinate) &&
+        displayedRoute && (
+          <Polyline
+            coordinates={[userCoordinate, displayedRoute.boardingStop.adress]}
+            strokeColor="#10B981"
+            strokeWidth={4}
+            lineDashPattern={[6, 4]}
+            zIndex={3}
+          />
+        )}
+
       {displayedRoute && remainingRouteCoordinates.length >= 2 && (
         <Polyline
           coordinates={remainingRouteCoordinates}
@@ -153,6 +171,31 @@ export default function TransitMap({
           </View>
         </Marker>
       )}
+
+      {userCoordinate && isValidCoordinate(userCoordinate) && (
+        <Marker
+          coordinate={userCoordinate}
+          title="Tú"
+          description={
+            userSimulationStatus === "walking"
+              ? "Caminando hacia la parada"
+              : userSimulationStatus === "waitingForBus"
+                ? "Esperando el bus"
+                : userSimulationStatus === "onBus"
+                  ? "A bordo del bus"
+                  : "Llegaste a tu parada"
+          }
+          zIndex={15}
+        >
+          <View style={styles.userMarker}>
+            {userSimulationStatus === "walking" ? (
+              <Walking width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
+            ) : (
+              <User width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
+            )}
+          </View>
+        </Marker>
+      )}
     </MapView>
   );
 }
@@ -175,6 +218,21 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.surface.primary,
     borderWidth: 3,
     borderColor: theme.surface.background,
+  },
+  userMarker: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#10B981",
+    borderWidth: 3,
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   locationButton: {
     borderRadius: theme.size_rounded.full,

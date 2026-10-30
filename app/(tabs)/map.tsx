@@ -8,6 +8,7 @@ import { usePassengerJourney } from "@/hooks/usePassengerJourney";
 import { usePlaceSearch } from "@/hooks/usePlaceSearch";
 import { useRoadRoute } from "@/hooks/useRoadRoute";
 import { useRoutePlanner } from "@/hooks/useRoutePlanner";
+import { useUserSimulation } from "@/hooks/useUserSimulation";
 import {
   Coordinate,
   GooglePlace,
@@ -85,15 +86,34 @@ export default function Map() {
     startNextBus,
     finishSimulation,
   } = useBusSimulation();
+  const {
+    userCoordinate: simulatedUserCoordinate,
+    status: userSimulationStatus,
+    startSimulation: startUserSimulation,
+    finishSimulation: finishUserSimulation,
+  } = useUserSimulation({
+    busCoordinate,
+    busStatus: journeyStatus,
+  });
+  const effectiveUserLocation = simulatedUserCoordinate ?? userLocation;
   const passengerJourney = usePassengerJourney({
     route: activeRoute,
-    userLocation,
+    userLocation: effectiveUserLocation,
     busCoordinate,
     busStatus: journeyStatus,
     hasBusPassedBoardingStop: hasPassedBoardingStop,
     busRunNumber,
   });
   const handledMissedBusSequence = useRef(0);
+
+  useEffect(() => {
+    if (
+      userSimulationStatus === "onBus" &&
+      passengerJourney.phase === "boardingPrompt"
+    ) {
+      passengerJourney.confirmBoarding();
+    }
+  }, [userSimulationStatus, passengerJourney]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -238,7 +258,8 @@ export default function Map() {
 
   const handleCenterUserLocation = useCallback(async () => {
     try {
-      const coordinate = userLocation ?? (await getFreshUserLocation());
+      const coordinate =
+        effectiveUserLocation ?? (await getFreshUserLocation());
 
       mapRef.current?.animateToRegion(
         {
@@ -256,7 +277,7 @@ export default function Map() {
           : "No pudimos obtener tu ubicación actual.",
       );
     }
-  }, [getFreshUserLocation, userLocation]);
+  }, [effectiveUserLocation, getFreshUserLocation]);
 
   const handleStartRoute = () => {
     if (!routePlanner.recommendation || roadRoute.coordinates.length < 2)
@@ -265,6 +286,10 @@ export default function Map() {
     const coordinates = startSimulation(
       routePlanner.recommendation,
       roadRoute.coordinates,
+    );
+    startUserSimulation(
+      routePlanner.recommendation,
+      userLocation ?? DEFAULT_LOCATION,
     );
     sheetRef.current?.collapse();
     mapRef.current?.fitToCoordinates(coordinates, {
@@ -330,11 +355,18 @@ export default function Map() {
     setIsStopNameModalOpen(false);
     setStopName("");
     finishSimulation();
+    finishUserSimulation();
     passengerJourney.resetJourney();
     routePlanner.setRecommendation(null);
     placeSearch.clearSelectedPlace();
     sheetRef.current?.close();
-  }, [finishSimulation, passengerJourney, placeSearch, routePlanner]);
+  }, [
+    finishSimulation,
+    finishUserSimulation,
+    passengerJourney,
+    placeSearch,
+    routePlanner,
+  ]);
 
   const handleRequestSheetClose = useCallback(() => {
     if (activeRoute) {
@@ -389,6 +421,8 @@ export default function Map() {
         routeCoordinates={roadRoute.coordinates}
         routeProgress={activeRoute ? routeProgress : 0}
         busCoordinate={busCoordinate}
+        userCoordinate={simulatedUserCoordinate}
+        userSimulationStatus={userSimulationStatus}
         defaultLocation={DEFAULT_LOCATION}
         onPoiClick={handlePoiClick}
         onMapPress={placeSearch.hideSuggestions}
@@ -468,6 +502,8 @@ export default function Map() {
         }}
         onStartRoute={handleStartRoute}
         onCancelRoute={() => {
+          finishSimulation();
+          finishUserSimulation();
           passengerJourney.resetJourney();
           routePlanner.setRecommendation(null);
           placeSearch.clearSelectedPlace();
@@ -480,6 +516,7 @@ export default function Map() {
         onConfirmExit={() => {
           passengerJourney.confirmExit();
           finishSimulation();
+          finishUserSimulation();
           routePlanner.setRecommendation(null);
           placeSearch.clearSelectedPlace();
           sheetRef.current?.close();
