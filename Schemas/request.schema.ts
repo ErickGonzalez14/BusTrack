@@ -35,6 +35,9 @@ export const businessRequestSchema = z.object({
       .min(-180, "La longitud debe ser mayor o igual a -180")
       .max(180, "La longitud debe ser menor o igual a 180"),
   }),
+  paymentIntentId: z.string().optional(),
+  plan: z.string().optional(),
+  amountPaid: z.number().optional(),
 });
 export type BusinessRequestInput = z.infer<typeof businessRequestSchema>;
 

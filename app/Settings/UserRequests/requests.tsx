@@ -1,10 +1,12 @@
 import AlternativeHeader from "@/components/Headers/alternativeHeader";
 import InfoCard from "@/components/ui/Cards/infoCard";
+import { useActiveBusiness } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import { Bus, City } from "iconoir-react-native";
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 export default function Request() {
+  const { isBusinessApproved } = useActiveBusiness();
   return (
     <View>
       <AlternativeHeader
@@ -22,12 +24,14 @@ export default function Request() {
           icon={Bus}
           onPress={() => router.push("/Settings/UserRequests/driverRequest")}
         />
-        <InfoCard
-          title="Empresas"
-          description="Publica promociones y productos con precio dentro de la plataforma BusTrack."
-          icon={City}
-          onPress={() => router.push("/Settings/UserRequests/businessRequest")}
-        />
+        {!isBusinessApproved && (
+          <InfoCard
+            title="Empresas"
+            description="Publica promociones y productos con precio dentro de la plataforma BusTrack."
+            icon={City}
+            onPress={() => router.push("/Settings/UserRequests/businessPlans")}
+          />
+        )}
       </View>
     </View>
   );

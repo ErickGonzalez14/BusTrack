@@ -32,9 +32,8 @@ export const DriverRequestService = async ({
       "Debes iniciar sesión para enviar una solicitud de conductor.",
     );
   }
-  addDoc(collection(db, "buses"), {
-    approved: false,
-    active: false,
+  await addDoc(collection(db, "buses"), {
+    requestStatus: "pending",
     routeType: routeType,
     licensePlate: licensePlate,
     publicTransportPlate: publicTransportPlate,
@@ -53,12 +52,18 @@ export type SaveBusinessRequest = {
     latitude: number;
     longitude: number;
   };
+  paymentIntentId?: string;
+  plan?: string;
+  amountPaid?: number;
 };
 
 export const BusinessRequestService = async ({
   businessName,
   categoryId,
   adress,
+  paymentIntentId,
+  plan,
+  amountPaid,
 }: SaveBusinessRequest) => {
   const db = getFirestore();
   const currentUser = getAuth().currentUser;
@@ -67,13 +72,17 @@ export const BusinessRequestService = async ({
       "Debes iniciar sesión para enviar una solicitud de negocio.",
     );
   }
-  addDoc(collection(db, "business"), {
-    active: false,
+  await addDoc(collection(db, "business"), {
     businessName: businessName,
     categoryId: categoryId,
     adress: adress,
+    requestStatus: "pending",
     userId: currentUser.uid,
     created_at: serverTimestamp(),
+    plan: plan || "BusTrack Business Pro",
+    amountPaid: amountPaid ?? 35.0,
+    paymentIntentId: paymentIntentId || null,
+    paymentStatus: paymentIntentId ? "completed" : "pending",
   });
 };
 
@@ -97,7 +106,7 @@ export const getCategories = async (): Promise<Categories[]> => {
 
 export const subscribeToActiveBusiness = (
   userId: string,
-  onChange: (isActive: boolean) => void,
+  onChange: (isApproved: boolean) => void,
 ) => {
   const db = getFirestore();
 
@@ -106,10 +115,10 @@ export const subscribeToActiveBusiness = (
     where("userId", "==", userId),
   );
   return onSnapshot(businessQuery, (snapshot) => {
-    const hasActiveBusiness = snapshot.docs.some(
-      (document) => document.data().active === true,
+    const hasApprovedBusiness = snapshot.docs.some(
+      (document) => document.data().requestStatus === "approved",
     );
-    onChange(hasActiveBusiness);
+    onChange(hasApprovedBusiness);
   });
 };
 

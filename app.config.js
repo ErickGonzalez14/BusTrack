@@ -8,6 +8,11 @@ module.exports = () => {
     process.env.GOOGLE_ROUTES_API_KEY || googlePlacesApiKey;
   const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
   const cloudinaryUploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+  const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+  const stripeSecretKey =
+    process.env.EXPO_PUBLIC_STRIPE_SECRET_KEY ||
+    process.env.STRIPE_SECRET_KEY;
+  const stripeFunctionsUrl = process.env.EXPO_PUBLIC_STRIPE_FUNCTIONS_URL;
 
   if (!googleMapsApiKey) {
     throw new Error("Falta GOOGLE_MAPS_API_KEY en el archivo .env");
@@ -21,6 +26,9 @@ module.exports = () => {
       googleRoutesApiKey,
       cloudinaryCloudName,
       cloudinaryUploadPreset,
+      stripePublishableKey,
+      stripeSecretKey,
+      stripeFunctionsUrl,
     },
     ios: {
       ...appJson.expo.ios,

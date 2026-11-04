@@ -21,7 +21,7 @@ export default function Settings() {
   const { profile } = useAuth();
   const { logOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const { isBusinessActive } = useActiveBusiness();
+  const { isBusinessApproved } = useActiveBusiness();
 
   const handleLogOut = async () => {
     await logOut();
@@ -96,10 +96,10 @@ export default function Settings() {
               icon={GitCompare}
               iconColor="#091540"
               isToggle={false}
-              separator={isBusinessActive ? true : false}
+              separator={isBusinessApproved ? true : false}
               onPress={() => router.push("/Settings/UserRequests/requests")}
             />
-            {isBusinessActive && (
+            {isBusinessApproved && (
               <OptionLabel
                 settingsName="Mi Negocio"
                 icon={Barcode}

@@ -3,7 +3,7 @@ import EditPhoto from "@/components/editPhoto";
 import HeroCard from "@/components/ui/Cards/heroCard";
 import MiniCard from "@/components/ui/Cards/miniCard";
 import PublicationCard from "@/components/ui/Cards/publicationCard";
-import { useBusinessPublications } from "@/hooks/useRequests";
+import { useMyBusinessPublications } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import { Barcode, HeadsetHelp } from "iconoir-react-native";
 import { ScrollView, Text, View } from "react-native";
@@ -13,7 +13,7 @@ export default function BusinessDashboard() {
   const { theme } = useUnistyles();
   //state for publications
   const { businessPublications, isPublicationLoading, publicationsError } =
-    useBusinessPublications();
+    useMyBusinessPublications();
   return (
     <View style={styles.container}>
       <AlternativeHeader

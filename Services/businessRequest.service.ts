@@ -4,6 +4,7 @@ import { getAuth } from "@react-native-firebase/auth";
 import {
   addDoc,
   collection,
+  getDocs,
   getFirestore,
   serverTimestamp,
 } from "@react-native-firebase/firestore";
@@ -140,7 +141,34 @@ export type Publication = {
   startDate?: FirestoreTimestamp | null;
   endDate?: FirestoreTimestamp | null;
 };
-export const getBusinessPublications = async (
+export const getBusinessPublications = async (): Promise<Publication[]> => {
+  const db = getFirestore();
+  const snapshot = await getDocs(collection(db, "publications"));
+  const publications: Publication[] = snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      type: data.type,
+      active: data.active,
+      name: data.name,
+      description: data.description,
+      businessId: data.businessId,
+      categoryId: data.categoryId,
+      imageUrl: data.imageUrl,
+      cardColor: data.cardColor,
+      price: data.price,
+      lastPrice: data.lastPrice,
+      currentPrice: data.currentPrice,
+      phoneNumber: data.phoneNumber,
+      createdAt: data.createdAt,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    };
+  });
+  return publications;
+};
+
+export const getMyBusinessPublications = async (
   businessId: string,
 ): Promise<Publication[]> => {
   const db = getFirestore();
@@ -148,9 +176,6 @@ export const getBusinessPublications = async (
   const snapshot = await publicationRef
     .where("businessId", "==", businessId)
     .get();
-  if (snapshot.empty) {
-    return [];
-  }
   const publications: Publication[] = [];
 
   snapshot.forEach((doc) => {

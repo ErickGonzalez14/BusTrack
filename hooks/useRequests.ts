@@ -13,6 +13,7 @@ import {
 import {
   DiscountRequestService,
   getBusinessPublications,
+  getMyBusinessPublications,
   ProductRequestService,
   ProfesionalServiceRequestService,
   type Publication,
@@ -79,19 +80,19 @@ export const useCategories = () => {
 };
 
 export const useActiveBusiness = () => {
-  const [isBusinessActive, setIsBusinessActive] = useState(false);
+  const [isBusinessApproved, setIsBusinessApproved] = useState(false);
   const userId = getAuth().currentUser?.uid;
 
   useEffect(() => {
     if (!userId) {
-      setIsBusinessActive(false);
+      setIsBusinessApproved(false);
       return;
     }
 
-    return subscribeToActiveBusiness(userId, setIsBusinessActive);
+    return subscribeToActiveBusiness(userId, setIsBusinessApproved);
   }, [userId]);
 
-  return { isBusinessActive };
+  return { isBusinessApproved };
 };
 
 export const useProductRequest = () => {
@@ -194,9 +195,54 @@ export const useBusinessPublications = () => {
   const [publicationsError, setPublicationsError] = useState<string | null>(
     null,
   );
-
   const userId = getAuth().currentUser?.uid;
+  const fetchBusinessPublications = async () => {
+    if (!userId) {
+      setBusinessPublications([]);
+      setPublicationsError("No hay un usuario autenticado.");
+      return;
+    }
 
+    setIsLoading(true);
+    setPublicationsError(null);
+
+    try {
+      const publications = await getBusinessPublications();
+
+      setBusinessPublications(publications);
+    } catch (fetchError) {
+      setBusinessPublications([]);
+      setPublicationsError(
+        fetchError instanceof Error
+          ? fetchError.message
+          : "No se pudieron obtener las publicaciones.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBusinessPublications();
+  }, []);
+
+  return {
+    businessPublications,
+    isPublicationLoading,
+    publicationsError,
+    fetchBusinessPublications,
+  };
+};
+
+export const useMyBusinessPublications = () => {
+  const [businessPublications, setBusinessPublications] = useState<
+    Publication[]
+  >([]);
+  const [isPublicationLoading, setIsLoading] = useState(false);
+  const [publicationsError, setPublicationsError] = useState<string | null>(
+    null,
+  );
+  const userId = getAuth().currentUser?.uid;
   const fetchBusinessPublications = async () => {
     if (!userId) {
       setBusinessPublications([]);
@@ -209,7 +255,7 @@ export const useBusinessPublications = () => {
 
     try {
       const businessId = await getBusinessId(userId);
-      const publications = await getBusinessPublications(businessId);
+      const publications = await getMyBusinessPublications(businessId);
 
       setBusinessPublications(publications);
     } catch (fetchError) {
