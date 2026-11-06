@@ -4,10 +4,14 @@ import { getAuth } from "@react-native-firebase/auth";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   getFirestore,
   serverTimestamp,
+  updateDoc,
 } from "@react-native-firebase/firestore";
+import { uploadImageToCloudinary } from "./uploadImage.service";
 type saveProduct = {
   name: string;
   description: string;
@@ -203,4 +207,37 @@ export const getMyBusinessPublications = async (
     });
   });
   return publications;
+};
+
+export const editBusinessLogo = async (
+  businessId: string,
+  newLogoUrl: string,
+) => {
+  const db = getFirestore();
+  const logoUrl = await uploadImageToCloudinary(newLogoUrl);
+
+  await updateDoc(doc(db, "business", businessId), {
+    logoUrl,
+  });
+
+  return {
+    success: true,
+    message: "Logo actualizado correctamente",
+    logoUrl,
+  };
+};
+export const getBusinessLogo = async (
+  userId: string,
+): Promise<string | null> => {
+  const db = getFirestore();
+  const businessId = await getBusinessId(userId);
+  const businessSnapshot = await getDoc(doc(db, "business", businessId));
+
+  if (!businessSnapshot.exists()) {
+    throw new Error("No se encontró el negocio.");
+  }
+
+  const data = businessSnapshot.data();
+
+  return typeof data.logoUrl === "string" ? data.logoUrl : null;
 };

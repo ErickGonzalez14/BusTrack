@@ -6,6 +6,7 @@ import {
   Roboto_400Regular,
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import Constants from "expo-constants";
@@ -41,78 +42,80 @@ function RootNavigator() {
 
   return (
     <StripeProvider publishableKey={stripePublishableKey}>
-      <Stack>
-        <Stack.Protected guard={!user || isAuthFlowInProgress}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="logIn" options={{ headerShown: false }} />
-          <Stack.Screen name="register" options={{ headerShown: false }} />
-        </Stack.Protected>
+      <BottomSheetModalProvider>
+        <Stack>
+          <Stack.Protected guard={!user || isAuthFlowInProgress}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="logIn" options={{ headerShown: false }} />
+            <Stack.Screen name="register" options={{ headerShown: false }} />
+          </Stack.Protected>
 
-        <Stack.Protected
-          guard={
-            Boolean(user) && (hasProfile === false || isAuthFlowInProgress)
-          }
-        >
-          <Stack.Screen
-            name="completeProfile"
-            options={{ headerShown: false }}
-          />
-        </Stack.Protected>
+          <Stack.Protected
+            guard={
+              Boolean(user) && (hasProfile === false || isAuthFlowInProgress)
+            }
+          >
+            <Stack.Screen
+              name="completeProfile"
+              options={{ headerShown: false }}
+            />
+          </Stack.Protected>
 
-        <Stack.Protected guard={Boolean(user) && hasProfile === true}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="Settings/editProfile"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/UserRequests/requests"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/UserRequests/driverRequest"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/UserRequests/businessPlans"
-            options={{ headerShown: false }}
-          />
+          <Stack.Protected guard={Boolean(user) && hasProfile === true}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="Settings/editProfile"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/UserRequests/requests"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/UserRequests/driverRequest"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/UserRequests/businessPlans"
+              options={{ headerShown: false }}
+            />
 
-          <Stack.Screen
-            name="Settings/UserRequests/businessLightRequest"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/UserRequests/businessProRequest"
-            options={{ headerShown: false }}
-          />
+            <Stack.Screen
+              name="Settings/UserRequests/businessLightRequest"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/UserRequests/businessProRequest"
+              options={{ headerShown: false }}
+            />
 
-          <Stack.Screen
-            name="Settings/Business/dashBoard"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/Business/productForm"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/Business/serviceForm"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/Business/discountForm"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/Favorites/favorite"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings/Favorites/createRoutine"
-            options={{ headerShown: false }}
-          />
-        </Stack.Protected>
-      </Stack>
+            <Stack.Screen
+              name="Settings/Business/dashBoard"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/Business/productForm"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/Business/serviceForm"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/Business/discountForm"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/Favorites/favorite"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings/Favorites/createRoutine"
+              options={{ headerShown: false }}
+            />
+          </Stack.Protected>
+        </Stack>
+      </BottomSheetModalProvider>
     </StripeProvider>
   );
 }

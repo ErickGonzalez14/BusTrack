@@ -12,6 +12,8 @@ import {
 } from "@/Schemas/request.schema";
 import {
   DiscountRequestService,
+  editBusinessLogo,
+  getBusinessLogo,
   getBusinessPublications,
   getMyBusinessPublications,
   ProductRequestService,
@@ -29,8 +31,9 @@ import {
 } from "@/Services/request.service";
 import { uploadImageToCloudinary } from "@/Services/uploadImage.service";
 import { getAuth } from "@react-native-firebase/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+
 export const useDriverRequest = () => {
   return useMutation({
     mutationFn: async (input: DriverRequestInput) => {
@@ -280,4 +283,44 @@ export const useMyBusinessPublications = () => {
     publicationsError,
     fetchBusinessPublications,
   };
+};
+
+export const useUpdateBusinessLogo = () => {
+  const queryClient = useQueryClient();
+  const userId = getAuth().currentUser?.uid;
+
+  return useMutation({
+    mutationFn: async (imageUri: string) => {
+      if (!imageUri) {
+        throw new Error("No se proporcionó ninguna URI de imagen.");
+      }
+
+      if (!userId) {
+        throw new Error("No hay un usuario autenticado.");
+      }
+
+      const businessId = await getBusinessId(userId);
+
+      return editBusinessLogo(businessId, imageUri);
+    },
+    onSuccess: (result) => {
+      queryClient.setQueryData(["business-logo", userId], result.logoUrl);
+    },
+  });
+};
+
+export const useBusinessLogo = () => {
+  const userId = getAuth().currentUser?.uid;
+
+  return useQuery({
+    queryKey: ["business-logo", userId],
+    queryFn: () => {
+      if (!userId) {
+        throw new Error("No hay un usuario autenticado.");
+      }
+
+      return getBusinessLogo(userId);
+    },
+    enabled: Boolean(userId),
+  });
 };

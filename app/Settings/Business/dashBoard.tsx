@@ -1,9 +1,12 @@
 import AlternativeHeader from "@/components/Headers/alternativeHeader";
-import EditPhoto from "@/components/editPhoto";
+import EditLogo from "@/components/editLogo";
 import HeroCard from "@/components/ui/Cards/heroCard";
 import MiniCard from "@/components/ui/Cards/miniCard";
 import PublicationCard from "@/components/ui/Cards/publicationCard";
-import { useMyBusinessPublications } from "@/hooks/useRequests";
+import {
+  useBusinessLogo,
+  useMyBusinessPublications,
+} from "@/hooks/useRequests";
 import { router } from "expo-router";
 import { Barcode, HeadsetHelp } from "iconoir-react-native";
 import { ScrollView, Text, View } from "react-native";
@@ -14,6 +17,8 @@ export default function BusinessDashboard() {
   //state for publications
   const { businessPublications, isPublicationLoading, publicationsError } =
     useMyBusinessPublications();
+
+  const { data: logoUrl } = useBusinessLogo();
   return (
     <View style={styles.container}>
       <AlternativeHeader
@@ -26,8 +31,8 @@ export default function BusinessDashboard() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* 1. Profile Bento Card (Apple ID / Merchant Spotlight) */}
-        <View>
-          <EditPhoto />
+        <View style={styles.logoContainer}>
+          <EditLogo initialLogoUrl={logoUrl ?? undefined} />
         </View>
 
         {/* 2. Bento Actions Grid */}
@@ -139,5 +144,9 @@ export const styles = StyleSheet.create((theme) => ({
   },
   publicationsList: {
     gap: 12,
+  },
+  logoContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));
