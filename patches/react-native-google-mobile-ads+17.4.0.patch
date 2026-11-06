@@ -1,0 +1,106 @@
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java b/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java
+index ba32040..4078fa9 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java
++++ b/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java
+@@ -468,7 +468,7 @@ public class ReactNativeGoogleMobileAdsBannerAdViewManager
+     }
+ 
+     ThemedReactContext themedReactContext = ((ThemedReactContext) reactViewGroup.getContext());
+-    EventDispatcher eventDispatcher = UIManagerHelper.getEventDispatcher(themedReactContext);
++    EventDispatcher eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(themedReactContext, reactViewGroup.getId());
+     if (eventDispatcher != null) {
+       eventDispatcher.dispatchEvent(
+           new OnNativeEvent(
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt b/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+index e3a7c91..585c12d 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+@@ -87,7 +87,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+                 outcome.message,
+                 "load",
+               )
+-            promise.reject(error.getString("code"), error.getString("message"), error)
++            promise.reject(error.getString("code") ?: "error", error.getString("message"), error)
+           }
+           is ReactNativeGoogleMobileAdsNativeAdLoad.Outcome.Resolve -> {
+             adHolders[outcome.responseId] = holder
+@@ -101,7 +101,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+         ReactNativeGoogleMobileAdsResponseInfo.toWritableMap(loadAdError.responseInfo)?.let {
+           error.putMap("responseInfo", it)
+         }
+-        promise.reject(error.getString("code"), error.getString("message"), error)
++        promise.reject(error.getString("code") ?: "error", error.getString("message"), error)
+       },
+     )
+   }
+@@ -331,7 +331,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+           "Custom native load requires a non-empty customFormatIds array.",
+           "load",
+         )
+-      promise.reject(error.getString("code"), error.getString("message"), error)
++      promise.reject(error.getString("code") ?: "error", error.getString("message"), error)
+       return
+     }
+     val holder =
+@@ -365,7 +365,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+         ReactNativeGoogleMobileAdsResponseInfo.toWritableMap(loadAdError.responseInfo)?.let {
+           error.putMap("responseInfo", it)
+         }
+-        promise.reject(error.getString("code"), error.getString("message"), error)
++        promise.reject(error.getString("code") ?: "error", error.getString("message"), error)
+       },
+     )
+   }
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java b/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java
+index de59a58..dd07e51 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java
++++ b/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsBannerAdViewManager.java
+@@ -397,7 +397,7 @@ public class ReactNativeGoogleMobileAdsBannerAdViewManager
+     event.putString("type", type);
+     if (payload != null) event.merge(payload);
+     ThemedReactContext context = (ThemedReactContext) view.getContext();
+-    EventDispatcher dispatcher = UIManagerHelper.getEventDispatcher(context);
++    EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, view.getId());
+     if (dispatcher != null) {
+       dispatcher.dispatchEvent(
+           new OnNativeEvent(UIManagerHelper.getSurfaceId(view), view.getId(), event));
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt b/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+index ad232a6..e193483 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+@@ -90,7 +90,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+                   outcome.message,
+                   "load",
+                 )
+-              promise.reject(error.getString("code"), error.getString("message"), error)
++              promise.reject(error.getString("code") ?: "error", error.getString("message"), error)
+             }
+             is ReactNativeGoogleMobileAdsNativeAdLoad.Outcome.Resolve -> {
+               bindNativeAd(ad)
+@@ -105,7 +105,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+             return
+           }
+           val payload = ReactNativeGoogleMobileAdsCommon.loadAdErrorToMap(error)
+-          promise.reject(payload.getString("code"), payload.getString("message"), payload)
++          promise.reject(payload.getString("code") ?: "error", payload.getString("message"), payload)
+         }
+       },
+     )
+@@ -345,7 +345,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+             if (invalidated) {
+               ad.destroy()
+               val error = invalidatedError()
+-              promise.reject(error.getString("code"), error.getString("message"), error)
++              promise.reject(error.getString("code") ?: "error", error.getString("message"), error)
+               return@post
+             }
+             val adId = UUID.randomUUID().toString()
+@@ -361,7 +361,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+             return
+           }
+           val payload = ReactNativeGoogleMobileAdsCommon.loadAdErrorToMap(error)
+-          promise.reject(payload.getString("code"), payload.getString("message"), payload)
++          promise.reject(payload.getString("code") ?: "error", payload.getString("message"), payload)
+         }
+       },
+     )

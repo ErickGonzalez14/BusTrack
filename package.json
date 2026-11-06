@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.4.3",
@@ -48,6 +49,7 @@
     "react-hook-form": "^7.84.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
+    "react-native-google-mobile-ads": "^17.4.0",
     "react-native-keyboard-controller": "1.18.5",
     "react-native-maps": "1.20.1",
     "react-native-nitro-google-signin": "^2.1.0",
@@ -65,6 +67,7 @@
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "patch-package": "^8.0.0",
     "typescript": "~5.9.2"
   },
   "private": true,

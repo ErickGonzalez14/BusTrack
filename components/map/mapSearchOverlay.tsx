@@ -88,7 +88,7 @@ export default function MapSearchOverlay({
 const styles = StyleSheet.create((theme) => ({
   container: {
     position: "absolute",
-    top: 50,
+    top: 75,
     left: 16,
     right: 16,
     zIndex: 10,

@@ -12,9 +12,12 @@ import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import mobileAds from "react-native-google-mobile-ads";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
+
 export const unstable_settings = {
   anchor: "(tabs)",
 };
@@ -122,6 +125,15 @@ export default function RootLayout() {
     Roboto_700Bold,
     Roboto_300Light,
   });
+
+  useEffect(() => {
+    mobileAds()
+      .initialize()
+      .then((adapterStatuses) => {})
+      .catch((error) => {
+        console.error("Error al inicializar AdMob:", error);
+      });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

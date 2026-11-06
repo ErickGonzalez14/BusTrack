@@ -28,6 +28,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -36,11 +37,12 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import MapView, { PoiClickEvent } from "react-native-maps";
 import { StyleSheet } from "react-native-unistyles";
 
 const DEFAULT_LOCATION = { latitude: 8.4821, longitude: -82.6178 };
-
+const windowWidth = Dimensions.get("window").width;
 const getSearchParam = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -203,9 +205,7 @@ export default function Map() {
     const placeId = getSearchParam(favoriteParams.favoritePlaceId);
     const name = getSearchParam(favoriteParams.favoriteName);
     const latitude = Number(getSearchParam(favoriteParams.favoriteLatitude));
-    const longitude = Number(
-      getSearchParam(favoriteParams.favoriteLongitude),
-    );
+    const longitude = Number(getSearchParam(favoriteParams.favoriteLongitude));
 
     if (
       !requestId ||
@@ -413,6 +413,13 @@ export default function Map() {
 
   return (
     <View style={styles.container}>
+      <BannerAd
+        unitId="ca-app-pub-3940256099942544/6300978111"
+        size={`${Math.floor(windowWidth)}x50` as BannerAdSize}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
       <TransitMap
         mapRef={mapRef}
         stops={stopsQuery.data ?? []}
@@ -460,6 +467,7 @@ export default function Map() {
           </Text>
         </Pressable>
       )}
+
       <MapSearchOverlay
         value={placeSearch.searchText}
         suggestions={placeSearch.suggestions}
@@ -482,9 +490,7 @@ export default function Map() {
         canStartRoute={roadRoute.coordinates.length >= 2}
         isRouteActive={activeRoute !== null}
         activeRoute={activeRoute}
-        activeRouteStatus={
-          journeyStatus === "idle" ? "running" : journeyStatus
-        }
+        activeRouteStatus={journeyStatus === "idle" ? "running" : journeyStatus}
         passengerPhase={passengerJourney.phase}
         timeNearestBus={
           activeRoute
@@ -592,7 +598,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   locationButton: {
     position: "absolute",
-    top: 116,
+    top: 140,
     right: 16,
     zIndex: 5,
     elevation: 5,

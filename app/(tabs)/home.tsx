@@ -7,21 +7,31 @@ import SearchBar from "@/components/ui/searchBar";
 import { useFavoriteSites } from "@/hooks/useFavoriteSites";
 import { useBusinessPublications } from "@/hooks/useRequests";
 import { router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { Dimensions, ScrollView, Text, View } from "react-native";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function Home() {
   const { sites, isLoading, error } = useFavoriteSites();
+  const windowWidth = Dimensions.get("window").width;
   const { businessPublications, isPublicationLoading, publicationsError } =
     useBusinessPublications();
   return (
     <View style={styles.mainContainer}>
       <PrimaryHeader />
+
       <ScrollView
         horizontal={false}
         showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.mainTabContainer}
       >
+        <BannerAd
+          unitId="ca-app-pub-3940256099942544/6300978111"
+          size={`${Math.floor(windowWidth)}x50` as BannerAdSize}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
         <View style={styles.container}>
           <Text style={styles.Titles}>Buscar Ruta</Text>
           <View style={{ marginRight: 20 }}>
