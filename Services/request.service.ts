@@ -272,7 +272,7 @@ export const getLightBusinesses = async (): Promise<BusinessListing[]> => {
 export const getProBusinesses = async (): Promise<BusinessListing[]> => {
   return getApprovedBusinesses("BusTrack Business Pro");
 };
-type businessInfo = {
+export type businessInfo = {
   phoneNumber?: string;
   adressDescription?: string;
   businessName: string;

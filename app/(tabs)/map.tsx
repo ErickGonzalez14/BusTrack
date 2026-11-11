@@ -1,4 +1,5 @@
 import { PrimaryBottomSheetRef } from "@/components/bottomSheet/primaryBottomSheet";
+import FinishRouteCard from "@/components/ui/Cards/finishRouteCard";
 import BusinessProPopup from "@/components/map/businessProPopup";
 import MapDetailsSheet from "@/components/map/mapDetailsSheet";
 import MapSearchOverlay from "@/components/map/mapSearchOverlay";
@@ -15,6 +16,7 @@ import {
 } from "@/hooks/useRequests";
 import { useRoadRoute } from "@/hooks/useRoadRoute";
 import { useRoutePlanner } from "@/hooks/useRoutePlanner";
+import { useRouteFeedback } from "@/hooks/useRouteFeedback";
 import { useUserSimulation } from "@/hooks/useUserSimulation";
 import {
   Coordinate,
@@ -87,6 +89,8 @@ export default function Map() {
   const [isAddingStop, setIsAddingStop] = useState(false);
   const [isStopNameModalOpen, setIsStopNameModalOpen] = useState(false);
   const [stopName, setStopName] = useState("");
+  const [feedbackRoute, setFeedbackRoute] = useState<RouteRecommendation | null>(null);
+  const routeFeedback = useRouteFeedback();
   const stopsQuery = useQuery({
     queryKey: ["stops"],
     queryFn: getStops,
@@ -509,6 +513,30 @@ export default function Map() {
     routePlanner,
   ]);
 
+  useEffect(() => {
+    if (passengerJourney.phase !== "exitPrompt" || !activeRoute || feedbackRoute) return;
+    setFeedbackRoute(activeRoute);
+    clearRouteAndPlace();
+  }, [activeRoute, clearRouteAndPlace, feedbackRoute, passengerJourney.phase]);
+
+  const handleRateRoute = useCallback(async (rating: number, fare: number) => {
+    if (!feedbackRoute) return;
+    try {
+      await routeFeedback.mutateAsync({
+        busId: feedbackRoute.bus.id,
+        routeId: feedbackRoute.route.id,
+        rating,
+        fare,
+      });
+      setFeedbackRoute(null);
+    } catch (error) {
+      Alert.alert(
+        "No pudimos guardar tu calificación",
+        error instanceof Error ? error.message : "Inténtalo nuevamente.",
+      );
+    }
+  }, [feedbackRoute, routeFeedback]);
+
   const handleRequestSheetClose = useCallback(() => {
     if (activeRoute) {
       Alert.alert(
@@ -732,18 +760,22 @@ export default function Map() {
           sheetRef.current?.collapse();
         }}
         onConfirmExit={() => {
-          passengerJourney.confirmExit();
-          finishSimulation();
-          finishUserSimulation();
-          routePlanner.setRecommendation(null);
-          placeSearch.clearSelectedPlace();
-          sheetRef.current?.close();
+          if (activeRoute) setFeedbackRoute(activeRoute);
+          clearRouteAndPlace();
         }}
         onFinishRoute={() => {
           clearRouteAndPlace();
         }}
         onRequestClose={handleRequestSheetClose}
         onSheetChange={(index) => setIsSheetOpen(index >= 0)}
+      />
+
+      <FinishRouteCard
+        key={feedbackRoute ? `${feedbackRoute.bus.id}:${feedbackRoute.route.id}` : "no-route"}
+        visible={feedbackRoute !== null}
+        isSubmitting={routeFeedback.isPending}
+        onRate={(rating, fare) => void handleRateRoute(rating, fare)}
+        onDismiss={() => setFeedbackRoute(null)}
       />
 
       {/* ── Popup de negocio Pro ────────────────────────────────────────── */}

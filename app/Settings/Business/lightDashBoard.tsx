@@ -67,7 +67,7 @@ export default function LightDashboard() {
             disabled={true}
           />
         </View>
-        <BusinessInfoCard />
+        {businessInfo && <BusinessInfoCard business={businessInfo} />}
       </ScrollView>
     </View>
   );

@@ -93,7 +93,7 @@ export default function RouteCard({
             textAlign: "center",
           }}
         >
-          ${routeFair}
+          ${routeFair.toFixed(2)}
         </Text>
         <View
           style={{
@@ -107,7 +107,7 @@ export default function RouteCard({
           }}
         >
           <StarSolid width={25} height={25} color="#fdc538" />
-          <Text style={styles.secundaryText}>{calification}</Text>
+          <Text style={styles.secundaryText}>{calification.toFixed(1)}</Text>
         </View>
       </View>
     </View>

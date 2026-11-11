@@ -1,4 +1,4 @@
-import { TextInput } from "react-native";
+import { StyleProp, TextInput, TextStyle } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 type keyBoardType =
@@ -17,6 +17,8 @@ type InputTextProps = {
   keyboardType?: keyBoardType;
   multiline?: boolean;
   numberOfLines?: number;
+  style?: StyleProp<TextStyle>;
+  accessibilityLabel?: string;
 };
 export default function InputText({
   placeholder = "Aqui va el placeHolder",
@@ -26,16 +28,19 @@ export default function InputText({
   keyboardType = "default",
   multiline = false,
   numberOfLines = 1,
+  style,
+  accessibilityLabel,
 }: InputTextProps) {
   const { theme } = useUnistyles();
 
   return (
     <TextInput
       placeholder={placeholder}
+      accessibilityLabel={accessibilityLabel}
       value={value}
       placeholderTextColor={theme.text.placeHolderLight}
       onChangeText={onChangeText}
-      style={styles.input}
+      style={[styles.input, style]}
       secureTextEntry={passwordText}
       keyboardType={keyboardType}
       multiline={multiline}

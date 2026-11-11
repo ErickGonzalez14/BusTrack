@@ -7,31 +7,18 @@ import {
     useUpdateBusinessAddressDescription,
     useUpdateBusinessPhone,
 } from "@/hooks/useRequests";
+import type { businessInfo } from "@/Services/request.service";
 import { MapPin, Phone } from "iconoir-react-native";
 import React, { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 
-export type BusinessInfoCardProps = {
-  phoneNumber?: string | null;
-  addressDescription?: string | null;
-  adressDescription?: string | null; // Compatibilidad con el esquema en Firestore
-  phoneTitle?: string;
-  addressTitle?: string;
-
-  disabled?: boolean;
+type BusinessInfoCardProps = {
+  business: businessInfo;
 };
 
-export default function BusinessInfoCard({
-  phoneNumber,
-  addressDescription,
-  adressDescription,
-  phoneTitle = "Teléfono",
-  addressTitle = "Dirección",
-  disabled = false,
-}: BusinessInfoCardProps) {
-  const finalAddress = addressDescription ?? adressDescription;
+export default function BusinessInfoCard({ business }: BusinessInfoCardProps) {
   const { mutate: updatePhone } = useUpdateBusinessPhone();
   const { mutate: updateAddressDescription } =
     useUpdateBusinessAddressDescription();
@@ -116,7 +103,7 @@ export default function BusinessInfoCard({
     }
   };
   return (
-    <View style={[styles.container, disabled && styles.disabledCard]}>
+    <View style={[styles.container]}>
       {/* Columna Izquierda: Teléfono */}
       <Pressable
         style={({ pressed }) => [
@@ -133,10 +120,10 @@ export default function BusinessInfoCard({
 
         <View style={styles.textContainer}>
           <Text style={styles.title} numberOfLines={1}>
-            {phoneTitle}
+            Teléfono
           </Text>
           <Text style={styles.subtitle} numberOfLines={1}>
-            {phoneNumber?.trim() || "Sin registrar"}
+            {business.phoneNumber || "Sin teléfono"}
           </Text>
         </View>
       </Pressable>
@@ -160,10 +147,10 @@ export default function BusinessInfoCard({
 
         <View style={styles.textContainer}>
           <Text style={styles.title} numberOfLines={1}>
-            {addressTitle}
+            Dirección
           </Text>
           <Text style={styles.subtitle} numberOfLines={2} ellipsizeMode="tail">
-            {finalAddress?.trim() || "Sin registrar"}
+            {business.adressDescription || "Sin dirección"}
           </Text>
         </View>
       </Pressable>
