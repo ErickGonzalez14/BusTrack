@@ -14,7 +14,7 @@ export default function BusinessPlans() {
         <PricingCard
           Name="BusTrack Business Light"
           Price="$10.00/mes"
-          Description="Haz que tu negocio aparezca en los resultados de búsqueda para que usuarios cercanos puedan descubrir tus productos y servicios."
+          Description="Tu negocio aparece como resultado patrocinado para usuarios cercanos que buscan lugares. Incluye nombre y ubicación."
           onPress={() =>
             router.push("/Settings/UserRequests/businessLightRequest")
           }
@@ -22,7 +22,7 @@ export default function BusinessPlans() {
         <PricingCard
           Name="BusTrack Business Pro"
           Price="$35.00/mes"
-          Description="Publica anuncios emergentes geolocalizados que se muestran al iniciar el seguimiento de una ruta, alcanzando a usuarios cercanos a tu negocio."
+          Description="Aparece con tu logo en el mapa y en una ventana emergente cuando un usuario se acerca. Incluye tu panel para publicar productos y promociones."
           onPress={() =>
             router.push("/Settings/UserRequests/businessProRequest")
           }

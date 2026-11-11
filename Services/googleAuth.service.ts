@@ -7,7 +7,6 @@ import {
 import {
   GoogleOneTapSignIn,
   isCancelledResponse,
-  isNoSavedCredentialFoundResponse,
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
 
@@ -26,15 +25,7 @@ export type GoogleAuthResult =
 export const signInWithGoogle = async (): Promise<GoogleAuthResult> => {
   await GoogleOneTapSignIn.checkPlayServices();
 
-  let response = await GoogleOneTapSignIn.signIn();
-
-  if (isNoSavedCredentialFoundResponse(response)) {
-    response = await GoogleOneTapSignIn.createAccount();
-  }
-
-  if (isNoSavedCredentialFoundResponse(response)) {
-    response = await GoogleOneTapSignIn.presentExplicitSignIn();
-  }
+  const response = await GoogleOneTapSignIn.presentExplicitSignIn();
 
   if (isCancelledResponse(response)) {
     return { status: "cancelled" };

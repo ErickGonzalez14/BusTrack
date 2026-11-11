@@ -1,4 +1,5 @@
 import { PrimaryBottomSheetRef } from "@/components/bottomSheet/primaryBottomSheet";
+import BusinessProPopup from "@/components/map/businessProPopup";
 import MapDetailsSheet from "@/components/map/mapDetailsSheet";
 import MapSearchOverlay from "@/components/map/mapSearchOverlay";
 import TransitMap from "@/components/map/transitMap";
@@ -6,6 +7,12 @@ import { useBusSimulation } from "@/hooks/useBusSimulation";
 import { useMapLocation } from "@/hooks/useMapLocation";
 import { usePassengerJourney } from "@/hooks/usePassengerJourney";
 import { usePlaceSearch } from "@/hooks/usePlaceSearch";
+import { useProximityBusinesses } from "@/hooks/useProximityBusinesses";
+import {
+  useActiveBusinessPromotions,
+  useLightBusinesses,
+  useProBusinesses,
+} from "@/hooks/useRequests";
 import { useRoadRoute } from "@/hooks/useRoadRoute";
 import { useRoutePlanner } from "@/hooks/useRoutePlanner";
 import { useUserSimulation } from "@/hooks/useUserSimulation";
@@ -14,16 +21,22 @@ import {
   GooglePlace,
   RouteRecommendation,
 } from "@/interfaces/transport.type";
+import { distanceInMeters } from "@/lib/mapRouting";
 import {
   addPendingStop,
   getBuses,
   getRoutes,
   getStops,
 } from "@/Services/map.service";
+import { BusinessListing } from "@/Services/request.service";
 import { useQuery } from "@tanstack/react-query";
 import * as Location from "expo-location";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { Plus, Position } from "iconoir-react-native";
+import {
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
+import { MapPin, Plus, Position } from "iconoir-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -42,6 +55,7 @@ import MapView, { PoiClickEvent } from "react-native-maps";
 import { StyleSheet } from "react-native-unistyles";
 
 const DEFAULT_LOCATION = { latitude: 8.4821, longitude: -82.6178 };
+const EMPTY_BUSINESSES: BusinessListing[] = [];
 const windowWidth = Dimensions.get("window").width;
 const getSearchParam = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
@@ -57,6 +71,8 @@ export default function Map() {
   const sheetRef = useRef<PrimaryBottomSheetRef>(null);
   const mapRef = useRef<MapView>(null);
   const handledFavoriteRequest = useRef<string | null>(null);
+  const hasFocusedProBusiness = useRef(false);
+  const [isMapReady, setIsMapReady] = useState(false);
   const navigation = useNavigation();
   const favoriteParams = useLocalSearchParams<{
     favoriteRequest?: string | string[];
@@ -71,11 +87,47 @@ export default function Map() {
   const [isAddingStop, setIsAddingStop] = useState(false);
   const [isStopNameModalOpen, setIsStopNameModalOpen] = useState(false);
   const [stopName, setStopName] = useState("");
-  const stopsQuery = useQuery({ queryKey: ["stops"], queryFn: getStops });
+  const stopsQuery = useQuery({
+    queryKey: ["stops"],
+    queryFn: getStops,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
   const routesQuery = useQuery({ queryKey: ["routes"], queryFn: getRoutes });
   const busesQuery = useQuery({ queryKey: ["buses"], queryFn: getBuses });
   const { userLocation, setUserLocation, getFreshUserLocation } =
     useMapLocation();
+
+  useEffect(() => {
+    let mounted = true;
+    const loadMapLocation = async () => {
+      try {
+        const existingPermission =
+          await Location.getForegroundPermissionsAsync();
+        const permission =
+          existingPermission.granted || !existingPermission.canAskAgain
+            ? existingPermission
+            : await Location.requestForegroundPermissionsAsync();
+        if (!permission.granted) return;
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+        if (mounted)
+          setUserLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
+      } catch (error) {
+        console.warn("No se pudo obtener la ubicación del mapa:", error);
+      }
+    };
+    void loadMapLocation();
+    return () => {
+      mounted = false;
+    };
+  }, [setUserLocation]);
   const {
     activeRoute,
     busCoordinate,
@@ -107,6 +159,73 @@ export default function Map() {
     busRunNumber,
   });
   const handledMissedBusSequence = useRef(0);
+
+  // ── Negocios Light y Pro ─────────────────────────────────────────────────
+  const { data: lightBusinessData, refetch: refetchLightBusinesses } =
+    useLightBusinesses();
+  const {
+    data: proBusinessData,
+    isError: proBusinessesError,
+    refetch: refetchProBusinesses,
+  } = useProBusinesses();
+  const { data: activePromotions, refetch: refetchActivePromotions } =
+    useActiveBusinessPromotions();
+  const lightBusinesses = lightBusinessData ?? EMPTY_BUSINESSES;
+  const proBusinesses = proBusinessData ?? EMPTY_BUSINESSES;
+
+  useFocusEffect(
+    useCallback(() => {
+      void refetchLightBusinesses();
+      void refetchProBusinesses();
+      void refetchActivePromotions();
+    }, [refetchLightBusinesses, refetchProBusinesses, refetchActivePromotions]),
+  );
+  const {
+    nearbyBusiness,
+    popupVisible,
+    isNearbyPopup,
+    checkProximity,
+    showBusinessPopup,
+    closePopup,
+  } = useProximityBusinesses(proBusinesses);
+
+  useEffect(() => {
+    if (userLocation) checkProximity(userLocation);
+  }, [userLocation, checkProximity]);
+
+  useEffect(() => {
+    if (
+      !isMapReady ||
+      hasFocusedProBusiness.current ||
+      proBusinesses.length === 0 ||
+      activeRoute ||
+      isSheetOpen
+    )
+      return;
+    const origin = userLocation ?? DEFAULT_LOCATION;
+    const nearest = [...proBusinesses].sort(
+      (a, b) =>
+        distanceInMeters(origin, a.adress) - distanceInMeters(origin, b.adress),
+    )[0];
+    const distance = distanceInMeters(origin, nearest.adress);
+    if (distance > 15000) return;
+    hasFocusedProBusiness.current = true;
+    if (distance < 1000) {
+      mapRef.current?.animateToRegion(
+        {
+          ...nearest.adress,
+          latitudeDelta: 0.025,
+          longitudeDelta: 0.025,
+        },
+        500,
+      );
+    } else {
+      mapRef.current?.fitToCoordinates([origin, nearest.adress], {
+        edgePadding: { top: 180, right: 60, bottom: 150, left: 60 },
+        animated: true,
+      });
+    }
+  }, [isMapReady, proBusinesses, userLocation, activeRoute, isSheetOpen]);
 
   useEffect(() => {
     if (
@@ -279,6 +398,28 @@ export default function Map() {
     }
   }, [effectiveUserLocation, getFreshUserLocation]);
 
+  const handleShowProBusinesses = useCallback(() => {
+    if (proBusinesses.length === 0) return;
+    if (proBusinesses.length === 1) {
+      mapRef.current?.animateToRegion(
+        {
+          ...proBusinesses[0].adress,
+          latitudeDelta: 0.025,
+          longitudeDelta: 0.025,
+        },
+        500,
+      );
+      return;
+    }
+    mapRef.current?.fitToCoordinates(
+      proBusinesses.map((business) => business.adress),
+      {
+        edgePadding: { top: 180, right: 60, bottom: 150, left: 60 },
+        animated: true,
+      },
+    );
+  }, [proBusinesses]);
+
   const handleStartRoute = () => {
     if (!routePlanner.recommendation || roadRoute.coordinates.length < 2)
       return;
@@ -390,6 +531,45 @@ export default function Map() {
     sheetRef.current?.close();
   }, [activeRoute, clearRouteAndPlace, placeSearch, routePlanner]);
 
+  // ── Verificar proximidad a negocios Pro cuando cambia la ubicación ────────
+  const handleUserLocationChange = useCallback(
+    (coordinate: Coordinate) => {
+      setUserLocation(coordinate);
+    },
+    [setUserLocation],
+  );
+
+  const handleLightBusinessPress = useCallback(
+    (business: BusinessListing) => {
+      placeSearch.selectPlace({
+        id: `business-${business.id}`,
+        name: business.businessName,
+        coordinate: business.adress,
+        type: "business",
+      });
+    },
+    [placeSearch],
+  );
+
+  // ── Manejar tap en pin de negocio Pro ─────────────────────────────────────
+  const handleProBusinessPress = useCallback(
+    (business: BusinessListing) => {
+      showBusinessPopup(business);
+    },
+    [showBusinessPopup],
+  );
+
+  const handleProBusinessDetail = useCallback(() => {
+    if (!nearbyBusiness) return;
+    closePopup();
+    placeSearch.selectPlace({
+      id: `business-${nearbyBusiness.id}`,
+      name: nearbyBusiness.businessName,
+      coordinate: nearbyBusiness.adress,
+      type: "business",
+    });
+  }, [nearbyBusiness, closePopup, placeSearch]);
+
   const isLoading =
     stopsQuery.isLoading || routesQuery.isLoading || busesQuery.isLoading;
   const isError =
@@ -431,9 +611,12 @@ export default function Map() {
         userCoordinate={simulatedUserCoordinate}
         userSimulationStatus={userSimulationStatus}
         defaultLocation={DEFAULT_LOCATION}
+        proBusinesses={proBusinesses}
         onPoiClick={handlePoiClick}
         onMapPress={placeSearch.hideSuggestions}
-        onUserLocationChange={setUserLocation}
+        onUserLocationChange={handleUserLocationChange}
+        onProBusinessPress={handleProBusinessPress}
+        onMapReady={() => setIsMapReady(true)}
       />
       <Pressable
         style={styles.locationButton}
@@ -444,6 +627,32 @@ export default function Map() {
       >
         <Position width={25} height={25} color="#FFFFFF" />
       </Pressable>
+      {proBusinesses.length > 0 && (
+        <Pressable
+          style={[
+            styles.proBusinessButton,
+            activeRoute && styles.proBusinessButtonWithRoute,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={`Ver ${proBusinesses.length} negocios Pro en el mapa`}
+          onPress={handleShowProBusinesses}
+        >
+          <MapPin width={18} height={18} color="#FFFFFF" />
+          <Text style={styles.proBusinessButtonText}>
+            Locales ({proBusinesses.length})
+          </Text>
+        </Pressable>
+      )}
+      {proBusinessesError && (
+        <Pressable
+          style={styles.proBusinessError}
+          onPress={() => void refetchProBusinesses()}
+        >
+          <Text style={styles.proBusinessErrorText}>
+            No se cargaron los negocios Pro. Toca para reintentar.
+          </Text>
+        </Pressable>
+      )}
       {activeRoute && (
         <Pressable
           style={[
@@ -471,6 +680,8 @@ export default function Map() {
       <MapSearchOverlay
         value={placeSearch.searchText}
         suggestions={placeSearch.suggestions}
+        lightBusinesses={lightBusinesses}
+        searchOrigin={userLocation ?? DEFAULT_LOCATION}
         isSearching={placeSearch.isSearching}
         hasSearched={placeSearch.hasSearched}
         searchError={placeSearch.searchError}
@@ -479,6 +690,7 @@ export default function Map() {
         onFocus={placeSearch.onSearchFocus}
         onSubmit={placeSearch.submitSearch}
         onSelect={placeSearch.selectSuggestion}
+        onSelectBusiness={handleLightBusinessPress}
       />
       <MapDetailsSheet
         sheetRef={sheetRef}
@@ -533,6 +745,19 @@ export default function Map() {
         onRequestClose={handleRequestSheetClose}
         onSheetChange={(index) => setIsSheetOpen(index >= 0)}
       />
+
+      {/* ── Popup de negocio Pro ────────────────────────────────────────── */}
+      <BusinessProPopup
+        business={nearbyBusiness}
+        visible={popupVisible}
+        isNearby={isNearbyPopup}
+        promotion={activePromotions?.find(
+          (promotion) => promotion.businessId === nearbyBusiness?.id,
+        )}
+        onClose={closePopup}
+        onViewDetail={handleProBusinessDetail}
+      />
+
       <Modal
         visible={isStopNameModalOpen}
         transparent
@@ -624,6 +849,42 @@ const styles = StyleSheet.create((theme) => ({
     gap: 7,
     paddingHorizontal: 14,
     paddingVertical: 10,
+  },
+  proBusinessButton: {
+    position: "absolute",
+    top: 195,
+    right: 16,
+    zIndex: 5,
+    elevation: 5,
+    borderRadius: theme.size_rounded.full,
+    backgroundColor: theme.surface.tertiary,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  proBusinessButtonWithRoute: {
+    top: 220,
+  },
+  proBusinessButtonText: {
+    color: "#FFFFFF",
+    fontFamily: theme.fonts.heavy,
+    fontSize: 12,
+  },
+  proBusinessError: {
+    position: "absolute",
+    top: 195,
+    left: 16,
+    right: 16,
+    zIndex: 6,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#FFF3E0",
+  },
+  proBusinessErrorText: {
+    color: "#8B4513",
+    fontSize: 12,
   },
   addStopButtonDisabled: {
     opacity: 0.7,

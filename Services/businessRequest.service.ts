@@ -241,3 +241,37 @@ export const getBusinessLogo = async (
 
   return typeof data.logoUrl === "string" ? data.logoUrl : null;
 };
+
+export type BusinessInfo = {
+  phoneNumber: string;
+  adressDescription: string;
+};
+
+export const updateBusinessPhone = async (
+  businessId: string,
+  phoneNumber: string,
+) => {
+  const db = getFirestore();
+  await updateDoc(doc(db, "business", businessId), {
+    phoneNumber: phoneNumber,
+  });
+  return {
+    success: true,
+    message: "Número de teléfono actualizado correctamente",
+    phoneNumber,
+  };
+};
+export const updateBusinessAdressDescription = async (
+  businessId: string,
+  adressDescription: string,
+) => {
+  const db = getFirestore();
+  await updateDoc(doc(db, "business", businessId), {
+    adressDescription: adressDescription,
+  });
+  return {
+    success: true,
+    message: "Descripción de la dirección actualizada correctamente",
+    adressDescription,
+  };
+};

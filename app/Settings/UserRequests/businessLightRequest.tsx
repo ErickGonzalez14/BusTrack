@@ -32,10 +32,10 @@ export default function BusinessLightRequest() {
   const [businessName, setBusinessName] = useState("");
   const [adress, setAdress] = useState<Adress | null>(null);
   const { categories } = useCategories();
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const { getFreshUserLocation } = useMapLocation();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const { getFreshUserLocation } = useMapLocation();
 
   const [alert, setAlert] = React.useState<{
     variant: AlertCardVariant;
@@ -180,6 +180,15 @@ export default function BusinessLightRequest() {
     }
   };
 
+  const closeAlert = () => {
+    const wasSuccessful = alert?.variant === "success";
+
+    setAlert(null);
+
+    if (wasSuccessful) {
+      router.replace("/(tabs)/settings");
+    }
+  };
   const handleBusinessLocation = async () => {
     if (isGettingLocation) return;
 
@@ -206,16 +215,6 @@ export default function BusinessLightRequest() {
       );
     } finally {
       setIsGettingLocation(false);
-    }
-  };
-
-  const closeAlert = () => {
-    const wasSuccessful = alert?.variant === "success";
-
-    setAlert(null);
-
-    if (wasSuccessful) {
-      router.replace("/(tabs)/settings");
     }
   };
 
@@ -296,19 +295,18 @@ export default function BusinessLightRequest() {
                 />
               ))}
             </View>
-          </View>
-
-          <View style={{ gap: 10, marginTop: 20, marginBottom: 20 }}>
-            <ButtonSecundary
-              title={
-                isGettingLocation
-                  ? "Obteniendo ubicación..."
-                  : adress
-                    ? "Ubicación seleccionada ✓"
-                    : "Seleccionar ubicación de la Empresa"
-              }
-              onPress={handleBusinessLocation}
-            />
+            <View style={{ gap: 10, marginTop: 20, marginBottom: 20 }}>
+              <ButtonSecundary
+                title={
+                  isGettingLocation
+                    ? "Obteniendo ubicación..."
+                    : adress
+                      ? "Ubicación seleccionada ✓"
+                      : "Seleccionar ubicación de la Empresa"
+                }
+                onPress={handleBusinessLocation}
+              />
+            </View>
           </View>
 
           <View style={styles.buttonContainer}>

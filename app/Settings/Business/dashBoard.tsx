@@ -4,6 +4,7 @@ import HeroCard from "@/components/ui/Cards/heroCard";
 import MiniCard from "@/components/ui/Cards/miniCard";
 import PublicationCard from "@/components/ui/Cards/publicationCard";
 import {
+  useBusinessInfo,
   useBusinessLogo,
   useMyBusinessPublications,
 } from "@/hooks/useRequests";
@@ -14,6 +15,7 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function BusinessDashboard() {
   const { theme } = useUnistyles();
+  const { data: businessInfo } = useBusinessInfo();
   //state for publications
   const { businessPublications, isPublicationLoading, publicationsError } =
     useMyBusinessPublications();
@@ -22,7 +24,7 @@ export default function BusinessDashboard() {
   return (
     <View style={styles.container}>
       <AlternativeHeader
-        SettingName="Mi Negocio"
+        SettingName={businessInfo?.businessName ?? "Mi Negocio"}
         onTouch={() => router.back()}
       />
 

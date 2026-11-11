@@ -1,3 +1,4 @@
+import BusinessProMarker from "@/components/map/businessProMarker";
 import { UserSimulationStatus } from "@/hooks/useUserSimulation";
 import { Stop } from "@/interfaces/stop.type";
 import {
@@ -10,9 +11,8 @@ import {
   isValidCoordinate,
   normalizeCoordinate,
 } from "@/lib/mapRouting";
-import { Bus, User, Walking } from "iconoir-react-native";
+import { BusinessListing } from "@/Services/request.service";
 import { RefObject, useMemo } from "react";
-import { Image, View } from "react-native";
 import MapView, {
   Marker,
   PoiClickEvent,
@@ -32,9 +32,12 @@ type TransitMapProps = {
   userCoordinate?: Coordinate | null;
   userSimulationStatus?: UserSimulationStatus;
   defaultLocation: Coordinate;
+  proBusinesses?: BusinessListing[];
   onPoiClick: (event: PoiClickEvent) => void;
   onMapPress: () => void;
   onUserLocationChange: (coordinate: Coordinate) => void;
+  onProBusinessPress?: (business: BusinessListing) => void;
+  onMapReady?: () => void;
 };
 
 export default function TransitMap({
@@ -48,12 +51,18 @@ export default function TransitMap({
   userCoordinate,
   userSimulationStatus,
   defaultLocation,
+  proBusinesses = [],
   onPoiClick,
   onMapPress,
   onUserLocationChange,
+  onProBusinessPress,
+  onMapReady,
 }: TransitMapProps) {
   const { theme } = useUnistyles();
-  const validStops = stops.filter((stop) => isValidCoordinate(stop.adress));
+  const validStops = useMemo(
+    () => stops.filter((stop) => isValidCoordinate(stop.adress)),
+    [stops],
+  );
   const remainingRouteCoordinates = useMemo(
     () => getRemainingRouteCoordinates(routeCoordinates, routeProgress),
     [routeCoordinates, routeProgress],
@@ -68,6 +77,7 @@ export default function TransitMap({
       showsMyLocationButton={false}
       onPoiClick={onPoiClick}
       onPress={onMapPress}
+      onMapReady={onMapReady}
       onUserLocationChange={(event) => {
         const coordinate = normalizeCoordinate(event.nativeEvent.coordinate);
         if (coordinate) onUserLocationChange(coordinate);
@@ -138,15 +148,19 @@ export default function TransitMap({
             coordinate={stop.adress}
             title={stop.name}
             description={stop.city}
-          >
-            <Image
-              source={require("@/assets/images/busStop.png")}
-              style={styles.stopMarker}
-              resizeMode="contain"
-            />
-          </Marker>
+            pinColor="#0B86C3"
+          />
         );
       })}
+
+      {/* ── Pins de negocios Pro ─────────────────────────── */}
+      {proBusinesses.map((biz) => (
+        <BusinessProMarker
+          key={`${biz.id}:${biz.logoUrl ?? ""}`}
+          business={biz}
+          onPress={(b) => onProBusinessPress?.(b)}
+        />
+      ))}
 
       {selectedPlace && isValidCoordinate(selectedPlace.coordinate) && (
         <Marker
@@ -165,11 +179,9 @@ export default function TransitMap({
             displayedRoute.direction === "outbound" ? "Ida" : "Regreso"
           }`}
           zIndex={10}
-        >
-          <View style={styles.busMarker}>
-            <Bus width={24} height={24} color="#FFFFFF" />
-          </View>
-        </Marker>
+          tracksViewChanges={false}
+          image={require("@/assets/images/busTrackPin.png")}
+        ></Marker>
       )}
 
       {userCoordinate && isValidCoordinate(userCoordinate) && (
@@ -186,15 +198,13 @@ export default function TransitMap({
                   : "Llegaste a tu parada"
           }
           zIndex={15}
-        >
-          <View style={styles.userMarker}>
-            {userSimulationStatus === "walking" ? (
-              <Walking width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
-            ) : (
-              <User width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
-            )}
-          </View>
-        </Marker>
+          tracksViewChanges={false}
+          image={
+            userSimulationStatus === "walking"
+              ? require("@/assets/images/walkingUser.png")
+              : require("@/assets/images/user.png")
+          }
+        ></Marker>
       )}
     </MapView>
   );
@@ -204,10 +214,6 @@ const styles = StyleSheet.create((theme) => ({
   map: {
     width: "100%",
     height: "100%",
-  },
-  stopMarker: {
-    width: 40,
-    height: 40,
   },
   busMarker: {
     width: 44,

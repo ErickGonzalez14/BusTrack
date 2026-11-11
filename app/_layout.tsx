@@ -113,6 +113,10 @@ function RootNavigator() {
               name="Settings/Favorites/createRoutine"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="Settings/Business/lightDashBoard"
+              options={{ headerShown: false }}
+            />
           </Stack.Protected>
         </Stack>
       </BottomSheetModalProvider>

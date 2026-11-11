@@ -17,12 +17,18 @@ import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+const BUSINESS_PRO_PLAN = "BusTrack Business Pro";
+const BUSINESS_LIGHT_PLAN = "BusTrack Business Light";
 export default function Settings() {
   const { profile } = useAuth();
   const { logOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const { isBusinessApproved } = useActiveBusiness();
+  const { isBusinessApproved, businessPlan } = useActiveBusiness();
 
+  // Solo el plan Pro tiene acceso al dashboard de negocio
+  const isProPlan = isBusinessApproved && businessPlan === BUSINESS_PRO_PLAN;
+  const isLightPlan =
+    isBusinessApproved && businessPlan === BUSINESS_LIGHT_PLAN;
   const handleLogOut = async () => {
     await logOut();
     router.replace("/logIn");
@@ -99,7 +105,8 @@ export default function Settings() {
               separator={isBusinessApproved ? true : false}
               onPress={() => router.push("/Settings/UserRequests/requests")}
             />
-            {isBusinessApproved && (
+            {/* Solo visible para empresas aprobadas con plan Pro */}
+            {isProPlan && (
               <OptionLabel
                 settingsName="Mi Negocio"
                 icon={Barcode}
@@ -107,6 +114,16 @@ export default function Settings() {
                 isToggle={false}
                 separator={false}
                 onPress={() => router.push("/Settings/Business/dashBoard")}
+              />
+            )}
+            {isLightPlan && (
+              <OptionLabel
+                settingsName="Mi Negocio"
+                icon={Barcode}
+                iconColor="#007fef"
+                isToggle={false}
+                separator={false}
+                onPress={() => router.push("/Settings/Business/lightDashBoard")}
               />
             )}
           </View>

@@ -10,6 +10,7 @@ type MiniCardProps = {
   onPress?: () => void;
   iconContainerColor?: string;
   pillText: string;
+  disabled?: boolean;
 };
 
 export default function MiniCard({
@@ -20,9 +21,14 @@ export default function MiniCard({
   onPress,
   iconColor = "#000",
   iconContainerColor = "#000",
+  disabled = false,
 }: MiniCardProps) {
   return (
-    <Pressable style={styles.squareBentoCard} onPress={onPress}>
+    <Pressable
+      style={[styles.squareBentoCard, disabled && styles.disabledCard]}
+      onPress={onPress}
+      disabled={disabled}
+    >
       <View style={styles.squareTopRow}>
         <View
           style={[styles.circleBadge, { backgroundColor: iconContainerColor }]}
@@ -97,5 +103,8 @@ export const styles = StyleSheet.create((theme) => ({
   squareContent: {
     marginTop: 14,
     gap: 2,
+  },
+  disabledCard: {
+    opacity: 0.45,
   },
 }));

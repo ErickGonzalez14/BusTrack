@@ -42,7 +42,11 @@ export default function EditLogo({ initialLogoUrl }: EditLogoProps) {
         return;
       }
 
-      const localImageUri = result.assets[0].uri;
+      const localImageUri = result.assets?.[0]?.uri;
+      if (!localImageUri) {
+        Alert.alert("Imagen no disponible", "No se pudo recuperar la imagen seleccionada. Inténtalo de nuevo.");
+        return;
+      }
 
       try {
         const response = await updateBusinessLogo(localImageUri);
@@ -77,36 +81,36 @@ export default function EditLogo({ initialLogoUrl }: EditLogoProps) {
     [closeSheet, isPending],
   );
   const chooseFromLibrary = useCallback(async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-
-    await saveLogo(result);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 0.7,
+      });
+      await saveLogo(result);
+    } catch (error) {
+      Alert.alert("Error al elegir logo", error instanceof Error ? error.message : "No se pudo abrir la galería.");
+    }
   }, [saveLogo]);
 
   const takePhoto = useCallback(async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    try {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert("Permiso necesario", "Permite el acceso a la cámara para tomar una foto.");
+        return;
+      }
 
-    if (!permission.granted) {
-      Alert.alert(
-        "Permiso necesario",
-        "Permite el acceso a la cámara para tomar una foto.",
-      );
-      return;
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 0.7,
+        cameraType: ImagePicker.CameraType.back,
+      });
+      await saveLogo(result);
+    } catch (error) {
+      Alert.alert("Error al tomar foto", error instanceof Error ? error.message : "No se pudo abrir la cámara.");
     }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-      cameraType: ImagePicker.CameraType.front,
-    });
-
-    await saveLogo(result);
   }, [saveLogo]);
 
   return (

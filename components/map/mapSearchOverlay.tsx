@@ -1,12 +1,17 @@
+import BusinessLightCard from "@/components/map/businessLightCard";
 import SearchBar from "@/components/ui/searchBar";
-import { PlaceSuggestion } from "@/interfaces/transport.type";
+import { BusinessListing } from "@/Services/request.service";
+import { Coordinate, PlaceSuggestion } from "@/interfaces/transport.type";
+import { distanceInMeters } from "@/lib/mapRouting";
 import { MapPin } from "iconoir-react-native";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 type MapSearchOverlayProps = {
   value: string;
   suggestions: PlaceSuggestion[];
+  lightBusinesses?: BusinessListing[];
+  searchOrigin: Coordinate;
   isSearching: boolean;
   hasSearched: boolean;
   searchError: string | null;
@@ -15,11 +20,39 @@ type MapSearchOverlayProps = {
   onFocus: () => void;
   onSubmit: () => void;
   onSelect: (suggestion: PlaceSuggestion) => void;
+  onSelectBusiness: (business: BusinessListing) => void;
 };
+
+/**
+ * Intercala negocios Light cada 2 resultados de lugares.
+ * Ejemplo: [lugar, lugar, LIGHT, lugar, lugar, LIGHT, ...]
+ */
+function buildInterleavedResults(
+  suggestions: PlaceSuggestion[],
+  lightBusinesses: BusinessListing[],
+): ({ type: "place"; data: PlaceSuggestion } | { type: "light"; data: BusinessListing })[] {
+  const result: (
+    { type: "place"; data: PlaceSuggestion } | { type: "light"; data: BusinessListing }
+  )[] = [];
+  let lightIndex = 0;
+
+  suggestions.forEach((s, i) => {
+    result.push({ type: "place", data: s });
+    // Insertar un negocio Light después de cada 2 sugerencias
+    if (((i + 1) % 2 === 0 || i === suggestions.length - 1) && lightIndex < lightBusinesses.length) {
+      result.push({ type: "light", data: lightBusinesses[lightIndex] });
+      lightIndex++;
+    }
+  });
+
+  return result;
+}
 
 export default function MapSearchOverlay({
   value,
   suggestions,
+  lightBusinesses = [],
+  searchOrigin,
   isSearching,
   hasSearched,
   searchError,
@@ -28,8 +61,28 @@ export default function MapSearchOverlay({
   onFocus,
   onSubmit,
   onSelect,
+  onSelectBusiness,
 }: MapSearchOverlayProps) {
   const { theme } = useUnistyles();
+
+  const query = value.trim().toLocaleLowerCase();
+  const nearbyLightBusinesses = lightBusinesses
+    .map((business) => ({
+      business,
+      distance: distanceInMeters(searchOrigin, business.adress),
+    }))
+    .filter(({ distance }) => distance <= 10000)
+    .sort((a, b) => {
+      const aMatches = a.business.businessName.toLocaleLowerCase().includes(query);
+      const bMatches = b.business.businessName.toLocaleLowerCase().includes(query);
+      return Number(bMatches) - Number(aMatches) || a.distance - b.distance;
+    })
+    .slice(0, 2)
+    .map(({ business }) => business);
+  const interleavedItems =
+    suggestions.length > 0
+      ? buildInterleavedResults(suggestions, nearbyLightBusinesses)
+      : [];
 
   return (
     <View style={styles.container}>
@@ -44,7 +97,7 @@ export default function MapSearchOverlay({
 
       {showSuggestions &&
         (isSearching || hasSearched || suggestions.length > 0) && (
-          <View style={styles.results}>
+          <ScrollView style={styles.results} keyboardShouldPersistTaps="handled">
             {isSearching && suggestions.length === 0 ? (
               <ActivityIndicator style={styles.loader} />
             ) : suggestions.length === 0 ? (
@@ -53,33 +106,45 @@ export default function MapSearchOverlay({
               </Text>
             ) : (
               <>
-                {suggestions.map((suggestion) => (
-                  <Pressable
-                    key={suggestion.id}
-                    style={styles.suggestion}
-                    onPress={() => onSelect(suggestion)}
-                  >
-                    <MapPin
-                      width={20}
-                      height={20}
-                      color={theme.surface.brand}
-                    />
-                    <View style={styles.textContainer}>
-                      <Text style={styles.title}>{suggestion.name}</Text>
-                      {suggestion.secondaryText && (
-                        <Text style={styles.subtitle} numberOfLines={1}>
-                          {suggestion.secondaryText}
-                        </Text>
-                      )}
-                    </View>
-                  </Pressable>
-                ))}
+                {interleavedItems.map((item) => {
+                  if (item.type === "light") {
+                    return (
+                      <BusinessLightCard
+                        key={`light-${item.data.id}`}
+                        business={item.data}
+                        onPress={() => onSelectBusiness(item.data)}
+                      />
+                    );
+                  }
+                  const suggestion = item.data;
+                  return (
+                    <Pressable
+                      key={suggestion.id}
+                      style={styles.suggestion}
+                      onPress={() => onSelect(suggestion)}
+                    >
+                      <MapPin
+                        width={20}
+                        height={20}
+                        color={theme.surface.brand}
+                      />
+                      <View style={styles.textContainer}>
+                        <Text style={styles.title}>{suggestion.name}</Text>
+                        {suggestion.secondaryText && (
+                          <Text style={styles.subtitle} numberOfLines={1}>
+                            {suggestion.secondaryText}
+                          </Text>
+                        )}
+                      </View>
+                    </Pressable>
+                  );
+                })}
                 {isSearching && (
                   <ActivityIndicator style={styles.refreshLoader} />
                 )}
               </>
             )}
-          </View>
+          </ScrollView>
         )}
     </View>
   );
@@ -96,6 +161,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   results: {
     marginTop: 6,
+    maxHeight: 350,
     overflow: "hidden",
     borderRadius: theme.size_rounded.md,
     backgroundColor: theme.surface.background,

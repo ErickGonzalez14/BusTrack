@@ -2,11 +2,15 @@ import { router } from "expo-router";
 import { Flash, NavArrowRight, Spark } from "iconoir-react-native";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-export default function HeroCard() {
+type HeroCardProps = {
+  disabled?: boolean;
+};
+export default function HeroCard({ disabled }: HeroCardProps) {
   return (
     <Pressable
-      style={styles.heroBentoCard}
+      style={[styles.heroBentoCard, disabled && styles.disabledCard]}
       onPress={() => router.push("/Settings/Business/discountForm")}
+      disabled={disabled}
     >
       <View style={styles.heroTopRow}>
         <View style={styles.heroTitleGroup}>
@@ -130,5 +134,8 @@ export const styles = StyleSheet.create((theme) => ({
     fontSize: 12,
     fontFamily: "Roboto_700Bold",
     color: "#FFFFFF",
+  },
+  disabledCard: {
+    opacity: 0.45,
   },
 }));

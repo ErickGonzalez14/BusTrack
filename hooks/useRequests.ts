@@ -8,7 +8,7 @@ import {
   ProductRequestInput,
   ProductRequestSchema,
   ServiceRequestInput,
-  ServiceRequestSchema,
+  ServiceRequestSchema
 } from "@/Schemas/request.schema";
 import {
   DiscountRequestService,
@@ -18,16 +18,24 @@ import {
   getMyBusinessPublications,
   ProductRequestService,
   ProfesionalServiceRequestService,
+  updateBusinessAdressDescription,
+  updateBusinessPhone,
   type Publication,
 } from "@/Services/businessRequest.service";
 import {
   BusinessRequestService,
-  type Categories,
   DriverRequestService,
+  getActiveBusinessPromotions,
   getBusinessCategories,
   getBusinessId,
+  getBusinessInfo,
   getCategories,
+  getLightBusinesses,
+  getProBusinesses,
   subscribeToActiveBusiness,
+  type BusinessListing,
+  type BusinessPromotion,
+  type Categories,
 } from "@/Services/request.service";
 import { uploadImageToCloudinary } from "@/Services/uploadImage.service";
 import { getAuth } from "@react-native-firebase/auth";
@@ -84,18 +92,23 @@ export const useCategories = () => {
 
 export const useActiveBusiness = () => {
   const [isBusinessApproved, setIsBusinessApproved] = useState(false);
+  const [businessPlan, setBusinessPlan] = useState<string | null>(null);
   const userId = getAuth().currentUser?.uid;
 
   useEffect(() => {
     if (!userId) {
       setIsBusinessApproved(false);
+      setBusinessPlan(null);
       return;
     }
 
-    return subscribeToActiveBusiness(userId, setIsBusinessApproved);
+    return subscribeToActiveBusiness(userId, (info) => {
+      setIsBusinessApproved(info.isApproved);
+      setBusinessPlan(info.plan);
+    });
   }, [userId]);
 
-  return { isBusinessApproved };
+  return { isBusinessApproved, businessPlan };
 };
 
 export const useProductRequest = () => {
@@ -322,5 +335,83 @@ export const useBusinessLogo = () => {
       return getBusinessLogo(userId);
     },
     enabled: Boolean(userId),
+  });
+};
+
+// ─── Hook para negocios Light (resultados de búsqueda) ───────────────────────
+
+export const useLightBusinesses = () => {
+  return useQuery<BusinessListing[]>({
+    queryKey: ["light-businesses"],
+    queryFn: getLightBusinesses,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+};
+
+// ─── Hook para negocios Pro (pins en el mapa) ────────────────────────────────
+
+export const useProBusinesses = () => {
+  return useQuery<BusinessListing[]>({
+    queryKey: ["pro-businesses"],
+    queryFn: getProBusinesses,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+};
+
+export const useActiveBusinessPromotions = () =>
+  useQuery<BusinessPromotion[]>({
+    queryKey: ["active-business-promotions"],
+    queryFn: getActiveBusinessPromotions,
+    staleTime: 1000 * 60,
+  });
+
+export const useBusinessInfo = () => {
+  const userId = getAuth().currentUser?.uid;
+
+  return useQuery({
+    queryKey: ["business-name", userId],
+    queryFn: () => {
+      if (!userId) {
+        throw new Error("No hay un usuario autenticado.");
+      }
+      return getBusinessInfo(userId);
+    },
+    enabled: Boolean(userId),
+  });
+};
+
+export const useUpdateBusinessPhone = () => {
+  const userId = getAuth().currentUser?.uid;
+  const queryClient = useQueryClient();
+  if (!userId) {
+    throw new Error("No hay un usuario autenticado.");
+  }
+  return useMutation({
+    mutationFn: async (newPhone: string) => {
+      const businessId = await getBusinessId(userId);
+      return updateBusinessPhone(businessId, newPhone);
+    },
+    onSuccess: (result) => {
+      queryClient.setQueryData(["business-info", userId], result.phoneNumber);
+    },
+  });
+};
+export const useUpdateBusinessAddressDescription = () => {
+  const userId = getAuth().currentUser?.uid;
+  const queryClient = useQueryClient();
+  if (!userId) {
+    throw new Error("No hay un usuario autenticado.");
+  }
+  return useMutation({
+    mutationFn: async (newAddressDescription: string) => {
+      const businessId = await getBusinessId(userId);
+      return updateBusinessAdressDescription(businessId, newAddressDescription);
+    },
+    onSuccess: (result) => {
+      queryClient.setQueryData(
+        ["business-info", userId],
+        result.adressDescription,
+      );
+    },
   });
 };
