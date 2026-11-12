@@ -3,16 +3,18 @@ import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 type PrimaryHeaderProps = {
-  lugar: string;
-  nextBus: string;
-  distance: string;
+  routineName: string;
+  recordatory: number;
+  startDay: string;
+  endDay: string;
   time: string;
 };
 
 export default function PrimaryCard({
-  lugar,
-  nextBus,
-  distance,
+  routineName,
+  recordatory,
+  startDay,
+  endDay,
   time,
 }: PrimaryHeaderProps) {
   return (
@@ -25,12 +27,14 @@ export default function PrimaryCard({
       </View>
       <View>
         <View>
-          <Text style={styles.text}>{lugar}</Text>
-          <Text style={styles.secundaryText}>Next Bus in {nextBus} mins. </Text>
+          <Text style={styles.text}>{routineName}</Text>
+          <Text style={styles.secundaryText}>Avisar {recordatory} Antes</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.text}>{distance}Km aprox</Text>
-          <Text style={styles.secundaryText}>{time} mins</Text>
+          <Text style={styles.text}>Viajar a las {time}</Text>
+          <Text style={styles.secundaryText}>
+            {startDay} - {endDay}
+          </Text>
         </View>
       </View>
     </Pressable>

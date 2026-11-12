@@ -37,13 +37,13 @@ export default function CreateRoutine() {
 
   //array for days of the week
   const weekDays = [
-    { id: "monday", label: "L" },
-    { id: "tuesday", label: "M" },
-    { id: "wednesday", label: "X" },
-    { id: "thursday", label: "J" },
-    { id: "friday", label: "V" },
-    { id: "saturday", label: "S" },
-    { id: "sunday", label: "D" },
+    { id: "Lunes", label: "L" },
+    { id: "Martes", label: "M" },
+    { id: "Miercoles", label: "X" },
+    { id: "Jueves", label: "J" },
+    { id: "Viernes", label: "V" },
+    { id: "Sábado", label: "S" },
+    { id: "Domingo", label: "D" },
   ];
 
   //Hook para enviar la solicitud de crear rutina

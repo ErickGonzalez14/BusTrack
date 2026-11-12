@@ -1,21 +1,22 @@
 import PrimaryHeader from "@/components/Headers/PrimaryHeader/primaryHeader";
-import TabButton from "@/components/ui/buttons/tabButton";
 import FavoriteCard from "@/components/ui/Cards/favoriteCard";
 import PrimaryCard from "@/components/ui/Cards/primaryCard";
 import ProductCard from "@/components/ui/Cards/productCard";
-import SearchBar from "@/components/ui/searchBar";
+import Empty from "@/components/ui/empty";
 import { useFavoriteSites } from "@/hooks/useFavoriteSites";
 import { useBusinessPublications } from "@/hooks/useRequests";
+import { useGetRoutines } from "@/hooks/useRoutine";
 import { router } from "expo-router";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import { StyleSheet } from "react-native-unistyles";
-
 export default function Home() {
   const { sites, isLoading, error } = useFavoriteSites();
   const windowWidth = Dimensions.get("window").width;
   const { businessPublications, isPublicationLoading, publicationsError } =
     useBusinessPublications();
+  const { routines, isRoutineLoading, RoutinesError } = useGetRoutines();
+
   return (
     <View style={styles.mainContainer}>
       <PrimaryHeader />
@@ -33,49 +34,26 @@ export default function Home() {
           }}
         />
         <View style={styles.container}>
-          <Text style={styles.Titles}>Buscar Ruta</Text>
-          <View style={{ marginRight: 20 }}>
-            <SearchBar
-              placeHolder="Buscar Ruta"
-              icon={require("../../assets/icons/search.svg")}
-            />
-          </View>
-
-          {/* carrucel de lugares mas concurridos */}
+          <Text style={styles.Titles}>Mis Rutinas</Text>
+          {/* carrucel de tus rutinas */}
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabContainer}
           >
-            <TabButton
-              title="Terminal de David"
-              onPress={() => console.log("Ruta 1")}
-            />
-            <TabButton title="Cocetrab" onPress={() => console.log("Ruta 2")} />
-            <TabButton
-              title="Parada Doña Fela"
-              onPress={() => console.log("Ruta 3")}
-            />
-          </ScrollView>
-          <Text style={styles.Titles}>Paradas Más Cercanas</Text>
-          {/* carrucel de paradas mas cercanas */}
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabContainer}
-          >
-            <PrimaryCard
-              lugar="Terminal de David"
-              nextBus="5"
-              distance="2.5"
-              time="10"
-            />
-            <PrimaryCard
-              lugar="Terminal de David"
-              nextBus="5"
-              distance="2.5"
-              time="10"
-            />
+            {routines.map((routine) => (
+              <PrimaryCard
+                key={routine.id}
+                routineName={routine.name}
+                recordatory={routine.recordatory}
+                startDay={routine.days[0]}
+                endDay={routine.days[routine.days.length - 1]}
+                time={routine.time}
+              />
+            ))}
+            {routines.length === 0 && (
+              <Empty message="Vaya, aún no tienes rutinas creadas" />
+            )}
           </ScrollView>
           <Text style={styles.Titles}>Promociones</Text>
           {/* carrucel de promociones */}
