@@ -6,6 +6,7 @@ import MapSearchOverlay from "@/components/map/mapSearchOverlay";
 import TransitMap from "@/components/map/transitMap";
 import { useBusSimulation } from "@/hooks/useBusSimulation";
 import { useMapLocation } from "@/hooks/useMapLocation";
+import { useLiveBuses } from "@/hooks/useLiveBuses";
 import { usePassengerJourney } from "@/hooks/usePassengerJourney";
 import { usePlaceSearch } from "@/hooks/usePlaceSearch";
 import { useProximityBusinesses } from "@/hooks/useProximityBusinesses";
@@ -101,6 +102,26 @@ export default function Map() {
   });
   const routesQuery = useQuery({ queryKey: ["routes"], queryFn: getRoutes });
   const busesQuery = useQuery({ queryKey: ["buses"], queryFn: getBuses });
+  const liveLocations = useLiveBuses();
+  const liveBuses = liveLocations.flatMap((location) => {
+    const bus = busesQuery.data?.find(
+      (candidate) =>
+        candidate.id === location.busId &&
+        candidate.userId === location.userId &&
+        candidate.busStatus === "approved" &&
+        candidate.active !== false,
+    );
+    return bus
+      ? [{
+          busId: bus.id,
+          licensePlate: bus.licensePlate,
+          coordinate: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+        }]
+      : [];
+  });
   const { userLocation, setUserLocation, getFreshUserLocation } =
     useMapLocation();
 
@@ -636,6 +657,7 @@ export default function Map() {
         routeCoordinates={roadRoute.coordinates}
         routeProgress={activeRoute ? routeProgress : 0}
         busCoordinate={busCoordinate}
+        liveBuses={liveBuses}
         userCoordinate={simulatedUserCoordinate}
         userSimulationStatus={userSimulationStatus}
         defaultLocation={DEFAULT_LOCATION}

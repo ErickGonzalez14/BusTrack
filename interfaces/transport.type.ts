@@ -15,6 +15,8 @@ export type RouteDirection = "outbound" | "return";
 
 export type Bus = {
   id: string;
+  userId?: string;
+  busStatus?: "pending" | "approved" | "rejected";
   active: boolean;
   routeType: string;
   licensePlate: string;

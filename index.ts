@@ -1,3 +1,4 @@
-import "expo-router/entry";
+import "./Services/busTracking.task";
 import "./unistyles";
+import "expo-router/entry";
 

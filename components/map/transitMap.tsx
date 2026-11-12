@@ -29,6 +29,7 @@ type TransitMapProps = {
   routeCoordinates: Coordinate[];
   routeProgress: number;
   busCoordinate: Coordinate | null;
+  liveBuses: { busId: string; coordinate: Coordinate; licensePlate: string }[];
   userCoordinate?: Coordinate | null;
   userSimulationStatus?: UserSimulationStatus;
   defaultLocation: Coordinate;
@@ -48,6 +49,7 @@ export default function TransitMap({
   routeCoordinates,
   routeProgress,
   busCoordinate,
+  liveBuses,
   userCoordinate,
   userSimulationStatus,
   defaultLocation,
@@ -171,7 +173,8 @@ export default function TransitMap({
         />
       )}
 
-      {busCoordinate && isValidCoordinate(busCoordinate) && displayedRoute && (
+      {busCoordinate && isValidCoordinate(busCoordinate) && displayedRoute &&
+        !liveBuses.some((bus) => bus.busId === displayedRoute.bus.id) && (
         <Marker
           coordinate={busCoordinate}
           title={displayedRoute.bus.licensePlate}
@@ -183,6 +186,18 @@ export default function TransitMap({
           image={require("@/assets/images/busTrackPin.png")}
         ></Marker>
       )}
+
+      {liveBuses.map((bus) => (
+        <Marker
+          key={`live-${bus.busId}`}
+          coordinate={bus.coordinate}
+          title={bus.licensePlate}
+          description="Bus en vivo"
+          zIndex={11}
+          tracksViewChanges={false}
+          image={require("@/assets/images/busTrackPin.png")}
+        />
+      ))}
 
       {userCoordinate && isValidCoordinate(userCoordinate) && (
         <Marker

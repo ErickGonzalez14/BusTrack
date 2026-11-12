@@ -8,7 +8,7 @@ import {
   ProductRequestInput,
   ProductRequestSchema,
   ServiceRequestInput,
-  ServiceRequestSchema
+  ServiceRequestSchema,
 } from "@/Schemas/request.schema";
 import {
   DiscountRequestService,
@@ -32,12 +32,15 @@ import {
   getCategories,
   getLightBusinesses,
   getProBusinesses,
+  subscribeToActiveBus,
   subscribeToActiveBusiness,
+  type BusesListing,
   type BusinessListing,
   type BusinessPromotion,
   type Categories,
 } from "@/Services/request.service";
 import { uploadImageToCloudinary } from "@/Services/uploadImage.service";
+import { useAuth } from "@/contexts/authContext";
 import { getAuth } from "@react-native-firebase/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -414,4 +417,27 @@ export const useUpdateBusinessAddressDescription = () => {
       );
     },
   });
+};
+
+export const useActiveBus = () => {
+  const { user } = useAuth();
+  const [isBusApproved, setIsBusApproved] = useState(false);
+  const [approvedBuses, setApprovedBuses] = useState<BusesListing[]>([]);
+  const [isBusLoading, setIsBusLoading] = useState(true);
+  const userId = user?.uid;
+
+  useEffect(() => {
+    if (!userId) {
+      setIsBusApproved(false);
+      setApprovedBuses([]);
+      setIsBusLoading(false);
+      return;
+    }
+    return subscribeToActiveBus(userId, (activeBus) => {
+      setIsBusApproved(activeBus.isApproved);
+      setApprovedBuses(activeBus.approvedBuses);
+      setIsBusLoading(false);
+    });
+  }, [userId]);
+  return { isBusApproved, approvedBuses, isBusLoading };
 };

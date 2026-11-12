@@ -109,11 +109,17 @@ export const getBuses = async (): Promise<Bus[]> => {
   const snapshot = await getDocs(collection(db, "buses"));
 
   return snapshot.docs.map((busDocument) => {
-    const data = busDocument.data() as Omit<Bus, "id">;
+    const data = busDocument.data() as Omit<Bus, "id"> & {
+      requestStatus?: unknown;
+    };
     return {
       ...data,
       id: busDocument.id.trim(),
       routeId: data.routeId?.trim() ?? "",
+      busStatus:
+        data.busStatus === "approved" || data.requestStatus === "approved"
+          ? "approved"
+          : data.busStatus,
     };
   });
 };

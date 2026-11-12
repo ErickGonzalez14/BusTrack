@@ -1,5 +1,6 @@
 import { UserProfile } from "@/interfaces/user.type";
 import { getUserProfile } from "@/Services/user.service";
+import { stopBusTracking } from "@/Services/busTrackingControl.service";
 import {
   getAuth,
   onAuthStateChanged,
@@ -112,6 +113,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const isGoogleUser = currentUser.providerData.some(
       ({ providerId }) => providerId === "google.com",
     );
+
+    try {
+      await stopBusTracking();
+    } catch (trackingError) {
+      console.warn("No se pudo retirar la ubicación del bus al salir:", trackingError);
+    }
 
     if (isGoogleUser) {
       try {

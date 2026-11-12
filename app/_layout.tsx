@@ -117,6 +117,10 @@ function RootNavigator() {
               name="Settings/Business/lightDashBoard"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="Settings/Buses/trackingView"
+              options={{ headerShown: false }}
+            />
           </Stack.Protected>
         </Stack>
       </BottomSheetModalProvider>

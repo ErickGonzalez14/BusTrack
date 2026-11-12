@@ -2,7 +2,7 @@ import SecundaryHeader from "@/components/Headers/secundaryHeader";
 import OptionLabel from "@/components/ui/Labels/optionLabel";
 import ProfileLabel from "@/components/ui/Labels/profileLabel";
 import { useAuth } from "@/contexts/authContext";
-import { useActiveBusiness } from "@/hooks/useRequests";
+import { useActiveBus, useActiveBusiness } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import {
   Barcode,
@@ -24,6 +24,7 @@ export default function Settings() {
   const { logOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const { isBusinessApproved, businessPlan } = useActiveBusiness();
+  const { isBusApproved } = useActiveBus();
 
   // Solo el plan Pro tiene acceso al dashboard de negocio
   const isProPlan = isBusinessApproved && businessPlan === BUSINESS_PRO_PLAN;
@@ -102,10 +103,23 @@ export default function Settings() {
               icon={GitCompare}
               iconColor="#091540"
               isToggle={false}
-              separator={isBusinessApproved ? true : false}
+              separator={
+                (isBusinessApproved ? true : false) ||
+                (isBusApproved ? true : false)
+              }
               onPress={() => router.push("/Settings/UserRequests/requests")}
             />
-            {/* Solo visible para empresas aprobadas con plan Pro */}
+            {isBusApproved && (
+              <OptionLabel
+                settingsName="BusTracking"
+                icon={require("@/assets/images/2xlogo.png")}
+                iconColor="#007fef"
+                isToggle={false}
+                separator={isBusinessApproved ? true : false}
+                onPress={() => router.push("/Settings/Buses/trackingView")}
+              />
+            )}
+            {/* Solo visible para empresas aprobadas */}
             {isProPlan && (
               <OptionLabel
                 settingsName="Mi Negocio"

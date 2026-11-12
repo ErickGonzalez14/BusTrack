@@ -33,7 +33,7 @@ export const DriverRequestService = async ({
     );
   }
   await addDoc(collection(db, "buses"), {
-    requestStatus: "pending",
+    busStatus: "pending",
     routeType: routeType,
     licensePlate: licensePlate,
     publicTransportPlate: publicTransportPlate,
@@ -317,4 +317,68 @@ export const getApprovedBusinessDocument = async (userId: string) => {
       (document) => document.data().requestStatus === "approved",
     )
   );
+};
+
+export type BusesListing = {
+  id: string;
+  licensePlate: string;
+  publicTransportPlate: string;
+  routeType: string;
+  routeId: string;
+  userId: string;
+  busStatus: "pending" | "approved" | "rejected";
+};
+
+const toApprovedBusListing = (document: {
+  id: string;
+  data: () => Record<string, unknown>;
+}, userId: string): BusesListing => {
+  const data = document.data();
+  const textField = (value: unknown) =>
+    typeof value === "string" ? value.trim() : "";
+  const licensePlate =
+    textField(data.licensePlate) ||
+    textField(data.publicTransportPlate) ||
+    `Bus ${document.id.slice(0, 6)}`;
+
+  return {
+    id: document.id,
+    licensePlate,
+    publicTransportPlate: textField(data.publicTransportPlate),
+    routeType: textField(data.routeType),
+    routeId: textField(data.routeId),
+    userId,
+    busStatus: "approved",
+  };
+};
+
+export type ActiveBusInfo = {
+  isApproved: boolean;
+  approvedBuses: BusesListing[];
+};
+
+export const subscribeToActiveBus = (
+  userId: string,
+  onChange: (activeBus: ActiveBusInfo) => void,
+) => {
+  const db = getFirestore();
+  const busQuery = query(
+    collection(db, "buses"),
+    where("userId", "==", userId),
+  );
+  return onSnapshot(busQuery, (snapshot) => {
+    const approvedDocuments = snapshot.docs.filter(
+      (document) => {
+        const data = document.data();
+        return data.busStatus === "approved" || data.requestStatus === "approved";
+      },
+    );
+    const approvedBuses = approvedDocuments.map((document) =>
+      toApprovedBusListing(document, userId),
+    );
+    onChange({
+      isApproved: approvedDocuments.length > 0,
+      approvedBuses,
+    });
+  });
 };
