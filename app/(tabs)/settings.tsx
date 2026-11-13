@@ -84,11 +84,12 @@ export default function Settings() {
           <Text style={styles.text}>Servicios</Text>
           <View style={styles.settings}>
             <OptionLabel
-              settingsName="Subscripciones"
+              settingsName="Suscripciones"
               icon={CreditCard}
               iconColor="#34C759"
               isToggle={false}
               separator={true}
+              onPress={() => router.push("/Settings/Subscriptions/dashBoard")}
             />
             <OptionLabel
               settingsName="Favoritos"
@@ -113,7 +114,7 @@ export default function Settings() {
               <OptionLabel
                 settingsName="BusTracking"
                 icon={require("@/assets/images/2xlogo.png")}
-                iconColor="#007fef"
+                iconColor="#4D7EFF"
                 isToggle={false}
                 separator={isBusinessApproved ? true : false}
                 onPress={() => router.push("/Settings/Buses/trackingView")}

@@ -2,15 +2,15 @@ import AlternativeHeader from "@/components/Headers/alternativeHeader";
 import { default as PrimaryButton } from "@/components/ui/buttons/buttonPrimary";
 import ChipButton from "@/components/ui/buttons/chipButton";
 import AlertCard, {
-  type AlertCardVariant,
+    type AlertCardVariant,
 } from "@/components/ui/Cards/alertCard";
 import ColorPickerCard from "@/components/ui/Cards/colorPickerCard";
 import ImageUpload from "@/components/ui/imageUpload";
 import TextInput from "@/components/ui/inputText";
 import {
-  useBusinessCategories,
-  useProductRequest,
-  useUploadImage,
+    useBusinessCategories,
+    useProductRequest,
+    useUploadImage,
 } from "@/hooks/useRequests";
 import { router } from "expo-router";
 import React, { useState } from "react";

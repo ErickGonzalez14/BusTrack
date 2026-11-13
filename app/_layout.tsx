@@ -68,6 +68,12 @@ function RootNavigator() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
+              name="Settings/Subscriptions/dashBoard"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="Settings/UserRequests/requests"
               options={{ headerShown: false }}
             />
