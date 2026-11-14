@@ -7,6 +7,7 @@ type Props = {
   onPress: () => void;
   filled: boolean;
   selected?: boolean;
+  disabled?: boolean;
 };
 
 export default function SubscriptionButton({
@@ -14,13 +15,15 @@ export default function SubscriptionButton({
   onPress,
   filled,
   selected,
+  disabled = false,
 }: Props) {
   const [focused, setFocused] = useState(false);
 
   return (
     <Pressable
       accessibilityRole={selected === undefined ? "button" : "tab"}
-      accessibilityState={selected === undefined ? undefined : { selected }}
+      accessibilityState={{ selected, disabled }}
+      disabled={disabled}
       onPress={onPress}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
@@ -29,6 +32,7 @@ export default function SubscriptionButton({
         filled && styles.filled,
         focused && styles.focused,
         pressed && styles.pressed,
+        disabled && styles.disabled,
       ]}
     >
       <Text style={[styles.label, filled && styles.filledLabel]}>{label}</Text>
@@ -50,6 +54,7 @@ const styles = StyleSheet.create((theme) => ({
   filled: { backgroundColor: theme.surface.primary },
   focused: { borderColor: theme.text.Body },
   pressed: { opacity: 0.8 },
+  disabled: { opacity: 0.6 },
   label: {
     fontFamily: "Roboto_700Bold",
     fontSize: 18,

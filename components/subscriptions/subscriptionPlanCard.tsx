@@ -9,6 +9,7 @@ type Props = {
   benefits: string[];
   action: string;
   onSelect: () => void;
+  disabled?: boolean;
   outlinedAction?: boolean;
   highlighted?: boolean;
   price: string;
@@ -21,6 +22,7 @@ export default function SubscriptionPlanCard({
   benefits,
   action,
   onSelect,
+  disabled,
   outlinedAction = false,
   highlighted = false,
   price,
@@ -52,6 +54,7 @@ export default function SubscriptionPlanCard({
         label={action}
         filled={!outlinedAction}
         onPress={onSelect}
+        disabled={disabled}
       />
     </View>
   );

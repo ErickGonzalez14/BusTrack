@@ -1,7 +1,9 @@
-import { setGlobalOptions } from "firebase-functions";
+import {setGlobalOptions} from "firebase-functions";
 import * as logger from "firebase-functions/logger";
-import { onRequest } from "firebase-functions/v2/https";
+import {onRequest} from "firebase-functions/v2/https";
 import Stripe from "stripe";
+
+export {revenueCatWebhook} from "./revenueCatWebhook";
 
 setGlobalOptions({maxInstances: 10});
 
@@ -20,11 +22,11 @@ export const createPaymentIntent = onRequest(
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
       logger.error(
-        "Falta la variable STRIPE_SECRET_KEY en el entorno de Firebase Functions.",
+        "Falta STRIPE_SECRET_KEY en el entorno de Firebase Functions.",
       );
       response.status(500).json({
         error:
-          "STRIPE_SECRET_KEY no configurada. Por favor define la variable en functions/.env",
+          "Define la variable STRIPE_SECRET_KEY en functions/.env",
       });
       return;
     }
@@ -51,15 +53,15 @@ export const createPaymentIntent = onRequest(
 
       if (!plan) {
         response.status(400).json({
-            error: "El plan seleccionado no es válido.",
+          error: "El plan seleccionado no es válido.",
         });
-            return;
-        }
+        return;
+      }
 
-       logger.info(
-           `Crdo ${plan.name} para ${businessName || "Empresa"} ` +
+      logger.info(
+        `Crdo ${plan.name} para ${businessName || "Empresa"} ` +
           `(Usuario: ${userId}) por ${plan.amountInCents} ${plan.currency}`,
-            );
+      );
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount: plan.amountInCents,

@@ -3,10 +3,16 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 type Props = {
   planName: string;
   payDate: string;
+  badge?: string;
+  dateLabel?: string;
+  billingLabel?: string;
 };
 export default function SubscriptionManagementCard({
   planName,
   payDate,
+  badge = "Activo",
+  dateLabel = "Proxima Fecha de Pago",
+  billingLabel = "Facturado Mensualmente - Automático",
 }: Props) {
   const { theme } = useUnistyles();
   return (
@@ -16,14 +22,14 @@ export default function SubscriptionManagementCard({
           Plan Actual
         </Text>
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>Activo</Text>
+          <Text style={styles.badgeText}>{badge}</Text>
         </View>
       </View>
       <Text style={styles.planName}>Plan: {planName}</Text>
       <View style={styles.payDateContainer}>
-        <Text style={styles.text}>Proxima Fecha de Pago</Text>
+        <Text style={styles.text}>{dateLabel}</Text>
         <Text style={styles.planName}>{payDate}</Text>
-        <Text style={styles.text}>Facturado Mensualmente - Automático</Text>
+        <Text style={styles.text}>{billingLabel}</Text>
       </View>
     </View>
   );
