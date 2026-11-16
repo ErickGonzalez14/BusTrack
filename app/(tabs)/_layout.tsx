@@ -2,7 +2,7 @@ import { queryClient } from "@/lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Tabs, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Home, Map, Settings } from "iconoir-react-native";
+import { Crown, Home, Map, Settings } from "iconoir-react-native";
 import React from "react";
 
 export default function TabLayout() {
@@ -41,6 +41,15 @@ export default function TabLayout() {
             title: "Mapa",
             tabBarIcon: ({ color, size }) => (
               <Map color={color} width={size} height={size} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="premium"
+          options={{
+            title: "Premium",
+            tabBarIcon: ({ color, size }) => (
+              <Crown color={color} width={size} height={size} />
             ),
           }}
         />

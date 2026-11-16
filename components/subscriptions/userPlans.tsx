@@ -19,10 +19,6 @@ export default function UserPlans() {
   );
 
   if (hasAccess || sdkConfirmed) {
-    const inGracePeriod = hasAccess
-      ? subscription?.status === "grace_period"
-      : Boolean(premium?.billingIssueDetectedAt);
-    const willRenew = hasAccess ? subscription?.willRenew : premium?.willRenew;
     const date = hasAccess ? accessEndsAt : expiration;
 
     return (
@@ -30,12 +26,21 @@ export default function UserPlans() {
         <SubscriptionManagementCard
           planName="BusTrack Premium"
           payDate={date ? new Date(date).toLocaleDateString() : "Desconocida"}
+          badge={hasAccess ? "Activo" : "Validando"}
+          billingLabel={hasAccess
+            ? "Facturado Mensualmente - Automático"
+            : "Compra confirmada por la tienda; acceso pendiente de validación"}
         />
         {!hasAccess && (
           <Text style={styles.body} accessibilityLiveRegion="polite">
-            Compra confirmada. La sincronización de tu suscripción está
-            pendiente.
+            {checkout.syncing
+              ? "Estamos verificando tu suscripción con el servidor."
+              : checkout.syncError ?? "La sincronización de tu suscripción está pendiente."}
           </Text>
+        )}
+        {!hasAccess && !checkout.syncing && (
+          <SubscriptionButton label="Reintentar validación" filled={false}
+            onPress={checkout.retrySync} />
         )}
       </View>
     );

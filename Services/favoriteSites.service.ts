@@ -28,6 +28,7 @@ export type FavoriteSite = {
   coordinate: Coordinate;
   placeType?: string;
   createdAt?: Date;
+  public: boolean;
 };
 
 const getFavoriteSiteRef = (placeId: string) => {
@@ -71,6 +72,7 @@ export const saveFavoriteSite = async ({
       name: name.trim(),
       originalName,
       location: new GeoPoint(coordinate.latitude, coordinate.longitude),
+      public: false,
       placeId,
       ...(address ? { address } : {}),
       ...(placeType ? { placeType } : {}),
@@ -85,12 +87,7 @@ export const getAllFavoriteSites = async (): Promise<FavoriteSite[]> => {
   if (!currentUser) return [];
 
   const snapshot = await getDocs(
-    collection(
-      getFirestore(),
-      "Users",
-      currentUser.uid,
-      "favoriteSites",
-    ),
+    collection(getFirestore(), "Users", currentUser.uid, "favoriteSites"),
   );
 
   const sites: FavoriteSite[] = snapshot.docs.map((siteDoc) => {
@@ -107,6 +104,7 @@ export const getAllFavoriteSites = async (): Promise<FavoriteSite[]> => {
       },
       placeType: data.placeType,
       createdAt: data.created_at?.toDate?.() ?? undefined,
+      public: data.public ?? false,
     };
   });
 

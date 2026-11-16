@@ -103,7 +103,8 @@ async function syncSubscription(uid: string): Promise<void> {
   const premium = customer.subscriber.entitlements[entitlement];
   const productId = premium?.product_identifier ?? null;
   const product = productId ?
-    customer.subscriber.subscriptions[productId] : undefined;
+    customer.subscriber.subscriptions[productId] ??
+    customer.subscriber.subscriptions[productId.split(":")[0]] : undefined;
   const isTestStore = product?.store.toLowerCase() === "test_store";
   const allowed = product && (
     (!isTestStore && product.is_sandbox === false) ||
@@ -177,6 +178,56 @@ export const revenueCatWebhook = onRequest(
     } catch (error) {
       logger.error("No se pudo sincronizar RevenueCat", error);
       response.sendStatus(500);
+    }
+  },
+);
+
+/**
+ * Rechecks the signed-in customer's purchase against RevenueCat.
+ * The client never sends a UID or an entitlement value.
+ */
+export const syncPremiumSubscription = onRequest(
+  {cors: true, maxInstances: 10, secrets: [revenueCatApiKey]},
+  async (request, response) => {
+    if (request.method !== "POST") {
+      response.set("Allow", "POST").sendStatus(405);
+      return;
+    }
+    const authorization = request.get("Authorization") ?? "";
+    const token = authorization.startsWith("Bearer ") ?
+      authorization.slice(7) : "";
+    if (!token) {
+      response.sendStatus(401);
+      return;
+    }
+
+    let uid: string;
+    try {
+      uid = (await getAuth(app).verifyIdToken(token, true)).uid;
+    } catch {
+      response.sendStatus(401);
+      return;
+    }
+
+    try {
+      await syncSubscription(uid);
+      const subscription = await getFirestore(app)
+        .collection("userSubscriptions").doc(uid).get();
+      const status = subscription.get("status");
+      const expiresAt = subscription.get("expiresAt") as Timestamp | null;
+      const gracePeriodExpiresAt = subscription.get("gracePeriodExpiresAt") as
+        Timestamp | null;
+      const accessEndsAt = status === "grace_period" ?
+        Math.max(expiresAt?.toMillis() ?? 0,
+          gracePeriodExpiresAt?.toMillis() ?? 0) :
+        expiresAt?.toMillis() ?? 0;
+      response.set("Cache-Control", "no-store").status(200).json({
+        hasAccess: subscription.get("entitlement") === entitlement &&
+          status !== "expired" && accessEndsAt > Date.now(),
+      });
+    } catch (error) {
+      logger.error("No se pudo verificar la suscripción", error);
+      response.status(503).json({error: "subscription_sync_unavailable"});
     }
   },
 );

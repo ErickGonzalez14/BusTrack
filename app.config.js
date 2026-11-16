@@ -12,6 +12,7 @@ module.exports = () => {
   const stripeSecretKey =
     process.env.EXPO_PUBLIC_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
   const stripeFunctionsUrl = process.env.EXPO_PUBLIC_STRIPE_FUNCTIONS_URL;
+  const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
   const googleAdsAppId = process.env.GOOGLE_ADS_APP_ID;
 
   if (!googleMapsApiKey) {
@@ -39,6 +40,7 @@ module.exports = () => {
       stripePublishableKey,
       stripeSecretKey,
       stripeFunctionsUrl,
+      backendUrl,
     },
     ios: {
       ...appJson.expo.ios,

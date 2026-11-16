@@ -5,9 +5,10 @@ import {
   withPremiumPurchases,
 } from "@/Services/premiumPurchases.service";
 import { useAuth } from "@/contexts/authContext";
+import { syncPremiumPurchase } from "@/Services/premiumSync.service";
 import { getAuth } from "@react-native-firebase/auth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import type {
   PurchasesEntitlementInfo,
@@ -25,6 +26,8 @@ export function usePremiumCheckout(enabled = true) {
   const queryClient = useQueryClient();
   const queryKey = ["premium-offer", uid] as const;
   const [busy, setBusy] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
   const operationInProgress = useRef(false);
   const offer = useQuery<CheckoutOffer>({
     queryKey,
@@ -47,6 +50,28 @@ export function usePremiumCheckout(enabled = true) {
       });
     },
   });
+
+  const sync = useCallback(async () => {
+    if (!uid) return;
+    setSyncing(true);
+    setSyncError(null);
+    try {
+      const verified = await syncPremiumPurchase(uid);
+      if (!verified && getAuth().currentUser?.uid === uid) {
+        setSyncError("RevenueCat aún no confirma el acceso en el servidor.");
+      }
+    } catch (error) {
+      if (getAuth().currentUser?.uid === uid) {
+        setSyncError((error as Error).message);
+      }
+    } finally {
+      setSyncing(false);
+    }
+  }, [uid]);
+
+  useEffect(() => {
+    if (offer.data?.premium) void sync();
+  }, [offer.data?.premium, sync]);
 
   async function runPurchase(monthly?: PurchasesPackage) {
     if (!uid || operationInProgress.current) return;
@@ -102,6 +127,9 @@ export function usePremiumCheckout(enabled = true) {
     monthly: offer.data?.monthly ?? null,
     loading: offer.isFetching,
     premium: offer.data?.premium ?? null,
+    syncing,
+    syncError,
+    retrySync: () => void sync(),
     reload: () => void offer.refetch(),
     purchase: () => {
       if (offer.data?.monthly) {

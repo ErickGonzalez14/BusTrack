@@ -14,7 +14,45 @@ service cloud.firestore {
     // your rules
     match /{collection}/{document=**} {
       allow read, write: if collection != 'userSubscriptions'
+        && collection != 'communityRoutes'
+        && collection != 'communityTrips'
         && request.time < timestamp.date(2026, 12, 13);
+    }
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function premium() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/userSubscriptions/$(request.auth.uid))
+        && premiumSubscriptionValid(
+          get(/databases/$(database)/documents/userSubscriptions/$(request.auth.uid)).data
+        );
+    }
+
+    function premiumSubscriptionValid(subscription) {
+      return subscription.entitlement == 'premium'
+        && subscription.status in ['active', 'grace_period']
+        && ((subscription.status == 'grace_period' && subscription.gracePeriodExpiresAt > request.time)
+          || subscription.expiresAt > request.time);
+    }
+
+    match /communityRoutes/{itemId} {
+      allow get, list: if premium() && (resource.data.status == 'published'
+        || resource.data.authorId == request.auth.uid);
+
+      match /ratings/{uid} {
+        allow get: if signedIn() && request.auth.uid == uid;
+      }
+    }
+
+    match /communityTrips/{itemId} {
+      allow get, list: if premium() && (resource.data.status == 'published'
+        || resource.data.authorId == request.auth.uid);
+      match /ratings/{uid} {
+        allow get: if signedIn() && request.auth.uid == uid;
+      }
     }
 
     match /userSubscriptions/{uid} {

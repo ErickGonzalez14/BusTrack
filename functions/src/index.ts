@@ -3,7 +3,13 @@ import * as logger from "firebase-functions/logger";
 import {onRequest} from "firebase-functions/v2/https";
 import Stripe from "stripe";
 
-export {revenueCatWebhook} from "./revenueCatWebhook";
+export {revenueCatWebhook, syncPremiumSubscription} from "./revenueCatWebhook";
+export {
+  communityRouteCreated,
+  communityTripCreated,
+  communityRouteRated,
+  communityTripRated,
+} from "./community";
 
 setGlobalOptions({maxInstances: 10});
 

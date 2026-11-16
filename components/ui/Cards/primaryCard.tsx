@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 type PrimaryHeaderProps = {
   routineName: string;
-  recordatory: number;
+  recordatory: number | string;
   startDay: string;
   endDay: string;
   time: string;
