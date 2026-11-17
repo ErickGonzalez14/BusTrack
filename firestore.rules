@@ -18,6 +18,7 @@ service cloud.firestore {
         && collection != 'communityTrips'
         && collection != 'trafficUsage'
         && collection != 'roadTrafficDaily'
+        && collection != 'crowdSoarcingRoutes'
         && request.time < timestamp.date(2026, 12, 13);
     }
 
@@ -55,6 +56,27 @@ service cloud.firestore {
       match /ratings/{uid} {
         allow get: if signedIn() && request.auth.uid == uid;
       }
+    }
+
+    match /crowdSoarcingRoutes/{proposalId} {
+      allow create: if signedIn() && validCrowdRouteProposal(request.resource.data);
+    }
+
+    function validCrowdRouteProposal(proposal) {
+      return proposal.keys().hasOnly([
+          'stopName', 'routeName', 'direction', 'busType', 'location',
+          'submittedBy', 'status', 'createdAt'
+        ])
+        && proposal.stopName is string
+        && proposal.stopName.size() > 0 && proposal.stopName.size() <= 80
+        && proposal.routeName is string
+        && proposal.routeName.size() > 0 && proposal.routeName.size() <= 120
+        && proposal.direction in ['outbound', 'return']
+        && proposal.busType in ['distrital', 'interdistrital']
+        && proposal.location is latlng
+        && proposal.submittedBy == request.auth.uid
+        && proposal.status == 'pending'
+        && proposal.createdAt == request.time;
     }
 
     match /userSubscriptions/{uid} {

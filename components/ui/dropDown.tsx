@@ -8,15 +8,19 @@ type DropDownOption = {
   label: string;
 };
 
-type DropDownProps = {
+type DropDownProps<Option extends DropDownOption> = {
   label: string;
-  options?: DropDownOption[];
-  onSelect?: (option: DropDownOption) => void;
+  options?: readonly Option[];
+  onSelect?: (option: Option) => void;
+  inline?: boolean;
+  disabled?: boolean;
 };
 
 const MENU_HORIZONTAL_MARGIN = 16;
 
-export default function DropDown({ label, options, onSelect }: DropDownProps) {
+export default function DropDown<Option extends DropDownOption>({
+  label, options, onSelect, inline = false, disabled = false,
+}: DropDownProps<Option>) {
   const { theme } = useUnistyles();
   const triggerRef = useRef<View>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +32,10 @@ export default function DropDown({ label, options, onSelect }: DropDownProps) {
   });
 
   const openMenu = () => {
+    if (inline) {
+      setIsOpen((open) => !open);
+      return;
+    }
     triggerRef.current?.measureInWindow((x, y, width, height) => {
       const windowWidth = Dimensions.get("window").width;
       const menuWidth = Math.min(
@@ -47,11 +55,31 @@ export default function DropDown({ label, options, onSelect }: DropDownProps) {
     });
   };
 
-  const selectOption = (option: DropDownOption) => {
+  const selectOption = (option: Option) => {
     setSelectedOption(option.label);
     setIsOpen(false);
     onSelect?.(option);
   };
+
+  const menuOptions = options?.map((option, index) => (
+    <Pressable
+      accessibilityRole="menuitem"
+      accessibilityState={{ selected: selectedOption === option.label, disabled }}
+      disabled={disabled}
+      key={option.id}
+      onPress={() => selectOption(option)}
+      style={({ pressed }) => [
+        styles.option,
+        index < options.length - 1 && styles.optionSeparator,
+        pressed && styles.optionPressed,
+      ]}
+    >
+      <Text style={styles.optionText}>{option.label}</Text>
+      {selectedOption === option.label && (
+        <Check width={22} height={22} color={theme.surface.brand} strokeWidth={2.5} />
+      )}
+    </Pressable>
+  ));
 
   return (
     <>
@@ -59,10 +87,13 @@ export default function DropDown({ label, options, onSelect }: DropDownProps) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Seleccionar ${label}`}
-          accessibilityState={{ expanded: isOpen }}
+          accessibilityValue={{ text: selectedOption }}
+          accessibilityState={{ expanded: isOpen, disabled }}
+          disabled={disabled}
           onPress={openMenu}
           style={({ pressed }) => [
             styles.container,
+            inline && styles.inlineContainer,
             pressed && styles.containerPressed,
           ]}
         >
@@ -76,50 +107,37 @@ export default function DropDown({ label, options, onSelect }: DropDownProps) {
         </Pressable>
       </View>
 
-      <Modal
-        animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
-        statusBarTranslucent
-        transparent
-        visible={isOpen}
-      >
-        <Pressable style={styles.backdrop} onPress={() => setIsOpen(false)}>
-          <View
-            accessibilityRole="menu"
-            style={[
-              styles.menu,
-              {
-                top: menuPosition.top,
-                left: menuPosition.left,
-                width: menuPosition.width,
-              },
-            ]}
-          >
-            {options?.map((option, index) => (
-              <Pressable
-                accessibilityRole="menuitem"
-                key={option.id}
-                onPress={() => selectOption(option)}
-                style={({ pressed }) => [
-                  styles.option,
-                  index < options.length - 1 && styles.optionSeparator,
-                  pressed && styles.optionPressed,
-                ]}
-              >
-                <Text style={styles.optionText}>{option.label}</Text>
-                {selectedOption === option.label && (
-                  <Check
-                    width={22}
-                    height={22}
-                    color={theme.surface.brand}
-                    strokeWidth={2.5}
-                  />
-                )}
-              </Pressable>
-            ))}
+      {inline ? (
+        isOpen && (
+          <View accessibilityRole="menu" style={styles.inlineMenu}>
+            {menuOptions}
           </View>
-        </Pressable>
-      </Modal>
+        )
+      ) : (
+        <Modal
+          animationType="fade"
+          onRequestClose={() => setIsOpen(false)}
+          statusBarTranslucent
+          transparent
+          visible={isOpen}
+        >
+          <Pressable style={styles.backdrop} onPress={() => setIsOpen(false)}>
+            <View
+              accessibilityRole="menu"
+              style={[
+                styles.menu,
+                {
+                  top: menuPosition.top,
+                  left: menuPosition.left,
+                  width: menuPosition.width,
+                },
+              ]}
+            >
+              {menuOptions}
+            </View>
+          </Pressable>
+        </Modal>
+      )}
     </>
   );
 }
@@ -138,6 +156,18 @@ export const styles = StyleSheet.create((theme) => ({
   },
   containerPressed: {
     opacity: 0.8,
+  },
+  inlineContainer: {
+    marginBottom: 0,
+    paddingVertical: 12,
+  },
+  inlineMenu: {
+    marginTop: 6,
+    borderRadius: theme.size_rounded.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: theme.text.placeHolderLight,
+    backgroundColor: theme.surface.inputs,
+    overflow: "hidden",
   },
   text: {
     color: theme.text.Body,

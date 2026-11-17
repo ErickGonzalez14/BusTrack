@@ -40,7 +40,7 @@ export function useMapLocation() {
     }
     if (permission.status !== Location.PermissionStatus.GRANTED) {
       throw new Error(
-        "Necesitamos acceso a tu ubicación para encontrar la parada de abordaje.",
+        "Activa el permiso de ubicación para continuar.",
       );
     }
 

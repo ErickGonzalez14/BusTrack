@@ -4,6 +4,7 @@ import BusinessProPopup from "@/components/map/businessProPopup";
 import MapDetailsSheet from "@/components/map/mapDetailsSheet";
 import MapSearchOverlay from "@/components/map/mapSearchOverlay";
 import TransitMap from "@/components/map/transitMap";
+import DropDown from "@/components/ui/dropDown";
 import { useBusSimulation } from "@/hooks/useBusSimulation";
 import { useMapLocation } from "@/hooks/useMapLocation";
 import { useLiveBuses } from "@/hooks/useLiveBuses";
@@ -23,10 +24,14 @@ import {
   Coordinate,
   GooglePlace,
   RouteRecommendation,
+  RouteDirection,
 } from "@/interfaces/transport.type";
 import { distanceInMeters } from "@/lib/mapRouting";
 import {
+  addCrowdSourcedStop,
   addPendingStop,
+  CROWD_BUS_TYPES,
+  CROWD_ROUTE_DIRECTIONS,
   getBuses,
   getRoutes,
   getStops,
@@ -49,6 +54,7 @@ import {
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -88,8 +94,16 @@ export default function Map() {
   }>();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isAddingStop, setIsAddingStop] = useState(false);
-  const [isStopNameModalOpen, setIsStopNameModalOpen] = useState(false);
+  const savingStop = useRef(false);
+  const [stopTarget, setStopTarget] = useState<{ routeId: string | null } | null>(null);
   const [stopName, setStopName] = useState("");
+  const [crowdRouteName, setCrowdRouteName] = useState("");
+  const [crowdDirection, setCrowdDirection] = useState<RouteDirection | null>(null);
+  const [crowdBusType, setCrowdBusType] =
+    useState<(typeof CROWD_BUS_TYPES)[number]["id"] | null>(null);
+  const isCrowdStop = stopTarget?.routeId === null;
+  const canSaveStop = !!stopTarget && !!stopName.trim() && !isAddingStop &&
+    (!isCrowdStop || (!!crowdRouteName.trim() && !!crowdDirection && !!crowdBusType));
   const [feedbackRoute, setFeedbackRoute] = useState<RouteRecommendation | null>(null);
   const routeFeedback = useRouteFeedback();
   const stopsQuery = useQuery({
@@ -466,29 +480,36 @@ export default function Map() {
 
   const handleAddStop = useCallback(async () => {
     const cleanStopName = stopName.trim();
-    if (!activeRoute || isAddingStop || !cleanStopName) return;
+    if (!stopTarget || savingStop.current || !cleanStopName) return;
+    const routeId = stopTarget.routeId;
+    const routeName = crowdRouteName.trim();
+    if (routeId === null && (!routeName || !crowdDirection || !crowdBusType)) return;
 
+    savingStop.current = true;
     setIsAddingStop(true);
 
     try {
       const coordinate = await getFreshUserLocation();
-      const [address] = await Location.reverseGeocodeAsync(coordinate);
-      const city =
-        address?.city?.trim() ||
-        address?.district?.trim() ||
-        address?.subregion?.trim() ||
-        address?.region?.trim() ||
-        "Por confirmar";
+      if (routeId !== null) {
+        const [address] = await Location.reverseGeocodeAsync(coordinate);
+        const city =
+          address?.city?.trim() ||
+          address?.district?.trim() ||
+          address?.subregion?.trim() ||
+          address?.region?.trim() ||
+          "Por confirmar";
+        await addPendingStop({ coordinate, routeId, city, name: cleanStopName });
+      } else if (crowdDirection && crowdBusType) {
+        await addCrowdSourcedStop({
+          coordinate,
+          stopName: cleanStopName,
+          routeName,
+          direction: crowdDirection,
+          busType: crowdBusType,
+        });
+      }
 
-      await addPendingStop({
-        coordinate,
-        routeId: activeRoute.route.id,
-        city,
-        name: cleanStopName,
-      });
-
-      setIsStopNameModalOpen(false);
-      setStopName("");
+      setStopTarget(null);
       Alert.alert(
         "¡Gracias por colaborar con BusTrack!",
         "Guardamos la parada para confirmar su posición antes de mostrarla.",
@@ -501,25 +522,26 @@ export default function Map() {
           : "Inténtalo nuevamente en unos momentos.",
       );
     } finally {
+      savingStop.current = false;
       setIsAddingStop(false);
     }
-  }, [activeRoute, getFreshUserLocation, isAddingStop, stopName]);
+  }, [crowdBusType, crowdDirection, crowdRouteName, getFreshUserLocation, stopName, stopTarget]);
 
   const openStopNameModal = useCallback(() => {
-    if (!activeRoute || isAddingStop) return;
+    if (savingStop.current) return;
     setStopName("");
-    setIsStopNameModalOpen(true);
-  }, [activeRoute, isAddingStop]);
+    setCrowdRouteName("");
+    setCrowdDirection(null);
+    setCrowdBusType(null);
+    setStopTarget({ routeId: activeRoute?.route.id ?? null });
+  }, [activeRoute]);
 
   const closeStopNameModal = useCallback(() => {
-    if (isAddingStop) return;
-    setIsStopNameModalOpen(false);
-    setStopName("");
-  }, [isAddingStop]);
+    if (!savingStop.current) setStopTarget(null);
+  }, []);
 
   const clearRouteAndPlace = useCallback(() => {
-    setIsStopNameModalOpen(false);
-    setStopName("");
+    setStopTarget((target) => target?.routeId ? null : target);
     finishSimulation();
     finishUserSimulation();
     passengerJourney.resetJourney();
@@ -679,10 +701,7 @@ export default function Map() {
       </Pressable>
       {proBusinesses.length > 0 && (
         <Pressable
-          style={[
-            styles.proBusinessButton,
-            activeRoute && styles.proBusinessButtonWithRoute,
-          ]}
+          style={styles.proBusinessButton}
           accessibilityRole="button"
           accessibilityLabel={`Ver ${proBusinesses.length} negocios Pro en el mapa`}
           onPress={handleShowProBusinesses}
@@ -703,29 +722,27 @@ export default function Map() {
           </Text>
         </Pressable>
       )}
-      {activeRoute && (
-        <Pressable
-          style={[
-            styles.addStopButton,
-            isAddingStop && styles.addStopButtonDisabled,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Agregar parada en mi ubicación"
-          accessibilityState={{ busy: isAddingStop, disabled: isAddingStop }}
-          hitSlop={8}
-          disabled={isAddingStop}
-          onPress={openStopNameModal}
-        >
-          {isAddingStop ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
-            <Plus width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
-          )}
-          <Text style={styles.addStopButtonText}>
-            {isAddingStop ? "Guardando" : "Agregar parada"}
-          </Text>
-        </Pressable>
-      )}
+      <Pressable
+        style={[
+          styles.addStopButton,
+          isAddingStop && styles.addStopButtonDisabled,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Agregar parada en mi ubicación"
+        accessibilityState={{ busy: isAddingStop, disabled: isAddingStop }}
+        hitSlop={4}
+        disabled={isAddingStop}
+        onPress={openStopNameModal}
+      >
+        {isAddingStop ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Plus width={20} height={20} color="#FFFFFF" strokeWidth={2.5} />
+        )}
+        <Text style={styles.addStopButtonText}>
+          {isAddingStop ? "Guardando" : "Agregar parada"}
+        </Text>
+      </Pressable>
 
       <MapSearchOverlay
         value={placeSearch.searchText}
@@ -813,7 +830,7 @@ export default function Map() {
       />
 
       <Modal
-        visible={isStopNameModalOpen}
+        visible={stopTarget !== null}
         transparent
         animationType="fade"
         statusBarTranslucent
@@ -823,23 +840,59 @@ export default function Map() {
           style={styles.modalOverlay}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Nombre de la parada</Text>
+          <ScrollView
+            style={styles.modalCard}
+            contentContainerStyle={styles.modalContent}
+            keyboardShouldPersistTaps="handled"
+            bounces={false}
+          >
+            <Text style={styles.modalTitle}>{isCrowdStop ? "Proponer parada" : "Nombre de la parada"}</Text>
             <Text style={styles.modalDescription}>
-              Escribe un nombre que ayude a reconocer este lugar.
+              {isCrowdStop
+                ? "Guardaremos tu ubicación actual como la posición de la parada."
+                : "Escribe un nombre que ayude a reconocer este lugar."}
             </Text>
             <TextInput
-              autoFocus
+              autoFocus={!!stopTarget && !isCrowdStop}
+              accessibilityLabel="Nombre de la parada"
               value={stopName}
               onChangeText={setStopName}
-              placeholder="Ejemplo: Valdez"
+              placeholder={isCrowdStop ? "Nombre de la parada" : "Ejemplo: Valdez"}
               placeholderTextColor="#7B8794"
               maxLength={80}
               editable={!isAddingStop}
               returnKeyType="done"
               style={styles.stopNameInput}
-              onSubmitEditing={() => void handleAddStop()}
+              onSubmitEditing={isCrowdStop ? undefined : () => void handleAddStop()}
             />
+            {isCrowdStop && (
+              <>
+                <TextInput
+                  accessibilityLabel="Nombre de la ruta"
+                  value={crowdRouteName}
+                  onChangeText={setCrowdRouteName}
+                  placeholder="Nombre de la ruta"
+                  placeholderTextColor="#7B8794"
+                  maxLength={120}
+                  editable={!isAddingStop}
+                  style={styles.stopNameInput}
+                />
+                <DropDown
+                  label="Sentido de la ruta"
+                  options={CROWD_ROUTE_DIRECTIONS}
+                  onSelect={({ id }) => setCrowdDirection(id)}
+                  inline
+                  disabled={isAddingStop}
+                />
+                <DropDown
+                  label="Tipo de bus"
+                  options={CROWD_BUS_TYPES}
+                  onSelect={({ id }) => setCrowdBusType(id)}
+                  inline
+                  disabled={isAddingStop}
+                />
+              </>
+            )}
             <View style={styles.modalActions}>
               <Pressable
                 style={styles.modalCancelButton}
@@ -851,10 +904,10 @@ export default function Map() {
               <Pressable
                 style={[
                   styles.modalSaveButton,
-                  (!stopName.trim() || isAddingStop) &&
-                    styles.addStopButtonDisabled,
+                  !canSaveStop && styles.addStopButtonDisabled,
                 ]}
-                disabled={!stopName.trim() || isAddingStop}
+                disabled={!canSaveStop}
+                accessibilityState={{ busy: isAddingStop, disabled: !canSaveStop }}
                 onPress={() => void handleAddStop()}
               >
                 {isAddingStop ? (
@@ -864,7 +917,7 @@ export default function Map() {
                 )}
               </Pressable>
             </View>
-          </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </Modal>
     </View>
@@ -890,7 +943,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   addStopButton: {
     position: "absolute",
-    top: 168,
+    top: 192,
     right: 16,
     zIndex: 5,
     elevation: 5,
@@ -906,7 +959,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   proBusinessButton: {
     position: "absolute",
-    top: 195,
+    top: 244,
     right: 16,
     zIndex: 5,
     elevation: 5,
@@ -918,9 +971,6 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
-  proBusinessButtonWithRoute: {
-    top: 220,
-  },
   proBusinessButtonText: {
     color: "#FFFFFF",
     fontFamily: theme.fonts.heavy,
@@ -928,7 +978,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   proBusinessError: {
     position: "absolute",
-    top: 195,
+    top: 296,
     left: 16,
     right: 16,
     zIndex: 6,
@@ -958,10 +1008,14 @@ const styles = StyleSheet.create((theme) => ({
   modalCard: {
     width: "100%",
     maxWidth: 420,
-    gap: 12,
-    padding: 20,
+    flexGrow: 0,
+    flexShrink: 1,
     borderRadius: theme.size_rounded.lg,
     backgroundColor: theme.surface.background,
+  },
+  modalContent: {
+    gap: 12,
+    padding: 20,
   },
   modalTitle: {
     fontFamily: theme.fonts.heavy,

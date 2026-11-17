@@ -1,6 +1,7 @@
 import { Stop } from "@/interfaces/stop.type";
-import { Bus, Coordinate, TransitRoute } from "@/interfaces/transport.type";
+import { Bus, Coordinate, RouteDirection, TransitRoute } from "@/interfaces/transport.type";
 import { normalizeCoordinate } from "@/lib/mapRouting";
+import { getAuth } from "@react-native-firebase/auth";
 import {
   addDoc,
   collection,
@@ -76,6 +77,47 @@ export const addPendingStop = async ({
 
   return stopDocument.id;
 };
+
+export const CROWD_ROUTE_DIRECTIONS = [
+  { id: "outbound", label: "Ida" },
+  { id: "return", label: "Regreso" },
+] as const satisfies readonly { id: RouteDirection; label: string }[];
+
+export const CROWD_BUS_TYPES = [
+  { id: "distrital", label: "Distrital" },
+  { id: "interdistrital", label: "Interdistrital" },
+] as const;
+
+type CrowdStopInput = {
+  coordinate: Coordinate;
+  stopName: string;
+  routeName: string;
+  direction: RouteDirection;
+  busType: (typeof CROWD_BUS_TYPES)[number]["id"];
+};
+
+export async function addCrowdSourcedStop(input: CrowdStopInput) {
+  const user = getAuth().currentUser;
+  if (!user) throw new Error("Inicia sesión para proponer una parada.");
+
+  const stopName = input.stopName.trim();
+  const routeName = input.routeName.trim();
+  if (!stopName || stopName.length > 80 || !routeName || routeName.length > 120) {
+    throw new Error("Revisa el nombre de la parada y el de la ruta.");
+  }
+
+  const { latitude, longitude } = input.coordinate;
+  await addDoc(collection(getFirestore(), "crowdSoarcingRoutes"), {
+    stopName,
+    routeName,
+    direction: input.direction,
+    busType: input.busType,
+    location: new GeoPoint(latitude, longitude),
+    submittedBy: user.uid,
+    status: "pending",
+    createdAt: serverTimestamp(),
+  });
+}
 
 export const getRoutes = async (): Promise<TransitRoute[]> => {
   const db = getFirestore();
