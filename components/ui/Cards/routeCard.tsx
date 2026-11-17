@@ -9,7 +9,7 @@ type RouterCardProps = {
   endStop: string;
   routeTime: string;
   routeFair: number;
-  calification: number;
+  calification?: number;
   timeNearestBus: string;
   routeDirection: "Ida" | "Regreso";
 };
@@ -93,22 +93,24 @@ export default function RouteCard({
             textAlign: "center",
           }}
         >
-          ${routeFair.toFixed(2)}
+          {Number.isFinite(routeFair) ? `$${routeFair.toFixed(2)}` : "Tarifa por confirmar"}
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 5,
-            borderWidth: 1,
-            borderColor: theme.text.placeholder,
-            padding: 4,
-            borderRadius: 6,
-          }}
-        >
-          <StarSolid width={25} height={25} color="#fdc538" />
-          <Text style={styles.secundaryText}>{calification.toFixed(1)}</Text>
-        </View>
+        {typeof calification === "number" && Number.isFinite(calification) && (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 5,
+              borderWidth: 1,
+              borderColor: theme.text.placeholder,
+              padding: 4,
+              borderRadius: 6,
+            }}
+          >
+            <StarSolid width={25} height={25} color="#fdc538" />
+            <Text style={styles.secundaryText}>{calification.toFixed(1)}</Text>
+          </View>
+        )}
       </View>
     </View>
   );

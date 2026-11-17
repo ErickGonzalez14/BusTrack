@@ -126,6 +126,8 @@ export const getRoutes = async (): Promise<TransitRoute[]> => {
   return snapshot.docs.map((routeDocument) => {
     const data = routeDocument.data() as Omit<TransitRoute, "id"> & {
       routeOutbondId?: unknown;
+      routeOutboundID?: unknown;
+      routeReturnId?: unknown;
       stopIds?: unknown;
     };
     const normalizeStopIds = (value: unknown) =>
@@ -139,9 +141,9 @@ export const getRoutes = async (): Promise<TransitRoute[]> => {
       ...data,
       id: routeDocument.id.trim(),
       routeOutboundId: normalizeStopIds(
-        data.routeOutboundId ?? data.routeOutbondId ?? data.stopIds,
+        data.routeOutboundId ?? data.routeOutboundID ?? data.routeOutbondId ?? data.stopIds,
       ),
-      routeReturnID: normalizeStopIds(data.routeReturnID),
+      routeReturnID: normalizeStopIds(data.routeReturnID ?? data.routeReturnId),
     };
   });
 };
@@ -167,7 +169,7 @@ export const getBuses = async (): Promise<Bus[]> => {
 };
 
 type RouteFeedback = {
-  busId: string;
+  busId?: string;
   routeId: string;
   rating: number;
   fare: number;
@@ -180,7 +182,6 @@ export const submitRouteFeedback = async ({
   fare,
 }: RouteFeedback) => {
   if (
-    !busId ||
     !routeId ||
     !Number.isFinite(rating) ||
     rating < 1 ||
@@ -193,33 +194,47 @@ export const submitRouteFeedback = async ({
   }
 
   const db = getFirestore();
-  const busRef = doc(db, "buses", busId);
+  const busRef = busId ? doc(db, "buses", busId) : null;
   const routeRef = doc(db, "routes", routeId);
 
   await runTransaction(db, async (transaction) => {
-    const busSnapshot = await transaction.get(busRef);
     const routeSnapshot = await transaction.get(routeRef);
-    if (!busSnapshot.exists() || !routeSnapshot.exists()) {
-      throw new Error("No se encontró el bus o la ruta del viaje.");
+    if (!routeSnapshot.exists()) {
+      throw new Error("No se encontró la ruta del viaje.");
     }
 
-    const currentRatings = busSnapshot.data()?.raitingCount;
-    const ratings = Array.isArray(currentRatings)
-      ? currentRatings.filter(
-          (value): value is number =>
-            typeof value === "number" && Number.isFinite(value),
-        )
-      : [];
-    const updatedRatings = [...ratings, rating];
-    const average =
-      updatedRatings.reduce((sum, value) => sum + value, 0) /
-      updatedRatings.length;
+    const busSnapshot = busRef ? await transaction.get(busRef) : null;
+    if (busRef && busSnapshot?.exists()) {
+      const currentRatings = busSnapshot.data()?.raitingCount;
+      const ratings = Array.isArray(currentRatings)
+        ? currentRatings.filter(
+            (value): value is number =>
+              typeof value === "number" && Number.isFinite(value),
+          )
+        : [];
+      const updatedRatings = [...ratings, rating];
+      const average =
+        updatedRatings.reduce((sum, value) => sum + value, 0) /
+        updatedRatings.length;
 
-    transaction.update(busRef, {
-      raitingCount: updatedRatings,
-      ratingAverage: average,
+      transaction.update(busRef, {
+        raitingCount: updatedRatings,
+        ratingAverage: average,
+      });
+    }
+
+    const { ratingCount, ratingAverage } = routeSnapshot.data() ?? {};
+    const hasPreviousRatings = typeof ratingCount === "number" &&
+      Number.isSafeInteger(ratingCount) && ratingCount > 0 &&
+      typeof ratingAverage === "number" && ratingAverage >= 1 && ratingAverage <= 5;
+    const previousCount = hasPreviousRatings ? ratingCount : 0;
+    const previousAverage = hasPreviousRatings ? ratingAverage : 0;
+    const count = previousCount + 1;
+    transaction.update(routeRef, {
+      fareAprox: fare,
+      ratingCount: count,
+      ratingAverage: (previousAverage * previousCount + rating) / count,
     });
-    transaction.update(routeRef, { fareAprox: fare });
   });
 };
 

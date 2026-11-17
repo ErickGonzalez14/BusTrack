@@ -6,7 +6,7 @@ import {
   TransitRoute,
 } from "@/interfaces/transport.type";
 import { Stop } from "@/interfaces/stop.type";
-import { findBestRoute } from "@/lib/mapRouting";
+import { findBestRoute, getRoutableDirections } from "@/lib/mapRouting";
 import { getStopWalkingDistances } from "@/Services/walkingRoute.service";
 import { useCallback, useEffect, useState } from "react";
 
@@ -47,28 +47,11 @@ export function useRoutePlanner({
 
     try {
       const currentPosition = await getUserLocation();
-      const activeRouteIds = new Set(
-        buses
-          .filter((bus) => bus.active)
-          .map((bus) => bus.routeId.trim()),
-      );
-      const activeStopIds = new Set(
-        routes
-          .filter(
-            (route) => route.active && activeRouteIds.has(route.id.trim()),
-          )
-          .flatMap((route) => [
-            ...route.routeOutboundId,
-            ...route.routeReturnID,
-          ]),
-      );
-      const candidateStops = stops.filter((stop) =>
-        activeStopIds.has(stop.id.trim()),
-      );
-
-      if (candidateStops.length < 2) {
-        throw new Error("No hay suficientes paradas activas para calcular la ruta.");
+      const directions = getRoutableDirections(stops, routes);
+      if (!directions.length) {
+        throw new Error("No hay rutas activas con dos paradas disponibles en el mismo sentido.");
       }
+      const candidateStops = [...new Set(directions.flatMap(({ orderedStops }) => orderedStops))];
 
       const walkingDistances = await getStopWalkingDistances(
         currentPosition,
@@ -76,8 +59,7 @@ export function useRoutePlanner({
         candidateStops,
       );
       const result = findBestRoute(
-        stops,
-        routes,
+        directions,
         buses,
         selectedPlace.coordinate,
         walkingDistances,

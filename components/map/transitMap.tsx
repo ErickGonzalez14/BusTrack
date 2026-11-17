@@ -1,5 +1,4 @@
 import BusinessProMarker from "@/components/map/businessProMarker";
-import { UserSimulationStatus } from "@/hooks/useUserSimulation";
 import { Stop } from "@/interfaces/stop.type";
 import {
   Coordinate,
@@ -7,7 +6,6 @@ import {
   RouteRecommendation,
 } from "@/interfaces/transport.type";
 import {
-  getRemainingRouteCoordinates,
   isValidCoordinate,
   normalizeCoordinate,
 } from "@/lib/mapRouting";
@@ -27,11 +25,7 @@ type TransitMapProps = {
   selectedPlace: GooglePlace | null;
   displayedRoute: RouteRecommendation | null;
   routeCoordinates: Coordinate[];
-  routeProgress: number;
-  busCoordinate: Coordinate | null;
   liveBuses: { busId: string; coordinate: Coordinate; licensePlate: string }[];
-  userCoordinate?: Coordinate | null;
-  userSimulationStatus?: UserSimulationStatus;
   defaultLocation: Coordinate;
   proBusinesses?: BusinessListing[];
   onPoiClick: (event: PoiClickEvent) => void;
@@ -47,11 +41,7 @@ export default function TransitMap({
   selectedPlace,
   displayedRoute,
   routeCoordinates,
-  routeProgress,
-  busCoordinate,
   liveBuses,
-  userCoordinate,
-  userSimulationStatus,
   defaultLocation,
   proBusinesses = [],
   onPoiClick,
@@ -65,17 +55,13 @@ export default function TransitMap({
     () => stops.filter((stop) => isValidCoordinate(stop.adress)),
     [stops],
   );
-  const remainingRouteCoordinates = useMemo(
-    () => getRemainingRouteCoordinates(routeCoordinates, routeProgress),
-    [routeCoordinates, routeProgress],
-  );
 
   return (
     <MapView
       ref={mapRef}
       style={styles.map}
       provider={PROVIDER_GOOGLE}
-      showsUserLocation={!userCoordinate}
+      showsUserLocation
       showsMyLocationButton={false}
       onPoiClick={onPoiClick}
       onPress={onMapPress}
@@ -91,22 +77,9 @@ export default function TransitMap({
         longitudeDelta: 0.08,
       }}
     >
-      {userSimulationStatus === "walking" &&
-        userCoordinate &&
-        isValidCoordinate(userCoordinate) &&
-        displayedRoute && (
-          <Polyline
-            coordinates={[userCoordinate, displayedRoute.boardingStop.adress]}
-            strokeColor="#10B981"
-            strokeWidth={4}
-            lineDashPattern={[6, 4]}
-            zIndex={3}
-          />
-        )}
-
-      {displayedRoute && remainingRouteCoordinates.length >= 2 && (
+      {displayedRoute && routeCoordinates.length >= 2 && (
         <Polyline
-          coordinates={remainingRouteCoordinates}
+          coordinates={routeCoordinates}
           strokeColor={
             displayedRoute.direction === "outbound" ? "#1473E6" : "#F57C00"
           }
@@ -173,54 +146,20 @@ export default function TransitMap({
         />
       )}
 
-      {busCoordinate && isValidCoordinate(busCoordinate) && displayedRoute &&
-        !liveBuses.some((bus) => bus.busId === displayedRoute.bus.id) && (
-        <Marker
-          coordinate={busCoordinate}
-          title={displayedRoute.bus.licensePlate}
-          description={`Simulación · ${displayedRoute.route.name} · ${
-            displayedRoute.direction === "outbound" ? "Ida" : "Regreso"
-          }`}
-          zIndex={10}
-          tracksViewChanges={false}
-          image={require("@/assets/images/busTrackPin.png")}
-        ></Marker>
-      )}
-
       {liveBuses.map((bus) => (
         <Marker
           key={`live-${bus.busId}`}
           coordinate={bus.coordinate}
           title={bus.licensePlate}
-          description="Bus en vivo"
+          description={bus.busId === displayedRoute?.bus?.id
+            ? `Bus en vivo · ${displayedRoute.route.name}`
+            : "Bus en vivo"}
           zIndex={11}
           tracksViewChanges={false}
           image={require("@/assets/images/busTrackPin.png")}
         />
       ))}
 
-      {userCoordinate && isValidCoordinate(userCoordinate) && (
-        <Marker
-          coordinate={userCoordinate}
-          title="Tú"
-          description={
-            userSimulationStatus === "walking"
-              ? "Caminando hacia la parada"
-              : userSimulationStatus === "waitingForBus"
-                ? "Esperando el bus"
-                : userSimulationStatus === "onBus"
-                  ? "A bordo del bus"
-                  : "Llegaste a tu parada"
-          }
-          zIndex={15}
-          tracksViewChanges={false}
-          image={
-            userSimulationStatus === "walking"
-              ? require("@/assets/images/walkingUser.png")
-              : require("@/assets/images/user.png")
-          }
-        ></Marker>
-      )}
     </MapView>
   );
 }

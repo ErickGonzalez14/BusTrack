@@ -5,6 +5,7 @@ export type TransitRoute = {
   active: boolean;
   estimatedDuration: number;
   fareAprox: number;
+  ratingAverage?: number;
   name: string;
   routeType: string;
   routeOutboundId: string[];
@@ -49,7 +50,7 @@ export type GooglePlace = PlaceSuggestion & {
 export type RouteRecommendation = {
   route: TransitRoute;
   direction: RouteDirection;
-  bus: Bus;
+  bus: Bus | null;
   orderedStops: Stop[];
   boardingStop: Stop;
   destinationStop: Stop;
@@ -57,5 +58,5 @@ export type RouteRecommendation = {
   destinationIndex: number;
   walkingDistanceMeters: number;
   destinationDistanceMeters: number;
-  estimatedRideMinutes: number;
+  estimatedRideMinutes: number | null;
 };

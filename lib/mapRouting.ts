@@ -134,109 +134,115 @@ function getCorridorDropoffIndex(
     : closestSegmentIndex + 1;
 }
 
+export function getRoutableDirections(stops: Stop[], routes: TransitRoute[]) {
+  const stopsById = new Map(
+    stops.filter((stop) => stop.active !== false).map((stop) => [stop.id.trim(), stop]),
+  );
+  return routes.filter((route) => route.active).flatMap((route) => {
+    const directions: { direction: RouteDirection; stopIds: string[] }[] = [
+      { direction: "outbound", stopIds: route.routeOutboundId },
+      { direction: "return", stopIds: route.routeReturnID },
+    ];
+    return directions.flatMap(({ direction, stopIds }) => {
+      const orderedStops = stopIds.flatMap((id) => {
+        const stop = stopsById.get(id.trim());
+        return stop ? [stop] : [];
+      });
+      return new Set(orderedStops).size >= 2 ? [{ route, direction, orderedStops }] : [];
+    });
+  });
+}
+
 export function findBestRoute(
-  stops: Stop[],
-  routes: TransitRoute[],
+  directions: ReturnType<typeof getRoutableDirections>,
   buses: Bus[],
   destination: Coordinate,
   walkingDistances: WalkingDistances,
 ): RouteRecommendation | null {
-  const stopsById = new Map(stops.map((stop) => [stop.id.trim(), stop]));
   let best: RouteRecommendation | null = null;
   let bestTotalWalkingDistance = Number.POSITIVE_INFINITY;
   let bestRideMinutes = Number.POSITIVE_INFINITY;
   let bestFollowsRouteProgress = false;
 
-  for (const route of routes.filter((candidate) => candidate.active)) {
+  for (const { route, direction, orderedStops } of directions) {
     const bus = buses.find(
-      (candidate) => candidate.active && candidate.routeId.trim() === route.id.trim(),
-    );
-    if (!bus) continue;
+      (candidate) =>
+        candidate.active !== false &&
+        candidate.busStatus !== "pending" &&
+        candidate.busStatus !== "rejected" &&
+        candidate.routeId.trim() === route.id.trim(),
+    ) ?? null;
 
-    const directions: { direction: RouteDirection; stopIds: string[] }[] = [
-      { direction: "outbound", stopIds: route.routeOutboundId },
-      { direction: "return", stopIds: route.routeReturnID },
-    ];
+    for (let boardingIndex = 0; boardingIndex < orderedStops.length - 1; boardingIndex += 1) {
+      const boardingStop = orderedStops[boardingIndex];
+      const boardingDistance = walkingDistances.fromUser.get(
+        boardingStop.id.trim(),
+      );
+      if (boardingDistance === undefined) continue;
+      const corridorDropoffIndex = getCorridorDropoffIndex(
+        orderedStops,
+        boardingIndex,
+        destination,
+      );
 
-    for (const { direction, stopIds } of directions) {
-      const orderedStops = stopIds.flatMap((id) => {
-        const stop = stopsById.get(id.trim());
-        return stop ? [stop] : [];
-      });
-      if (orderedStops.length < 2) continue;
-
-      for (let boardingIndex = 0; boardingIndex < orderedStops.length - 1; boardingIndex += 1) {
-        const boardingStop = orderedStops[boardingIndex];
-        const boardingDistance = walkingDistances.fromUser.get(
-          boardingStop.id.trim(),
+      for (
+        let destinationIndex = boardingIndex + 1;
+        destinationIndex < orderedStops.length;
+        destinationIndex += 1
+      ) {
+        const destinationStop = orderedStops[destinationIndex];
+        if (destinationStop === boardingStop) continue;
+        const destinationDistance = walkingDistances.toDestination.get(
+          destinationStop.id.trim(),
         );
-        if (boardingDistance === undefined) continue;
-        const corridorDropoffIndex = getCorridorDropoffIndex(
-          orderedStops,
-          boardingIndex,
-          destination,
-        );
+        if (destinationDistance === undefined) continue;
 
-        for (
-          let destinationIndex = boardingIndex + 1;
-          destinationIndex < orderedStops.length;
-          destinationIndex += 1
+        const coveredSegments = destinationIndex - boardingIndex;
+        const totalSegments = orderedStops.length - 1;
+        const estimatedRideMinutes = Number.isFinite(route.estimatedDuration) && route.estimatedDuration > 0
+          ? Math.max(1, Math.round(route.estimatedDuration * coveredSegments / totalSegments))
+          : null;
+        const rideMinutesForRanking = estimatedRideMinutes ?? Number.POSITIVE_INFINITY;
+        const totalWalkingDistance =
+          boardingDistance + destinationDistance;
+        const walkingIsShorter =
+          totalWalkingDistance < bestTotalWalkingDistance - 25;
+        const walkingIsEquivalent =
+          Math.abs(totalWalkingDistance - bestTotalWalkingDistance) <= 25;
+        const followsRouteProgress =
+          destinationIndex === corridorDropoffIndex;
+        const routeProgressIsBetter =
+          followsRouteProgress && !bestFollowsRouteProgress;
+        const routeProgressIsEquivalent =
+          followsRouteProgress === bestFollowsRouteProgress;
+
+        if (
+          !routeProgressIsBetter &&
+          (!routeProgressIsEquivalent ||
+            (!walkingIsShorter &&
+              !(
+                walkingIsEquivalent && rideMinutesForRanking < bestRideMinutes
+              )))
         ) {
-          const destinationStop = orderedStops[destinationIndex];
-          const destinationDistance = walkingDistances.toDestination.get(
-            destinationStop.id.trim(),
-          );
-          if (destinationDistance === undefined) continue;
-
-          const coveredSegments = destinationIndex - boardingIndex;
-          const totalSegments = Math.max(orderedStops.length - 1, 1);
-          const estimatedRideMinutes = Math.max(
-            1,
-            Math.round(
-              route.estimatedDuration * (coveredSegments / totalSegments),
-            ),
-          );
-          const totalWalkingDistance =
-            boardingDistance + destinationDistance;
-          const walkingIsShorter =
-            totalWalkingDistance < bestTotalWalkingDistance - 25;
-          const walkingIsEquivalent =
-            Math.abs(totalWalkingDistance - bestTotalWalkingDistance) <= 25;
-          const followsRouteProgress =
-            destinationIndex === corridorDropoffIndex;
-          const routeProgressIsBetter =
-            followsRouteProgress && !bestFollowsRouteProgress;
-          const routeProgressIsEquivalent =
-            followsRouteProgress === bestFollowsRouteProgress;
-
-          if (
-            !routeProgressIsBetter &&
-            (!routeProgressIsEquivalent ||
-              (!walkingIsShorter &&
-                !(
-                  walkingIsEquivalent && estimatedRideMinutes < bestRideMinutes
-                )))
-          ) {
-            continue;
-          }
-
-          bestFollowsRouteProgress = followsRouteProgress;
-          bestTotalWalkingDistance = totalWalkingDistance;
-          bestRideMinutes = estimatedRideMinutes;
-          best = {
-            route,
-            direction,
-            bus,
-            orderedStops,
-            boardingStop,
-            destinationStop,
-            boardingIndex,
-            destinationIndex,
-            walkingDistanceMeters: boardingDistance,
-            destinationDistanceMeters: destinationDistance,
-            estimatedRideMinutes,
-          };
+          continue;
         }
+
+        bestFollowsRouteProgress = followsRouteProgress;
+        bestTotalWalkingDistance = totalWalkingDistance;
+        bestRideMinutes = rideMinutesForRanking;
+        best = {
+          route,
+          direction,
+          bus,
+          orderedStops,
+          boardingStop,
+          destinationStop,
+          boardingIndex,
+          destinationIndex,
+          walkingDistanceMeters: boardingDistance,
+          destinationDistanceMeters: destinationDistance,
+          estimatedRideMinutes,
+        };
       }
     }
   }

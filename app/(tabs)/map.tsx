@@ -5,7 +5,6 @@ import MapDetailsSheet from "@/components/map/mapDetailsSheet";
 import MapSearchOverlay from "@/components/map/mapSearchOverlay";
 import TransitMap from "@/components/map/transitMap";
 import DropDown from "@/components/ui/dropDown";
-import { useBusSimulation } from "@/hooks/useBusSimulation";
 import { useMapLocation } from "@/hooks/useMapLocation";
 import { useLiveBuses } from "@/hooks/useLiveBuses";
 import { usePassengerJourney } from "@/hooks/usePassengerJourney";
@@ -19,7 +18,6 @@ import {
 import { useRoadRoute } from "@/hooks/useRoadRoute";
 import { useRoutePlanner } from "@/hooks/useRoutePlanner";
 import { useRouteFeedback } from "@/hooks/useRouteFeedback";
-import { useUserSimulation } from "@/hooks/useUserSimulation";
 import {
   Coordinate,
   GooglePlace,
@@ -37,7 +35,7 @@ import {
   getStops,
 } from "@/Services/map.service";
 import { BusinessListing } from "@/Services/request.service";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Location from "expo-location";
 import {
   useFocusEffect,
@@ -65,16 +63,12 @@ import { StyleSheet } from "react-native-unistyles";
 
 const DEFAULT_LOCATION = { latitude: 8.4821, longitude: -82.6178 };
 const EMPTY_BUSINESSES: BusinessListing[] = [];
+const STOPS_QUERY = { queryKey: ["stops"], queryFn: getStops, staleTime: 60_000 };
+const ROUTES_QUERY = { queryKey: ["routes"], queryFn: getRoutes, staleTime: 60_000 };
+const BUSES_QUERY = { queryKey: ["buses"], queryFn: getBuses, staleTime: 60_000 };
 const windowWidth = Dimensions.get("window").width;
 const getSearchParam = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
-
-const formatBusArrival = (seconds: number | null) => {
-  if (seconds === null) return "Calculando";
-  if (seconds <= 0) return "En la parada";
-  if (seconds < 60) return "Menos de 1 min";
-  return `${Math.ceil(seconds / 60)} min`;
-};
 
 export default function Map() {
   const sheetRef = useRef<PrimaryBottomSheetRef>(null);
@@ -105,17 +99,12 @@ export default function Map() {
   const canSaveStop = !!stopTarget && !!stopName.trim() && !isAddingStop &&
     (!isCrowdStop || (!!crowdRouteName.trim() && !!crowdDirection && !!crowdBusType));
   const [feedbackRoute, setFeedbackRoute] = useState<RouteRecommendation | null>(null);
+  const submittingRouteFeedback = useRef(false);
   const routeFeedback = useRouteFeedback();
-  const stopsQuery = useQuery({
-    queryKey: ["stops"],
-    queryFn: getStops,
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-  });
-  const routesQuery = useQuery({ queryKey: ["routes"], queryFn: getRoutes });
-  const busesQuery = useQuery({ queryKey: ["buses"], queryFn: getBuses });
+  const queryClient = useQueryClient();
+  const stopsQuery = useQuery(STOPS_QUERY);
+  const routesQuery = useQuery(ROUTES_QUERY);
+  const busesQuery = useQuery(BUSES_QUERY);
   const liveLocations = useLiveBuses();
   const liveBuses = liveLocations.flatMap((location) => {
     const bus = busesQuery.data?.find(
@@ -167,37 +156,13 @@ export default function Map() {
       mounted = false;
     };
   }, [setUserLocation]);
-  const {
-    activeRoute,
-    busCoordinate,
-    status: journeyStatus,
-    etaToBoardingSeconds,
-    hasPassedBoardingStop,
-    busRunNumber,
-    routeProgress,
-    startSimulation,
-    startNextBus,
-    finishSimulation,
-  } = useBusSimulation();
-  const {
-    userCoordinate: simulatedUserCoordinate,
-    status: userSimulationStatus,
-    startSimulation: startUserSimulation,
-    finishSimulation: finishUserSimulation,
-  } = useUserSimulation({
-    busCoordinate,
-    busStatus: journeyStatus,
-  });
-  const effectiveUserLocation = simulatedUserCoordinate ?? userLocation;
+  const [activeRoute, setActiveRoute] = useState<RouteRecommendation | null>(null);
+  const activeBus = liveBuses.find((bus) => bus.busId === activeRoute?.bus?.id);
   const passengerJourney = usePassengerJourney({
     route: activeRoute,
-    userLocation: effectiveUserLocation,
-    busCoordinate,
-    busStatus: journeyStatus,
-    hasBusPassedBoardingStop: hasPassedBoardingStop,
-    busRunNumber,
+    userLocation,
+    busCoordinate: activeBus?.coordinate ?? null,
   });
-  const handledMissedBusSequence = useRef(0);
 
   // ── Negocios Light y Pro ─────────────────────────────────────────────────
   const { data: lightBusinessData, refetch: refetchLightBusinesses } =
@@ -214,10 +179,13 @@ export default function Map() {
 
   useFocusEffect(
     useCallback(() => {
+      void queryClient.prefetchQuery(STOPS_QUERY);
+      void queryClient.prefetchQuery(ROUTES_QUERY);
+      void queryClient.prefetchQuery(BUSES_QUERY);
       void refetchLightBusinesses();
       void refetchProBusinesses();
       void refetchActivePromotions();
-    }, [refetchLightBusinesses, refetchProBusinesses, refetchActivePromotions]),
+    }, [queryClient, refetchLightBusinesses, refetchProBusinesses, refetchActivePromotions]),
   );
   const {
     nearbyBusiness,
@@ -267,15 +235,6 @@ export default function Map() {
   }, [isMapReady, proBusinesses, userLocation, activeRoute, isSheetOpen]);
 
   useEffect(() => {
-    if (
-      userSimulationStatus === "onBus" &&
-      passengerJourney.phase === "boardingPrompt"
-    ) {
-      passengerJourney.confirmBoarding();
-    }
-  }, [userSimulationStatus, passengerJourney]);
-
-  useEffect(() => {
     navigation.setOptions({
       tabBarStyle: isSheetOpen ? { display: "none" } : undefined,
     });
@@ -284,23 +243,6 @@ export default function Map() {
       navigation.setOptions({ tabBarStyle: undefined });
     };
   }, [isSheetOpen, navigation]);
-
-  useEffect(() => {
-    if (
-      passengerJourney.missedBusSequence === 0 ||
-      passengerJourney.missedBusSequence === handledMissedBusSequence.current
-    ) {
-      return;
-    }
-
-    handledMissedBusSequence.current = passengerJourney.missedBusSequence;
-    startNextBus();
-    sheetRef.current?.open();
-    Alert.alert(
-      "El bus ya pasó",
-      "No estabas cerca de la parada de abordaje. Ya estamos calculando la llegada del siguiente bus.",
-    );
-  }, [passengerJourney.missedBusSequence, startNextBus]);
 
   useEffect(() => {
     if (
@@ -392,16 +334,21 @@ export default function Map() {
     return () => clearTimeout(timer);
   }, [favoriteParams, placeSearch.selectPlace]);
 
+  const liveBusIds = new Set(liveBuses.map((bus) => bus.busId));
+  const busesForPlanning = [...(busesQuery.data ?? [])].sort(
+    (first, second) => Number(liveBusIds.has(second.id)) - Number(liveBusIds.has(first.id)),
+  );
   const routePlanner = useRoutePlanner({
     stops: stopsQuery.data ?? [],
     routes: routesQuery.data ?? [],
-    buses: busesQuery.data ?? [],
+    buses: busesForPlanning,
     selectedPlace: placeSearch.selectedPlace,
     getUserLocation: getFreshUserLocation,
     onRouteFound: focusRoute,
   });
-  const visibleRoute = routePlanner.recommendation ?? activeRoute;
+  const visibleRoute = activeRoute ?? routePlanner.recommendation;
   const roadRoute = useRoadRoute(visibleRoute);
+  const displayedBusIsLive = !!visibleRoute?.bus && liveBusIds.has(visibleRoute.bus.id);
 
   const handlePoiClick = useCallback(
     (event: PoiClickEvent) => {
@@ -417,7 +364,7 @@ export default function Map() {
   const handleCenterUserLocation = useCallback(async () => {
     try {
       const coordinate =
-        effectiveUserLocation ?? (await getFreshUserLocation());
+        userLocation ?? (await getFreshUserLocation());
 
       mapRef.current?.animateToRegion(
         {
@@ -435,7 +382,7 @@ export default function Map() {
           : "No pudimos obtener tu ubicación actual.",
       );
     }
-  }, [effectiveUserLocation, getFreshUserLocation]);
+  }, [userLocation, getFreshUserLocation]);
 
   const handleShowProBusinesses = useCallback(() => {
     if (proBusinesses.length === 0) return;
@@ -463,16 +410,10 @@ export default function Map() {
     if (!routePlanner.recommendation || roadRoute.coordinates.length < 2)
       return;
 
-    const coordinates = startSimulation(
-      routePlanner.recommendation,
-      roadRoute.coordinates,
-    );
-    startUserSimulation(
-      routePlanner.recommendation,
-      userLocation ?? DEFAULT_LOCATION,
-    );
+    passengerJourney.resetJourney();
+    setActiveRoute(routePlanner.recommendation);
     sheetRef.current?.collapse();
-    mapRef.current?.fitToCoordinates(coordinates, {
+    mapRef.current?.fitToCoordinates(roadRoute.coordinates, {
       edgePadding: { top: 190, right: 45, bottom: 130, left: 45 },
       animated: true,
     });
@@ -542,31 +483,33 @@ export default function Map() {
 
   const clearRouteAndPlace = useCallback(() => {
     setStopTarget((target) => target?.routeId ? null : target);
-    finishSimulation();
-    finishUserSimulation();
+    setActiveRoute(null);
     passengerJourney.resetJourney();
     routePlanner.setRecommendation(null);
     placeSearch.clearSelectedPlace();
     sheetRef.current?.close();
   }, [
-    finishSimulation,
-    finishUserSimulation,
     passengerJourney,
     placeSearch,
     routePlanner,
   ]);
 
-  useEffect(() => {
-    if (passengerJourney.phase !== "exitPrompt" || !activeRoute || feedbackRoute) return;
-    setFeedbackRoute(activeRoute);
+  const finishRoute = useCallback(() => {
+    if (!activeRoute) return;
+    setFeedbackRoute((current) => current ?? activeRoute);
     clearRouteAndPlace();
-  }, [activeRoute, clearRouteAndPlace, feedbackRoute, passengerJourney.phase]);
+  }, [activeRoute, clearRouteAndPlace]);
+
+  useEffect(() => {
+    if (passengerJourney.phase === "exitPrompt") finishRoute();
+  }, [finishRoute, passengerJourney.phase]);
 
   const handleRateRoute = useCallback(async (rating: number, fare: number) => {
-    if (!feedbackRoute) return;
+    if (!feedbackRoute || submittingRouteFeedback.current) return;
+    submittingRouteFeedback.current = true;
     try {
       await routeFeedback.mutateAsync({
-        busId: feedbackRoute.bus.id,
+        busId: feedbackRoute.bus?.id,
         routeId: feedbackRoute.route.id,
         rating,
         fare,
@@ -577,6 +520,8 @@ export default function Map() {
         "No pudimos guardar tu calificación",
         error instanceof Error ? error.message : "Inténtalo nuevamente.",
       );
+    } finally {
+      submittingRouteFeedback.current = false;
     }
   }, [feedbackRoute, routeFeedback]);
 
@@ -590,7 +535,7 @@ export default function Map() {
           {
             text: "Sí, terminar",
             style: "destructive",
-            onPress: clearRouteAndPlace,
+            onPress: finishRoute,
           },
         ],
       );
@@ -600,7 +545,7 @@ export default function Map() {
     routePlanner.setRecommendation(null);
     placeSearch.clearSelectedPlace();
     sheetRef.current?.close();
-  }, [activeRoute, clearRouteAndPlace, placeSearch, routePlanner]);
+  }, [activeRoute, finishRoute, placeSearch, routePlanner]);
 
   // ── Verificar proximidad a negocios Pro cuando cambia la ubicación ────────
   const handleUserLocationChange = useCallback(
@@ -641,10 +586,8 @@ export default function Map() {
     });
   }, [nearbyBusiness, closePopup, placeSearch]);
 
-  const isLoading =
-    stopsQuery.isLoading || routesQuery.isLoading || busesQuery.isLoading;
-  const isError =
-    stopsQuery.isError || routesQuery.isError || busesQuery.isError;
+  const isLoading = stopsQuery.isLoading || routesQuery.isLoading;
+  const isError = stopsQuery.isLoadingError || routesQuery.isLoadingError;
 
   if (isLoading) {
     return (
@@ -657,7 +600,7 @@ export default function Map() {
   if (isError) {
     return (
       <View style={styles.centered}>
-        <Text>No se pudieron cargar las paradas, rutas y buses.</Text>
+        <Text>No se pudieron cargar las paradas y rutas.</Text>
       </View>
     );
   }
@@ -677,11 +620,7 @@ export default function Map() {
         selectedPlace={placeSearch.selectedPlace}
         displayedRoute={visibleRoute}
         routeCoordinates={roadRoute.coordinates}
-        routeProgress={activeRoute ? routeProgress : 0}
-        busCoordinate={busCoordinate}
         liveBuses={liveBuses}
-        userCoordinate={simulatedUserCoordinate}
-        userSimulationStatus={userSimulationStatus}
         defaultLocation={DEFAULT_LOCATION}
         proBusinesses={proBusinesses}
         onPoiClick={handlePoiClick}
@@ -762,55 +701,42 @@ export default function Map() {
       <MapDetailsSheet
         sheetRef={sheetRef}
         place={placeSearch.selectedPlace}
-        recommendation={routePlanner.recommendation}
+        recommendation={visibleRoute}
         isLoadingPlace={placeSearch.isLoadingPlace}
         isFindingRoute={routePlanner.isFindingRoute}
         isLoadingRoad={roadRoute.isLoading}
         canStartRoute={roadRoute.coordinates.length >= 2}
         isRouteActive={activeRoute !== null}
         activeRoute={activeRoute}
-        activeRouteStatus={journeyStatus === "idle" ? "running" : journeyStatus}
+        activeRouteStatus={passengerJourney.phase === "exitPrompt" ? "arrived" : "running"}
         passengerPhase={passengerJourney.phase}
         timeNearestBus={
-          activeRoute
-            ? passengerJourney.phase === "onBoard"
-              ? "A bordo"
-              : passengerJourney.phase === "exitPrompt"
-                ? "Llegaste"
-                : formatBusArrival(etaToBoardingSeconds)
-            : "Al confirmar"
+          passengerJourney.phase === "onBoard"
+            ? "A bordo"
+            : displayedBusIsLive
+              ? "En vivo"
+              : visibleRoute?.bus ? "Sin ubicación en vivo" : "Sin bus asignado"
         }
+        hasLiveBus={displayedBusIsLive}
         error={routePlanner.error ?? roadRoute.error ?? placeSearch.error}
         onFindRoute={() => {
           placeSearch.clearError();
           void routePlanner.findRouteToPlace();
         }}
         onStartRoute={handleStartRoute}
-        onCancelRoute={() => {
-          finishSimulation();
-          finishUserSimulation();
-          passengerJourney.resetJourney();
-          routePlanner.setRecommendation(null);
-          placeSearch.clearSelectedPlace();
-          sheetRef.current?.close();
-        }}
+        onCancelRoute={clearRouteAndPlace}
         onConfirmBoarding={() => {
           passengerJourney.confirmBoarding();
           sheetRef.current?.collapse();
         }}
-        onConfirmExit={() => {
-          if (activeRoute) setFeedbackRoute(activeRoute);
-          clearRouteAndPlace();
-        }}
-        onFinishRoute={() => {
-          clearRouteAndPlace();
-        }}
+        onConfirmExit={finishRoute}
+        onFinishRoute={finishRoute}
         onRequestClose={handleRequestSheetClose}
         onSheetChange={(index) => setIsSheetOpen(index >= 0)}
       />
 
       <FinishRouteCard
-        key={feedbackRoute ? `${feedbackRoute.bus.id}:${feedbackRoute.route.id}` : "no-route"}
+        key={feedbackRoute?.route.id ?? "no-route"}
         visible={feedbackRoute !== null}
         isSubmitting={routeFeedback.isPending}
         onRate={(rating, fare) => void handleRateRoute(rating, fare)}

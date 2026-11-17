@@ -37,6 +37,7 @@ type MapDetailsSheetProps = {
   activeRouteStatus: "running" | "nearDestination" | "arrived";
   passengerPhase: PassengerJourneyPhase;
   timeNearestBus: string;
+  hasLiveBus: boolean;
   error: string | null;
   onFindRoute: () => void;
   onStartRoute: () => void;
@@ -66,6 +67,7 @@ export default function MapDetailsSheet({
   activeRouteStatus,
   passengerPhase,
   timeNearestBus,
+  hasLiveBus,
   error,
   onFindRoute,
   onStartRoute,
@@ -229,13 +231,17 @@ export default function MapDetailsSheet({
               </>
             )}
             <RouteCard
-              busPlate={recommendation.bus.publicTransportPlate}
-              busType={recommendation.bus.routeType}
+              busPlate={recommendation.bus
+                ? recommendation.bus.publicTransportPlate || recommendation.bus.licensePlate || "Bus registrado"
+                : "Sin bus asignado"}
+              busType={recommendation.bus?.routeType || recommendation.route.routeType}
               startStop={recommendation.boardingStop.name}
               endStop={recommendation.destinationStop.name}
-              routeTime={`${recommendation.estimatedRideMinutes} min`}
+              routeTime={recommendation.estimatedRideMinutes === null
+                ? "Por confirmar"
+                : `${recommendation.estimatedRideMinutes} min`}
               routeFair={recommendation.route.fareAprox}
-              calification={recommendation.bus.ratingAverage}
+              calification={recommendation.bus?.ratingAverage ?? recommendation.route.ratingAverage}
               timeNearestBus={timeNearestBus}
               routeDirection={
                 recommendation.direction === "outbound" ? "Ida" : "Regreso"
@@ -244,6 +250,7 @@ export default function MapDetailsSheet({
             {isRouteActive ? (
               <JourneyStatus
                 phase={passengerPhase}
+                hasLiveBus={hasLiveBus}
                 boardingStopName={recommendation.boardingStop.name}
                 destinationStopName={recommendation.destinationStop.name}
                 onConfirmBoarding={onConfirmBoarding}
@@ -362,6 +369,7 @@ export default function MapDetailsSheet({
 
 type JourneyStatusProps = {
   phase: PassengerJourneyPhase;
+  hasLiveBus: boolean;
   boardingStopName: string;
   destinationStopName: string;
   onConfirmBoarding: () => void;
@@ -370,6 +378,7 @@ type JourneyStatusProps = {
 
 function JourneyStatus({
   phase,
+  hasLiveBus,
   boardingStopName,
   destinationStopName,
   onConfirmBoarding,
@@ -394,8 +403,7 @@ function JourneyStatus({
     return (
       <View style={styles.journeyMessage}>
         <Text style={styles.journeyMessageText}>
-          Sigues cerca de {destinationStopName} y el bus se está alejando.
-          Confirma que ya bajaste.
+          Estás cerca de {destinationStopName}. Confirma cuando hayas bajado.
         </Text>
         <PrimaryAction text="Sí, ya bajé" onPress={onConfirmExit} />
       </View>
@@ -406,7 +414,9 @@ function JourneyStatus({
     <Text style={styles.compactStatus}>
       {phase === "onBoard"
         ? `Vas dentro del bus. Te avisaremos al llegar a ${destinationStopName}.`
-        : `Dirígete a ${boardingStopName}. Te avisaremos cuando llegue el bus.`}
+        : hasLiveBus
+          ? `Dirígete a ${boardingStopName}. Te avisaremos cuando el bus esté cerca.`
+          : `Dirígete a ${boardingStopName}. Por ahora no hay una ubicación del bus en vivo.`}
     </Text>
   );
 }
