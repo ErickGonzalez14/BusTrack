@@ -1,5 +1,6 @@
 import { getAuth } from "@react-native-firebase/auth";
 import { authenticatedBackendRequest } from "@/Services/premiumSync.service";
+import type { Coordinate } from "@/interfaces/transport.type";
 import {
   collection,
   doc,
@@ -32,7 +33,10 @@ export type CommunityRoute = CommunityItem & {
 export type CommunityTrip = CommunityItem & {
   origin: string;
   destination: string;
-  stops: string[];
+  originPlaceId?: string;
+  destinationPlaceId?: string;
+  originCoordinate?: Coordinate;
+  destinationCoordinate?: Coordinate;
   distanceKm: number;
   durationMinutes: number;
 };
@@ -70,7 +74,10 @@ export async function createCommunityTrip(input: {
   description: string;
   origin: string;
   destination: string;
-  stops: string[];
+  originPlaceId: string;
+  destinationPlaceId: string;
+  originCoordinate: Coordinate;
+  destinationCoordinate: Coordinate;
   distanceKm: number;
   durationMinutes: number;
 }) {
@@ -78,16 +85,28 @@ export async function createCommunityTrip(input: {
   const description = clean(input.description);
   const origin = clean(input.origin);
   const destination = clean(input.destination);
-  const stops = input.stops.map(clean).filter(Boolean);
-  if (title.length < 4 || title.length > 80 || description.length > 500 ||
-      origin.length < 2 || origin.length > 80 || destination.length < 2 || destination.length > 80 ||
-      stops.length > 10 || stops.some((stop) => stop.length > 80) ||
-      !Number.isFinite(input.distanceKm) || input.distanceKm <= 0 || input.distanceKm > 1000 ||
+  if (title.length < 4 || title.length > 80) {
+    throw new Error("El título debe tener entre 4 y 80 caracteres.");
+  }
+  if (description.length > 500) {
+    throw new Error("La descripción puede tener hasta 500 caracteres.");
+  }
+  if (origin.length < 2 || origin.length > 80 || destination.length < 2 || destination.length > 80 ||
+      !input.originPlaceId || !input.destinationPlaceId ||
+      !Number.isFinite(input.originCoordinate.latitude) || !Number.isFinite(input.originCoordinate.longitude) ||
+      !Number.isFinite(input.destinationCoordinate.latitude) || !Number.isFinite(input.destinationCoordinate.longitude)) {
+    throw new Error("Selecciona un origen y un destino válidos de las sugerencias.");
+  }
+  if (!Number.isFinite(input.distanceKm) || input.distanceKm <= 0 || input.distanceKm > 1000 ||
       !Number.isInteger(input.durationMinutes) || input.durationMinutes < 1 || input.durationMinutes > 10080) {
-    throw new Error("Revisa el origen, destino, distancia y duración del trip.");
+    throw new Error("La distancia o la duración calculada está fuera del rango admitido.");
   }
   await authenticatedBackendRequest("/community/trips", {
-    title, description, origin, destination, stops,
+    title, description, origin, destination,
+    // Older Render deployments still require this field.
+    stops: [],
+    originPlaceId: input.originPlaceId, destinationPlaceId: input.destinationPlaceId,
+    originCoordinate: input.originCoordinate, destinationCoordinate: input.destinationCoordinate,
     distanceKm: input.distanceKm, durationMinutes: input.durationMinutes,
   });
 }

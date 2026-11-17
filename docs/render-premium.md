@@ -72,3 +72,19 @@ ningún evento.
 
 Render Free se suspende tras 15 minutos sin tráfico; la primera verificación
 puede tardar cerca de un minuto. El cliente espera hasta 90 segundos.
+
+## Habilitar la predicción de tráfico
+
+1. Despliega las reglas de Firestore actualizadas para proteger `trafficUsage`.
+2. En Render, configura `GOOGLE_ROUTES_TRAFFIC_API_KEY` con una clave restringida
+   a Routes API, con facturación habilitada en Google Cloud. Vuelve a desplegar
+   el servidor para habilitar `POST /premium/traffic-forecast`.
+3. En la app actualizada, abre Premium y elige un día en **Predicción de
+   tráfico vial**.
+
+La app ofrece fechas entre 7 y 13 días en el futuro. El servidor solicita a
+Google Routes estimaciones para cuatro horarios de tres corredores, con
+`TRAFFIC_AWARE_OPTIMAL` y `BEST_GUESS`. El gráfico muestra los minutos por
+corredor. Son pronósticos de duración en carro. Cada consulta usa hasta
+12 solicitudes a Google, con un límite de 3 consultas por usuario y 72
+solicitudes totales por día. Firestore almacena los contadores de uso.

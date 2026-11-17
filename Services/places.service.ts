@@ -51,18 +51,8 @@ export async function searchPlaces(
       includedRegionCodes: ["pa"],
       languageCode: "es",
       regionCode: "pa",
-      ...(origin
-        ? {
-            origin,
-            locationRestriction: {
-              rectangle: CHIRIQUI_VIEWPORT,
-            },
-          }
-        : {
-            locationRestriction: {
-              rectangle: CHIRIQUI_VIEWPORT,
-            },
-          }),
+      ...(origin ? { origin } : {}),
+      locationRestriction: { rectangle: CHIRIQUI_VIEWPORT },
     }),
   });
 

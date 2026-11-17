@@ -20,6 +20,39 @@ function waypoint(coordinate: Coordinate) {
   };
 }
 
+export async function getRoadTripEstimate(origin: Coordinate, destination: Coordinate) {
+  const response = await fetch(ROUTES_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": getApiKey(),
+      "X-Goog-FieldMask": "routes.distanceMeters,routes.duration",
+    },
+    body: JSON.stringify({
+      origin: waypoint(origin),
+      destination: waypoint(destination),
+      travelMode: "DRIVE",
+      routingPreference: "TRAFFIC_UNAWARE",
+      languageCode: "es",
+      units: "METRIC",
+    }),
+  });
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
+    throw new Error(body?.error?.message || "No se pudo calcular el trip por carretera.");
+  }
+  const body = (await response.json()) as { routes?: { distanceMeters?: number; duration?: string }[] };
+  const route = body.routes?.[0];
+  const seconds = Number(route?.duration?.replace(/s$/, ""));
+  if (!route?.distanceMeters || !Number.isFinite(seconds) || seconds <= 0) {
+    throw new Error("Google Routes no devolvió distancia y duración para estos lugares.");
+  }
+  return {
+    distanceKm: Math.max(0.1, Math.round(route.distanceMeters / 100) / 10),
+    durationMinutes: Math.max(1, Math.ceil(seconds / 60)),
+  };
+}
+
 function decodePolyline(encoded: string): Coordinate[] {
   const coordinates: Coordinate[] = [];
   let latitude = 0;

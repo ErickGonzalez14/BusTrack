@@ -14,7 +14,6 @@ type TripCardProps = {
   destination?: string;
   distanceKm?: number | string;
   duration?: string;
-  stops?: string;
   ratingAverage?: number;
   ratingCount?: number;
   onPress?: () => void;
@@ -77,7 +76,6 @@ export default function TripCard({
   destination = "Playa La Barqueta",
   distanceKm = "20.15",
   duration = "2h",
-  stops = "No hay",
   ratingAverage,
   ratingCount,
   onPress,
@@ -86,7 +84,7 @@ export default function TripCard({
     <Pressable
       style={styles.shadow}
       accessible
-      accessibilityLabel={`${destination}, ${distanceKm} kilómetros, tiempo ${duration}, escalas ${stops}`}
+      accessibilityLabel={`${destination}, ${distanceKm} kilómetros, tiempo ${duration}`}
       onPress={onPress}
     >
       <View style={[styles.card, ratingCount !== undefined && styles.ratedCard]}>
@@ -108,12 +106,6 @@ export default function TripCard({
             <Text style={styles.detailLabel}>Tiempo</Text>
             <Text style={styles.detailValue} numberOfLines={1}>
               {duration}
-            </Text>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailLabel}>Escalas</Text>
-            <Text style={styles.detailValue} numberOfLines={1}>
-              {stops}
             </Text>
           </View>
         </View>

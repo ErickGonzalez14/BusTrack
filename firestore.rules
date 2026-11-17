@@ -16,6 +16,8 @@ service cloud.firestore {
       allow read, write: if collection != 'userSubscriptions'
         && collection != 'communityRoutes'
         && collection != 'communityTrips'
+        && collection != 'trafficUsage'
+        && collection != 'roadTrafficDaily'
         && request.time < timestamp.date(2026, 12, 13);
     }
 

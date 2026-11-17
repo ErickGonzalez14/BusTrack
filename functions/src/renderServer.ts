@@ -4,6 +4,7 @@ import {timingSafeEqual} from "node:crypto";
 import {cert, initializeApp} from "firebase-admin/app";
 import {getAuth} from "firebase-admin/auth";
 import {FieldValue, getFirestore, Timestamp} from "firebase-admin/firestore";
+import {trafficForecast} from "./trafficForecast";
 
 type RevenueCatCustomer = {
   request_date_ms: number;
@@ -209,25 +210,40 @@ async function createCommunityRoute(uid: string, body: Record<string, unknown>) 
 
 async function createCommunityTrip(uid: string, body: Record<string, unknown>) {
   const title = text(body.title, 4, 80);
-  const description = text(body.description, 0, 500);
+  const description = text(body.description ?? "", 0, 500);
   const origin = text(body.origin, 2, 80);
   const destination = text(body.destination, 2, 80);
-  const stops = body.stops;
+  const originPlaceId = text(body.originPlaceId, 1, 200);
+  const destinationPlaceId = text(body.destinationPlaceId, 1, 200);
+  const originCoordinate = body.originCoordinate as {latitude?: unknown; longitude?: unknown} | undefined;
+  const destinationCoordinate = body.destinationCoordinate as {latitude?: unknown; longitude?: unknown} | undefined;
+  const validCoordinate = (coordinate: typeof originCoordinate) =>
+    coordinate && typeof coordinate.latitude === "number" &&
+    Number.isFinite(coordinate.latitude) && Math.abs(coordinate.latitude) <= 90 &&
+    typeof coordinate.longitude === "number" &&
+    Number.isFinite(coordinate.longitude) && Math.abs(coordinate.longitude) <= 180;
   const distanceKm = body.distanceKm;
   const durationMinutes = body.durationMinutes;
-  if (!title || description === null || !origin || !destination ||
-      !Array.isArray(stops) || stops.length > 10 ||
-      !stops.every((stop) => text(stop, 1, 80) !== null) ||
-      typeof distanceKm !== "number" || distanceKm <= 0 || distanceKm > 1000 ||
+  if (!title) return {error: "El título debe tener entre 4 y 80 caracteres."};
+  if (description === null) return {error: "La descripción puede tener hasta 500 caracteres."};
+  if (!origin || !destination ||
+      !originPlaceId || !destinationPlaceId ||
+      !validCoordinate(originCoordinate) || !validCoordinate(destinationCoordinate)) {
+    return {error: "Selecciona un origen y un destino válidos de las sugerencias."};
+  }
+  if (typeof distanceKm !== "number" || !Number.isFinite(distanceKm) || distanceKm <= 0 || distanceKm > 1000 ||
       !Number.isInteger(durationMinutes) || (durationMinutes as number) < 1 ||
-      (durationMinutes as number) > 10080) return null;
+      (durationMinutes as number) > 10080) {
+    return {error: "La distancia o la duración calculada está fuera del rango admitido."};
+  }
   const ref = await db.collection("communityTrips").add({
-    authorId: uid, title, description, origin, destination, stops,
+    authorId: uid, title, description, origin, destination,
+    originPlaceId, destinationPlaceId, originCoordinate, destinationCoordinate,
     distanceKm, durationMinutes, status: "published",
     ratingAverage: 0, ratingCount: 0, ratingTotal: 0,
     rankingScore: 3, createdAt: FieldValue.serverTimestamp(),
   });
-  return ref.id;
+  return {id: ref.id};
 }
 
 async function rateCommunity(uid: string, body: Record<string, unknown>) {
@@ -311,12 +327,15 @@ const server = createServer(async (request, response) => {
       return;
     }
     const body = await readJson(request);
-    if (path === "/community/routes") {
+    if (path === "/premium/traffic-forecast") {
+      const forecast = await trafficForecast(db, uid, body.date);
+      send(response, forecast.status, forecast.body);
+    } else if (path === "/community/routes") {
       const id = await createCommunityRoute(uid, body);
       send(response, id ? 201 : 400, id ? {id} : {error: "Revisa la ruta y sus paradas."});
     } else if (path === "/community/trips") {
-      const id = await createCommunityTrip(uid, body);
-      send(response, id ? 201 : 400, id ? {id} : {error: "Revisa los datos del trip."});
+      const result = await createCommunityTrip(uid, body);
+      send(response, result.id ? 201 : 400, result);
     } else if (path === "/community/rating") {
       const rated = await rateCommunity(uid, body);
       send(response, rated ? 200 : 400, rated ? {ok: true} : {error: "No se pudo valorar esta publicación."});
