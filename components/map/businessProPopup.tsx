@@ -1,14 +1,8 @@
 import { BusinessListing, BusinessPromotion } from "@/Services/request.service";
+import { router } from "expo-router";
 import { Xmark } from "iconoir-react-native";
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  Image,
-  Modal,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Image, Modal, Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 type BusinessProPopupProps = {
@@ -114,18 +108,16 @@ export default function BusinessProPopup({
                 onPress={onClose}
                 style={styles.closeButton}
               >
-                <Xmark
-                  width={20}
-                  height={20}
-                  color={theme.text.placeholder}
-                />
+                <Xmark width={20} height={20} color={theme.text.placeholder} />
               </Pressable>
             </View>
 
             {/* Cuerpo */}
             <View style={styles.body}>
               <Text style={styles.nearbyLabel}>
-                {isNearby ? "📍 Estás cerca de este negocio" : "Negocio en el mapa"}
+                {isNearby
+                  ? "📍 Estás cerca de este negocio"
+                  : "Negocio en el mapa"}
               </Text>
               <Text style={styles.description} numberOfLines={3}>
                 {isNearby
@@ -134,13 +126,38 @@ export default function BusinessProPopup({
               </Text>
               {promotion && (
                 <View style={styles.promotion}>
-                  <Text style={styles.promotionTitle} numberOfLines={2}>{promotion.title}</Text>
-                  <Text style={styles.description} numberOfLines={3}>{promotion.description}</Text>
+                  <Text style={styles.promotionTitle} numberOfLines={2}>
+                    {promotion.title}
+                  </Text>
+                  <Text style={styles.description} numberOfLines={3}>
+                    {promotion.description}
+                  </Text>
                 </View>
               )}
-              <Pressable style={styles.detailButton} onPress={onViewDetail} accessibilityRole="button">
-                <Text style={styles.detailButtonText}>Ver detalle</Text>
-              </Pressable>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 8,
+                  justifyContent: "space-between",
+                }}
+              >
+                <Pressable
+                  style={[styles.detailButton, { flex: 1 }]}
+                  onPress={onViewDetail}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.detailButtonText}>Viajar</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.detailButton, { flex: 1 }]}
+                  accessibilityRole="button"
+                  onPress={() => {
+                    router.push("/productCatalog");
+                  }}
+                >
+                  <Text style={styles.detailButtonText}>Ver Catálogo</Text>
+                </Pressable>
+              </View>
             </View>
           </Pressable>
         </Animated.View>

@@ -2,11 +2,16 @@ import PrimaryHeader from "@/components/Headers/PrimaryHeader/primaryHeader";
 import FavoriteCard from "@/components/ui/Cards/favoriteCard";
 import PrimaryCard from "@/components/ui/Cards/primaryCard";
 import ProductCard from "@/components/ui/Cards/productCard";
+import ProductModal from "@/components/ui/Cards/productModal";
 import Empty from "@/components/ui/empty";
 import { useFavoriteSites } from "@/hooks/useFavoriteSites";
-import { useBusinessPublications } from "@/hooks/useRequests";
+import {
+  useBusinessFromPublication,
+  useBusinessPublications,
+} from "@/hooks/useRequests";
 import { useGetRoutines } from "@/hooks/useRoutine";
 import { router } from "expo-router";
+import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import { StyleSheet } from "react-native-unistyles";
@@ -16,6 +21,16 @@ export default function Home() {
   const { businessPublications, isPublicationLoading, publicationsError } =
     useBusinessPublications();
   const { routines, isRoutineLoading, RoutinesError } = useGetRoutines();
+
+  const [selectedProduct, setSelectedProduct] = useState<
+    (typeof businessPublications)[number] | null
+  >(null);
+
+  const {
+    data: business,
+    isLoading: isBusinessLoading,
+    error: businessError,
+  } = useBusinessFromPublication(selectedProduct?.businessId);
 
   return (
     <View style={styles.mainContainer}>
@@ -73,9 +88,27 @@ export default function Home() {
                 price={publication.price ?? ""}
                 currentPrice={publication.currentPrice}
                 lastPrice={publication.lastPrice}
+                onPress={() => setSelectedProduct(publication)}
               />
             ))}
           </ScrollView>
+          {selectedProduct && (
+            <ProductModal
+              title={selectedProduct.name}
+              description={selectedProduct.description}
+              img={selectedProduct.imageUrl}
+              cardType={selectedProduct.type}
+              color={selectedProduct.cardColor}
+              price={selectedProduct.price ?? ""}
+              currentPrice={selectedProduct.currentPrice}
+              lastPrice={selectedProduct.lastPrice}
+              onClose={() => setSelectedProduct(null)}
+              visible
+              businessName={business?.businessName ?? ""}
+              businessLogo={business?.logoUrl ?? ""}
+              businessPhone={business?.phoneNumber ?? ""}
+            />
+          )}
           {/*   Carrucel para Lugares Favoritos */}
           <Text style={styles.Titles}>Lugares Favoritos</Text>
           {isLoading && (

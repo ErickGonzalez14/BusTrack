@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 type ProductCardProps = {
@@ -12,6 +12,7 @@ type ProductCardProps = {
   price: string;
   currentPrice?: string;
   lastPrice?: string;
+  onPress?: () => void;
 };
 type ColorAdjustment = {
   saturation?: number;
@@ -120,6 +121,7 @@ export default function ProductCard({
   price,
   currentPrice,
   lastPrice,
+  onPress,
 }: ProductCardProps) {
   const { theme } = useUnistyles();
   const lighterColor = adjustColor(color, {
@@ -135,7 +137,7 @@ export default function ProductCard({
   });
 
   return (
-    <View>
+    <Pressable onPress={onPress}>
       <LinearGradient
         colors={[darkerColor, lighterColor]}
         style={styles.container}
@@ -198,7 +200,7 @@ export default function ProductCard({
           </View>
         </View>
       </LinearGradient>
-    </View>
+    </Pressable>
   );
 }
 

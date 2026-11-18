@@ -26,7 +26,7 @@ export default function CreateRoutine() {
   const [selectedRoute, setSelectedRoute] = useState("");
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState("");
-  const [recordatory, setRecordatory] = useState("");
+  const [recordatory, setRecordatory] = useState("5min");
 
   //state for Alert
   const [alert, setAlert] = React.useState<{
@@ -80,9 +80,8 @@ export default function CreateRoutine() {
         onSuccess: () => {
           setAlert({
             variant: "success",
-            title: "Solicitud enviada",
-            message:
-              "Tu solicitud de servicio ha sido enviada con éxito. Se revisará y se publicará una vez aprobada.",
+            title: "Rutina guardada",
+            message: "BusTrack usa tu última ubicación conocida para encontrar una parada cercana. Permite la ubicación y las notificaciones para recibir el aviso.",
           });
         },
         onError: (requestError) => {
@@ -111,7 +110,7 @@ export default function CreateRoutine() {
 
   //construir un array de opciones para el dropdown
   const favoriteRoutes = sites.map((site) => ({
-    id: site.placeId,
+    id: site.id,
     label: site.name,
   }));
 

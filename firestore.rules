@@ -19,11 +19,44 @@ service cloud.firestore {
         && collection != 'trafficUsage'
         && collection != 'roadTrafficDaily'
         && collection != 'crowdSoarcingRoutes'
+        && collection != 'routines'
+        && collection != 'Users'
+        && collection != 'routinePushDevices'
+        && collection != 'routinePushDeliveries'
         && request.time < timestamp.date(2026, 12, 13);
     }
 
     function signedIn() {
       return request.auth != null;
+    }
+
+    match /Users/{uid} {
+      allow read, write: if request.time < timestamp.date(2026, 12, 13);
+
+      match /favoriteSites/{siteId} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+
+      match /{userCollection}/{document=**} {
+        allow read, write: if userCollection != 'favoriteSites'
+          && request.time < timestamp.date(2026, 12, 13);
+      }
+    }
+
+    match /routines/{routineId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, delete: if signedIn() && resource.data.userId == request.auth.uid;
+      allow update: if signedIn() && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /routinePushDevices/{uid} {
+      allow get, delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['token', 'origin'])
+        && request.resource.data.token is string
+        && request.resource.data.token.size() <= 200
+        && request.resource.data.origin is latlng;
     }
 
     function premium() {

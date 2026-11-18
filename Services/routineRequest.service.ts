@@ -12,7 +12,7 @@ export type Routines = {
   route: string;
   days: string[];
   time: string;
-  recordatory: number;
+  recordatory: string | number;
 };
 type saveRoutines = {
   name: string;
@@ -30,14 +30,16 @@ export const RoutineRequestService = async ({
 }: saveRoutines) => {
   const db = getFirestore();
   const currentUser = getAuth().currentUser;
-  addDoc(collection(db, "routines"), {
+  if (!currentUser) throw new Error("Inicia sesión para guardar tu rutina.");
+  await addDoc(collection(db, "routines"), {
     active: true,
     name: name,
     route: route,
+    routeId: route,
     days: days,
     time: time,
     recordatory: recordatory,
-    userId: currentUser?.uid,
+    userId: currentUser.uid,
     createdAt: serverTimestamp(),
   });
 };
@@ -60,7 +62,7 @@ export const getRoutinesService = async (
     routines.push({
       id: doc.id,
       name: data.name,
-      route: data.route,
+      route: data.routeId ?? data.route,
       days: data.days,
       time: data.time,
       recordatory: data.recordatory,

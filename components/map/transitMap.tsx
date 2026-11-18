@@ -25,7 +25,12 @@ type TransitMapProps = {
   selectedPlace: GooglePlace | null;
   displayedRoute: RouteRecommendation | null;
   routeCoordinates: Coordinate[];
-  liveBuses: { busId: string; coordinate: Coordinate; licensePlate: string }[];
+  trackedBuses: {
+    busId: string;
+    coordinate: Coordinate;
+    licensePlate: string;
+    simulated?: boolean;
+  }[];
   defaultLocation: Coordinate;
   proBusinesses?: BusinessListing[];
   onPoiClick: (event: PoiClickEvent) => void;
@@ -41,7 +46,7 @@ export default function TransitMap({
   selectedPlace,
   displayedRoute,
   routeCoordinates,
-  liveBuses,
+  trackedBuses,
   defaultLocation,
   proBusinesses = [],
   onPoiClick,
@@ -146,14 +151,14 @@ export default function TransitMap({
         />
       )}
 
-      {liveBuses.map((bus) => (
+      {trackedBuses.map((bus) => (
         <Marker
           key={`live-${bus.busId}`}
           coordinate={bus.coordinate}
           title={bus.licensePlate}
           description={bus.busId === displayedRoute?.bus?.id
-            ? `Bus en vivo · ${displayedRoute.route.name}`
-            : "Bus en vivo"}
+            ? `${bus.simulated ? "Simulación" : "Bus en vivo"} · ${displayedRoute.route.name}`
+            : bus.simulated ? "Simulación" : "Bus en vivo"}
           zIndex={11}
           tracksViewChanges={false}
           image={require("@/assets/images/busTrackPin.png")}

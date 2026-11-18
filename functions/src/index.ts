@@ -4,6 +4,7 @@ import {onRequest} from "firebase-functions/v2/https";
 import Stripe from "stripe";
 
 export {revenueCatWebhook, syncPremiumSubscription} from "./revenueCatWebhook";
+export {sendRoutineNotifications} from "./routineNotifications";
 export {
   communityRouteCreated,
   communityTripCreated,

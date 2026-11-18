@@ -21,6 +21,7 @@ type SaveFavoriteSiteInput = {
 };
 
 export type FavoriteSite = {
+  id: string;
   placeId: string;
   name: string;
   originalName: string;
@@ -58,6 +59,24 @@ export const getFavoriteSite = async (placeId: string) => {
   };
 };
 
+export async function getFavoriteSiteById(userId: string, id: string) {
+  const snapshot = await getDoc(
+    doc(getFirestore(), "Users", userId, "favoriteSites", id),
+  );
+  const data = snapshot.data();
+  if (!data?.location || !data.name) return null;
+  return {
+    placeId: data.placeId ?? snapshot.id,
+    name: data.name,
+    address: data.address,
+    placeType: data.placeType,
+    coordinate: {
+      latitude: data.location.latitude,
+      longitude: data.location.longitude,
+    },
+  };
+}
+
 export const saveFavoriteSite = async ({
   placeId,
   name,
@@ -94,6 +113,7 @@ export const getAllFavoriteSites = async (): Promise<FavoriteSite[]> => {
     const data = siteDoc.data();
     const location = data.location; // GeoPoint
     return {
+      id: siteDoc.id,
       placeId: data.placeId ?? siteDoc.id,
       name: data.name ?? "",
       originalName: data.originalName ?? "",

@@ -275,3 +275,31 @@ export const updateBusinessAdressDescription = async (
     adressDescription,
   };
 };
+
+export type PublicationBusiness = {
+  id: string;
+  businessName: string;
+  logoUrl?: string | null;
+  phoneNumber?: string;
+};
+
+export const getBusinessFromPublication = async (
+  publication: Pick<Publication, "businessId">,
+): Promise<PublicationBusiness> => {
+  const businessSnapshot = await getDoc(
+    doc(getFirestore(), "business", publication.businessId),
+  );
+
+  if (!businessSnapshot.exists()) {
+    throw new Error("No se encontró el negocio de esta publicación.");
+  }
+
+  const data = businessSnapshot.data();
+
+  return {
+    id: businessSnapshot.id,
+    businessName: data.businessName,
+    logoUrl: data.logoUrl ?? null,
+    phoneNumber: data.phoneNumber,
+  };
+};

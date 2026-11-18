@@ -20,7 +20,7 @@ export default function ActiveRouteBadge({
       ? `Llegaste a ${route.destinationStop.name}`
       : status === "nearDestination"
         ? `Estás a punto de llegar a ${route.destinationStop.name}`
-        : `Viaje en curso · ${route.route.name} · ${direction}`;
+        : `${route.bus?.simulated ? "Simulación" : "Viaje en curso"} · ${route.route.name} · ${direction}`;
 
   return (
     <View style={styles.container}>

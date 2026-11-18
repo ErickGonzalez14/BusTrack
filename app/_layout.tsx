@@ -1,5 +1,6 @@
 import { AuthProvider, useAuth } from "@/contexts/authContext";
 import { useLocationPermission } from "@/hooks/useLocationPermission";
+import { useRoutineNotifications } from "@/hooks/useRoutineNotifications";
 import { queryClient } from "@/lib/queryClient";
 import {
   Roboto_300Light,
@@ -35,6 +36,10 @@ function RootNavigator() {
       hasProfile === true,
     userId: user?.uid,
   });
+
+  useRoutineNotifications(
+    !isAuthLoading && !isAuthFlowInProgress && hasProfile === true ? user?.uid : undefined,
+  );
 
   if (isAuthLoading) {
     return null;
@@ -125,6 +130,11 @@ function RootNavigator() {
             />
             <Stack.Screen
               name="Settings/Buses/trackingView"
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="productCatalog"
               options={{ headerShown: false }}
             />
           </Stack.Protected>

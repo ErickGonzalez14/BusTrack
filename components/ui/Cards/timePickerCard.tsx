@@ -90,7 +90,10 @@ export default function TimePickerCard({
   };
 
   const handleConfirm = () => {
-    const formatted = `${padZero(selectedHour)}:${padZero(selectedMinute)}`;
+    const hour = is24Hour
+      ? selectedHour
+      : selectedHour % 12 + (selectedPeriod === "PM" ? 12 : 0);
+    const formatted = `${padZero(hour)}:${padZero(selectedMinute)}`;
     setDisplayTime(formatted);
     onChange?.(formatted, {
       hours: selectedHour,

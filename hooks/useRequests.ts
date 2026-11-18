@@ -13,6 +13,7 @@ import {
 import {
   DiscountRequestService,
   editBusinessLogo,
+  getBusinessFromPublication,
   getBusinessLogo,
   getBusinessPublications,
   getMyBusinessPublications,
@@ -440,4 +441,18 @@ export const useActiveBus = () => {
     });
   }, [userId]);
   return { isBusApproved, approvedBuses, isBusLoading };
+};
+
+export const useBusinessFromPublication = (businessId?: string) => {
+  return useQuery({
+    queryKey: ["business-from-publication", businessId],
+    queryFn: () => {
+      if (!businessId) {
+        throw new Error("La publicación no tiene businessId.");
+      }
+
+      return getBusinessFromPublication({ businessId });
+    },
+    enabled: Boolean(businessId),
+  });
 };

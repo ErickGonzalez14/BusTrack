@@ -1,3 +1,4 @@
+import { removeRoutinePushDevice } from "@/hooks/useRoutineNotifications";
 import { UserProfile } from "@/interfaces/user.type";
 import { getUserProfile } from "@/Services/user.service";
 import { stopBusTracking } from "@/Services/busTrackingControl.service";
@@ -118,6 +119,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
       await stopBusTracking();
     } catch (trackingError) {
       console.warn("No se pudo retirar la ubicación del bus al salir:", trackingError);
+    }
+
+    try {
+      await removeRoutinePushDevice(currentUser.uid);
+    } catch (error) {
+      console.warn("No se pudo retirar el registro de recordatorios:", error);
     }
 
     if (isGoogleUser) {
