@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native-unistyles";
-import * as Colors from "./Design/Tokens/Colors";
-import * as Sizes from "./Design/Tokens/size";
+import * as Colors from "@/src/shared/theme/tokens/Colors";
+import * as Sizes from "@/src/shared/theme/tokens/size";
 
 export const LightTheme = {
   surface: {
@@ -144,6 +144,7 @@ const appThemes = {
 type AppThemes = typeof appThemes;
 
 declare module "react-native-unistyles" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- Unistyles extends its theme interface through declaration merging.
   export interface UnistylesThemes extends AppThemes {}
 }
 

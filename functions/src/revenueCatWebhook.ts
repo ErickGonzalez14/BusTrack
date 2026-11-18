@@ -1,7 +1,12 @@
 import {timingSafeEqual} from "node:crypto";
 import {initializeApp} from "firebase-admin/app";
 import {getAuth} from "firebase-admin/auth";
-import {FieldValue, getFirestore, Timestamp} from "firebase-admin/firestore";
+import {getFirestore} from "firebase-admin/firestore";
+import {
+  hasPremiumAccess,
+  syncRevenueCatSubscription,
+  type RevenueCatEvent,
+} from "./premiumSubscription";
 import * as logger from "firebase-functions/logger";
 import {defineBoolean, defineSecret} from "firebase-functions/params";
 import {onRequest} from "firebase-functions/v2/https";
@@ -12,49 +17,6 @@ const webhookToken = defineSecret("REVENUECAT_WEBHOOK_TOKEN");
 const allowSandbox = defineBoolean("REVENUECAT_ALLOW_SANDBOX", {
   default: false,
 });
-const entitlement = "premium";
-
-type RevenueCatCustomer = {
-  request_date_ms: number;
-  subscriber: {
-    entitlements: Record<string, {
-      product_identifier: string;
-      expires_date: string | null;
-      grace_period_expires_date?: string | null;
-    }>;
-    subscriptions: Record<string, {
-      store: string;
-      is_sandbox: boolean;
-      unsubscribe_detected_at?: string | null;
-      billing_issues_detected_at?: string | null;
-      grace_period_expires_date?: string | null;
-    }>;
-  };
-};
-
-type RevenueCatEvent = {
-  type?: string;
-  environment?: string;
-  store?: string;
-  app_user_id?: string;
-  transferred_from?: string[];
-  transferred_to?: string[];
-};
-
-/**
- * Converts a RevenueCat date into a Firestore timestamp.
- * @param {string|null} value The date from RevenueCat.
- * @return {Timestamp|null} The timestamp, if a date is present.
- */
-function parseDate(value?: string | null): Timestamp | null {
-  if (!value) return null;
-  const milliseconds = Date.parse(value);
-  if (!Number.isFinite(milliseconds)) {
-    throw new Error("Invalid RevenueCat date");
-  }
-  return Timestamp.fromMillis(milliseconds);
-}
-
 /**
  * Identifies the Firebase accounts whose access may have changed.
  * @param {RevenueCatEvent} event The authenticated webhook event.
@@ -84,62 +46,11 @@ async function syncSubscription(uid: string): Promise<void> {
     throw error;
   }
 
-  const url = "https://api.revenuecat.com/v1/subscribers/" +
-    encodeURIComponent(uid);
-  const result = await fetch(url, {
-    headers: {Authorization: `Bearer ${revenueCatApiKey.value()}`},
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (!result.ok) {
-    throw new Error(`RevenueCat returned HTTP ${result.status}`);
-  }
-
-  const customer = await result.json() as RevenueCatCustomer;
-  const checkedAt = customer.request_date_ms;
-  if (!Number.isSafeInteger(checkedAt) || checkedAt <= 0) {
-    throw new Error("Missing RevenueCat response timestamp");
-  }
-
-  const premium = customer.subscriber.entitlements[entitlement];
-  const productId = premium?.product_identifier ?? null;
-  const product = productId ?
-    customer.subscriber.subscriptions[productId] ??
-    customer.subscriber.subscriptions[productId.split(":")[0]] : undefined;
-  const isTestStore = product?.store.toLowerCase() === "test_store";
-  const allowed = product && (
-    (!isTestStore && product.is_sandbox === false) ||
-    ((isTestStore || product.is_sandbox === true) && allowSandbox.value())
-  );
-  const expiresAt = allowed ? parseDate(premium?.expires_date) : null;
-  const gracePeriodExpiresAt = allowed ? parseDate(
-    premium?.grace_period_expires_date ?? product.grace_period_expires_date,
-  ) : null;
-  const isActive = (expiresAt?.toMillis() ?? 0) > checkedAt;
-  const isInGracePeriod = (gracePeriodExpiresAt?.toMillis() ?? 0) > checkedAt;
-  const status = isInGracePeriod && (!isActive ||
-    product?.billing_issues_detected_at) ? "grace_period" :
-    isActive ? "active" : "expired";
-  const willRenew = status === "active" && !product?.unsubscribe_detected_at &&
-    !product?.billing_issues_detected_at;
-
-  const db = getFirestore(app);
-  const ref = db.collection("userSubscriptions").doc(uid);
-  await db.runTransaction(async (transaction) => {
-    const previous = await transaction.get(ref);
-    if ((previous.get("revenueCatCheckedAtMs") ?? 0) >= checkedAt) return;
-    if (!previous.exists && !allowed) return;
-
-    transaction.set(ref, {
-      entitlement,
-      status,
-      expiresAt,
-      gracePeriodExpiresAt,
-      willRenew,
-      store: allowed ? product.store : null,
-      productId: allowed ? productId : null,
-      revenueCatCheckedAtMs: checkedAt,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+  await syncRevenueCatSubscription(getFirestore(app), uid, {
+    apiKey: revenueCatApiKey.value(),
+    allowSandbox: allowSandbox.value(),
+    requireExplicitProductionFlag: true,
+    timeoutMs: 10_000,
   });
 }
 
@@ -213,17 +124,8 @@ export const syncPremiumSubscription = onRequest(
       await syncSubscription(uid);
       const subscription = await getFirestore(app)
         .collection("userSubscriptions").doc(uid).get();
-      const status = subscription.get("status");
-      const expiresAt = subscription.get("expiresAt") as Timestamp | null;
-      const gracePeriodExpiresAt = subscription.get("gracePeriodExpiresAt") as
-        Timestamp | null;
-      const accessEndsAt = status === "grace_period" ?
-        Math.max(expiresAt?.toMillis() ?? 0,
-          gracePeriodExpiresAt?.toMillis() ?? 0) :
-        expiresAt?.toMillis() ?? 0;
       response.set("Cache-Control", "no-store").status(200).json({
-        hasAccess: subscription.get("entitlement") === entitlement &&
-          status !== "expired" && accessEndsAt > Date.now(),
+        hasAccess: hasPremiumAccess(subscription.data()),
       });
     } catch (error) {
       logger.error("No se pudo verificar la suscripción", error);

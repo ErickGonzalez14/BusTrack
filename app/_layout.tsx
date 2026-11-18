@@ -1,7 +1,7 @@
-import { AuthProvider, useAuth } from "@/contexts/authContext";
-import { useLocationPermission } from "@/hooks/useLocationPermission";
-import { useRoutineNotifications } from "@/hooks/useRoutineNotifications";
-import { queryClient } from "@/lib/queryClient";
+import { AuthProvider, useAuth } from "@/src/features/auth/context/authContext";
+import { useLocationPermission } from "@/src/shared/hooks/useLocationPermission";
+import { useRoutineNotifications } from "@/src/features/routines/hooks/useRoutineNotifications";
+import { queryClient } from "@/src/shared/lib/queryClient";
 import {
   Roboto_300Light,
   Roboto_400Regular,
@@ -145,7 +145,7 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  useFonts({
     ObjectSansHeavy: require("@/Fonts/ObjectSansHeavy.otf"),
     ObjectSansRegular: require("@/Fonts/ObjectSansRegular.otf"),
     Roboto_400Regular,
@@ -156,7 +156,6 @@ export default function RootLayout() {
   useEffect(() => {
     mobileAds()
       .initialize()
-      .then((adapterStatuses) => {})
       .catch((error) => {
         console.error("Error al inicializar AdMob:", error);
       });

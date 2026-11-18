@@ -1,5 +1,3 @@
-import { queryClient } from "@/lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { Tabs, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Crown, Home, Map, Settings } from "iconoir-react-native";
@@ -18,7 +16,7 @@ export default function TabLayout() {
 
   const statusBarStyle = statusBarStyles[currentTab] ?? "light";
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <StatusBar style={statusBarStyle} />
       <Tabs
         screenOptions={{
@@ -63,6 +61,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </QueryClientProvider>
+    </>
   );
 }

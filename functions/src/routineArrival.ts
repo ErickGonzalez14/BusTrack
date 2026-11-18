@@ -1,6 +1,6 @@
 /* eslint-disable max-len, require-jsdoc */
-import {cumulativeDistances, distance, offset, type Point, type SimulatedBus} from "./simulatedFleet";
-export type {Point} from "./simulatedFleet";
+import {cumulativeDistances, distance, offset, type Point, type SimulatedBus} from "../shared/simulatedFleet";
+export type {Point} from "../shared/simulatedFleet";
 export type Stop = Point & {id: string};
 export type Direction = {
   routeId: string;

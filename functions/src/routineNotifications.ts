@@ -7,7 +7,7 @@ import {onSchedule} from "firebase-functions/v2/scheduler";
 import {
   Direction, findRoutineArrival, Point, routineWindow, Stop, TrackedBus,
 } from "./routineArrival";
-import {simulateFleet} from "./simulatedFleet";
+import {simulateFleet} from "../shared/simulatedFleet";
 
 const app = getApps().length ? getApp() : initializeApp();
 const db = getFirestore(app);
