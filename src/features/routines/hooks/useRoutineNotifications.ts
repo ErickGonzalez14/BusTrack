@@ -4,7 +4,6 @@ import {
   collection, getFirestore, onSnapshot, query, where,
 } from "@react-native-firebase/firestore";
 import Constants, { ExecutionEnvironment } from "expo-constants";
-import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { router, useRootNavigationState } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -61,15 +60,13 @@ export function useRoutineNotifications(userId?: string) {
         const current = await Notifications.getPermissionsAsync();
         const permission = current.granted || !current.canAskAgain
           ? current : await Notifications.requestPermissionsAsync();
-        if (!permission.granted || !(await Location.getForegroundPermissionsAsync()).granted) {
+        if (!permission.granted) {
           if (canRegister()) await unregisterRoutinePushDevice(userId);
           return;
         }
-        const { coords } = await Location.getLastKnownPositionAsync({ maxAge: 300_000 }) ??
-          await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
         token ??= (await Notifications.getExpoPushTokenAsync({ projectId })).data;
         if (!canRegister()) return;
-        await saveRoutinePushDevice(userId, token, coords, canRegister);
+        await saveRoutinePushDevice(userId, token, canRegister);
       } catch (error) {
         console.warn("No se pudo activar el recordatorio de rutinas:", error);
       } finally {
@@ -101,7 +98,16 @@ export function useRoutineNotifications(userId?: string) {
       if (
         response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER ||
         handled.current === request.identifier || data.type !== "routine" ||
-        data.userId !== userId || typeof data.favoriteId !== "string" ||
+        data.userId !== userId
+      ) return;
+      if (typeof data.routineId === "string") {
+        handled.current = request.identifier;
+        router.navigate("/Settings/Favorites/favorite");
+        Notifications.clearLastNotificationResponse();
+        return;
+      }
+      if (
+        typeof data.favoriteId !== "string" ||
         typeof data.routeId !== "string" || typeof data.boardingId !== "string" ||
         typeof data.dropoffId !== "string" || typeof data.busId !== "string" ||
         (data.direction !== "outbound" && data.direction !== "return")

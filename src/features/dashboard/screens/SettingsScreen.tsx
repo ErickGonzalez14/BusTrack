@@ -1,18 +1,14 @@
+import { useAuth } from "@/src/features/auth/context/authContext";
+import { useActiveBusiness } from "@/src/features/business/hooks/useBusinessProfile";
+import { useActiveBus } from "@/src/features/tracking/hooks/useDriverApplication";
 import SecundaryHeader from "@/src/shared/ui/headers/secundaryHeader";
 import OptionLabel from "@/src/shared/ui/Labels/optionLabel";
 import ProfileLabel from "@/src/shared/ui/Labels/profileLabel";
-import { useAuth } from "@/src/features/auth/context/authContext";
-import { useActiveBus } from "@/src/features/tracking/hooks/useDriverApplication";
-import { useActiveBusiness } from "@/src/features/business/hooks/useBusinessProfile";
 import { router } from "expo-router";
 import {
   Barcode,
-  Bell,
   CreditCard,
-  GitCompare,
-  Heart,
-  Palette,
-  PrivacyPolicy,
+  GitCompare
 } from "iconoir-react-native";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -51,30 +47,6 @@ export default function Settings() {
           />
         </View>
 
-        {/* Seccion de preferencias*/}
-        <View style={styles.settingsContainer}>
-          <Text style={styles.text}>Preferencias</Text>
-          <View style={styles.settings}>
-            <OptionLabel
-              settingsName="Tema"
-              icon={Palette}
-              iconColor="#5856D6"
-              isToggle={true}
-              separator={true}
-              toggleValue={notificationsEnabled}
-              onToggleChange={setNotificationsEnabled}
-            />
-            <OptionLabel
-              settingsName="Notificaciones"
-              icon={Bell}
-              iconColor="#FF9500"
-              isToggle={true}
-              separator={false}
-              toggleValue={notificationsEnabled}
-              onToggleChange={setNotificationsEnabled}
-            />
-          </View>
-        </View>
         {/* Seccion de Servicios*/}
         <View style={styles.settingsContainer}>
           <Text style={styles.text}>Servicios</Text>
@@ -87,14 +59,7 @@ export default function Settings() {
               separator={true}
               onPress={() => router.push("/Settings/Subscriptions/dashBoard")}
             />
-            <OptionLabel
-              settingsName="Favoritos"
-              icon={Heart}
-              iconColor="#FF2D55"
-              isToggle={false}
-              separator={true}
-              onPress={() => router.push("/Settings/Favorites/favorite")}
-            />
+
             <OptionLabel
               settingsName="Solicitudes"
               icon={GitCompare}
@@ -137,19 +102,6 @@ export default function Settings() {
                 onPress={() => router.push("/Settings/Business/lightDashBoard")}
               />
             )}
-          </View>
-        </View>
-        {/* Seccion de Legal*/}
-        <View style={styles.settingsContainer}>
-          <Text style={styles.text}>Legal</Text>
-          <View style={styles.settings}>
-            <OptionLabel
-              settingsName="Terminos y Condiciones"
-              icon={PrivacyPolicy}
-              iconColor="#8E8E93"
-              isToggle={false}
-              separator={false}
-            />
           </View>
         </View>
       </ScrollView>

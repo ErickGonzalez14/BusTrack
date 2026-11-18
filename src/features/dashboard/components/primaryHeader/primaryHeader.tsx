@@ -1,13 +1,11 @@
+import UserProfile from "@/src/features/dashboard/components/primaryHeader/userProfile";
+import IconButton from "@/src/shared/ui/buttons/iconButton";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { Bell, CrownCircle, HeartSolid } from "iconoir-react-native";
+import { router } from "expo-router";
+import { CrownCircle } from "iconoir-react-native";
 import { useMemo, useRef } from "react";
 import { Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import IconButton from "@/src/shared/ui/buttons/iconButton";
-import LocationDropDown from "@/src/features/dashboard/components/primaryHeader/locationDropDown";
-import UserProfile from "@/src/features/dashboard/components/primaryHeader/userProfile";
-import WeatherBadge from "@/src/features/dashboard/components/primaryHeader/weatherBadge";
-
 // Resolver el problema con el BottomSheet en las siguientes versiones
 export default function PrimaryHeader() {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -20,30 +18,10 @@ export default function PrimaryHeader() {
     <View style={styles.container}>
       <View style={styles.firstRow}>
         <UserProfile userName="Roberto Díaz" />
-        <LocationDropDown siteName="Bugaba" onPress={handleOpenLocation} />
-      </View>
-      <View style={styles.secondRow}>
-        <WeatherBadge />
         <View style={styles.iconButtonContainer}>
           <IconButton
             onPress={() => {
-              console.log("Pressed");
-            }}
-            icon={Bell}
-            width={20}
-            height={20}
-          />
-          <IconButton
-            onPress={() => {
-              console.log("Pressed");
-            }}
-            icon={HeartSolid}
-            width={20}
-            height={20}
-          />
-          <IconButton
-            onPress={() => {
-              console.log("Pressed");
+              router.push("/(tabs)/premium");
             }}
             icon={CrownCircle}
             width={20}

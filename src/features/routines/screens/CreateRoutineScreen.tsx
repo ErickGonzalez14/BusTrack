@@ -81,7 +81,7 @@ export default function CreateRoutine() {
           setAlert({
             variant: "success",
             title: "Rutina guardada",
-            message: "BusTrack usa tu última ubicación conocida para encontrar una parada cercana. Permite la ubicación y las notificaciones para recibir el aviso.",
+            message: "Recibirás el aviso a la hora del bus menos el margen que elegiste. Activa las notificaciones para recibirlo.",
           });
         },
         onError: (requestError) => {

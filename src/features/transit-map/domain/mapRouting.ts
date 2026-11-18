@@ -153,6 +153,13 @@ export function getRoutableDirections(stops: Stop[], routes: TransitRoute[]) {
   });
 }
 
+export function isBusAvailableForRoute(bus: Bus, routeId: string) {
+  return bus.active !== false &&
+    bus.busStatus !== "pending" &&
+    bus.busStatus !== "rejected" &&
+    bus.routeId.trim() === routeId.trim();
+}
+
 export function findBestRoute(
   directions: ReturnType<typeof getRoutableDirections>,
   buses: Bus[],
@@ -165,13 +172,7 @@ export function findBestRoute(
   let bestFollowsRouteProgress = false;
 
   for (const { route, direction, orderedStops } of directions) {
-    const bus = buses.find(
-      (candidate) =>
-        candidate.active !== false &&
-        candidate.busStatus !== "pending" &&
-        candidate.busStatus !== "rejected" &&
-        candidate.routeId.trim() === route.id.trim(),
-    ) ?? null;
+    const bus = buses.find((candidate) => isBusAvailableForRoute(candidate, route.id)) ?? null;
 
     for (let boardingIndex = 0; boardingIndex < orderedStops.length - 1; boardingIndex += 1) {
       const boardingStop = orderedStops[boardingIndex];

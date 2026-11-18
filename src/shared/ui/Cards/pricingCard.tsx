@@ -31,10 +31,6 @@ export default function PrincingCard({
 
 export const styles = StyleSheet.create((theme) => ({
   container: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     backgroundColor: "#FFFFFF",
     borderRadius: 24,
     padding: 16,

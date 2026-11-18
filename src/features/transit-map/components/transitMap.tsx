@@ -25,6 +25,7 @@ type TransitMapProps = {
   selectedPlace: GooglePlace | null;
   displayedRoute: RouteRecommendation | null;
   routeCoordinates: Coordinate[];
+  simulatedPassenger: { coordinate: Coordinate; isWalking: boolean } | null;
   trackedBuses: {
     busId: string;
     coordinate: Coordinate;
@@ -46,6 +47,7 @@ export default function TransitMap({
   selectedPlace,
   displayedRoute,
   routeCoordinates,
+  simulatedPassenger,
   trackedBuses,
   defaultLocation,
   proBusinesses = [],
@@ -165,6 +167,18 @@ export default function TransitMap({
         />
       ))}
 
+      {simulatedPassenger && (
+        <Marker
+          coordinate={simulatedPassenger.coordinate}
+          title="Pasajero simulado"
+          description={simulatedPassenger.isWalking ? "Caminando hacia la parada" : "En la parada"}
+          image={simulatedPassenger.isWalking
+            ? require("@/assets/images/walkingUser.png")
+            : require("@/assets/images/user.png")}
+          tracksViewChanges={false}
+          zIndex={10}
+        />
+      )}
     </MapView>
   );
 }

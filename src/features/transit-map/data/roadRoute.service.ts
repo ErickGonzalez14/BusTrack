@@ -95,7 +95,7 @@ async function requestRoadSegment(coordinates: Coordinate[]) {
     headers: {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": getApiKey(),
-      "X-Goog-FieldMask": "routes.polyline.encodedPolyline",
+      "X-Goog-FieldMask": "routes.legs.polyline.encodedPolyline",
     },
     body: JSON.stringify({
       origin: waypoint(coordinates[0]),
@@ -123,23 +123,27 @@ async function requestRoadSegment(coordinates: Coordinate[]) {
   }
 
   const body = (await response.json()) as {
-    routes?: { polyline?: { encodedPolyline?: string } }[];
+    routes?: { legs?: { polyline?: { encodedPolyline?: string } }[] }[];
   };
-  const encodedPolyline = body.routes?.[0]?.polyline?.encodedPolyline;
-  if (!encodedPolyline) {
+  const legs = body.routes?.[0]?.legs;
+  if (legs?.length !== coordinates.length - 1) {
     throw new Error("Google Routes no devolvió un recorrido por carretera.");
   }
 
-  return decodePolyline(encodedPolyline);
+  return legs.map((leg, index) => [
+    coordinates[index],
+    ...decodePolyline(leg.polyline?.encodedPolyline ?? ""),
+    coordinates[index + 1],
+  ]);
 }
 
-export async function getRoadRoute(coordinates: Coordinate[]) {
+export async function getRoadRouteLegs(coordinates: Coordinate[]) {
   const validCoordinates = coordinates
     .map(normalizeCoordinate)
     .filter((coordinate): coordinate is Coordinate => coordinate !== null);
   if (validCoordinates.length < 2) return [];
 
-  const route: Coordinate[] = [];
+  const legs: Coordinate[][] = [];
   for (
     let start = 0;
     start < validCoordinates.length - 1;
@@ -149,9 +153,8 @@ export async function getRoadRoute(coordinates: Coordinate[]) {
       start,
       start + MAX_COORDINATES_PER_REQUEST,
     );
-    const roadSegment = await requestRoadSegment(segment);
-    route.push(...(route.length ? roadSegment.slice(1) : roadSegment));
+    legs.push(...await requestRoadSegment(segment));
   }
 
-  return route;
+  return legs;
 }

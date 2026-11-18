@@ -1,5 +1,7 @@
 import type { BusinessListing } from "@/src/features/business/data/businessDirectory";
 import type { Coordinate, GooglePlace, RouteRecommendation } from "../domain/transport.type";
+import { buildJourneySimulation } from "../domain/journeySimulation";
+import { isBusAvailableForRoute } from "../domain/mapRouting";
 import { useRoadRoute } from "../hooks/useRoadRoute";
 import { useJourneyFeedback } from "../hooks/useJourneyFeedback";
 import { useRoutePlanner } from "../hooks/useRoutePlanner";
@@ -8,6 +10,7 @@ import { useStopContribution } from "../hooks/useStopContribution";
 import { useMapBusinesses } from "../hooks/useMapBusinesses";
 import { useMapNavigationRequest } from "../hooks/useMapNavigationRequest";
 import { useMapTransport } from "../hooks/useMapTransport";
+import { useWalkingSimulation } from "../hooks/useWalkingSimulation";
 import { PrimaryBottomSheetRef } from "@/src/shared/ui/bottomSheet/primaryBottomSheet";
 import FinishRouteCard from "@/src/features/transit-map/components/finishRouteCard";
 import BusinessProPopup from "@/src/features/business/components/businessProPopup";
@@ -38,6 +41,13 @@ import { StyleSheet } from "react-native-unistyles";
 const DEFAULT_LOCATION = { latitude: 8.4821, longitude: -82.6178 };
 const windowWidth = Dimensions.get("window").width;
 
+type ActiveJourney = {
+  route: RouteRecommendation;
+  placeId: string;
+  simulation: ReturnType<typeof buildJourneySimulation> | null;
+  coordinates: Coordinate[];
+};
+
 export default function Map() {
   const sheetRef = useRef<PrimaryBottomSheetRef>(null);
   const mapRef = useRef<MapView>(null);
@@ -49,17 +59,13 @@ export default function Map() {
   const { userLocation, setUserLocation, getFreshUserLocation } =
     useMapLocation({ requestPermissionOnMount: true });
 
-  const [activeRoute, setActiveRoute] = useState<RouteRecommendation | null>(null);
+  const [activeJourney, setActiveJourney] = useState<ActiveJourney | null>(null);
+  const activeRoute = activeJourney?.route ?? null;
   const stopContribution = useStopContribution(activeRoute?.route.id ?? null, getFreshUserLocation);
   const { clearRouteStop } = stopContribution;
   const activeBus = liveBuses.find((bus) => bus.busId === activeRoute?.bus?.id);
   const activeSimulation = simulatedBuses.find((bus) =>
     bus.id === activeRoute?.bus?.id && bus.direction === activeRoute.direction);
-  const passengerJourney = usePassengerJourney({
-    route: activeRoute,
-    userLocation,
-    busCoordinate: activeRoute?.bus?.simulated ? activeSimulation ?? null : activeBus?.coordinate ?? null,
-  });
 
   const {
     lightBusinesses, proBusinesses, activePromotions, proBusinessesError,
@@ -86,15 +92,6 @@ export default function Map() {
       navigation.setOptions({ tabBarStyle: undefined });
     };
   }, [isSheetOpen, navigation]);
-
-  useEffect(() => {
-    if (
-      passengerJourney.phase === "boardingPrompt" ||
-      passengerJourney.phase === "exitPrompt"
-    ) {
-      sheetRef.current?.open();
-    }
-  }, [passengerJourney.phase]);
 
   const openSheet = useCallback(() => sheetRef.current?.open(), []);
   const focusPlace = useCallback((place: GooglePlace) => {
@@ -138,25 +135,89 @@ export default function Map() {
   });
 
   const { selectedPlace } = placeSearch;
+  const catalogBuses = busesQuery.data;
+  const liveBusIds = new Set(liveBuses.map((bus) => bus.busId));
+  const busesForPlanning = [...(catalogBuses ?? [])].sort(
+    (first, second) => Number(liveBusIds.has(second.id)) - Number(liveBusIds.has(first.id)),
+  );
+  const routePlanner = useRoutePlanner({
+    stops: stopsQuery.data ?? [],
+    routes: routesQuery.data ?? [],
+    buses: busesForPlanning,
+    selectedPlace,
+    getUserLocation: getFreshUserLocation,
+    onRouteFound: focusRoute,
+  });
+  const visibleRoute = activeRoute ?? routePlanner.recommendation;
+  const roadRoute = useRoadRoute(routePlanner.recommendation);
+  const walking = useWalkingSimulation(
+    activeJourney?.placeId ?? selectedPlace?.id,
+    visibleRoute?.boardingStop,
+    stopsQuery.data ?? [],
+    userLocation ?? activeRoute?.boardingStop.adress ?? null,
+  );
+  const walkingOrigin = walking?.origin;
+  const walkingTarget = walking?.target;
+  const passengerJourney = usePassengerJourney({
+    route: activeRoute,
+    userLocation,
+    busCoordinate: activeRoute?.bus?.simulated ? activeSimulation ?? null : activeBus?.coordinate ?? null,
+    simulation: activeJourney?.simulation ?? null,
+    isSimulatedPassengerAtStop: walking?.isAtBoardingStop ?? false,
+  });
+  const simulatedBusCoordinate = passengerJourney.simulatedBusCoordinate;
+  const displayingWalk = !activeRoute || passengerJourney.phase === "waitingForBus" ||
+    passengerJourney.phase === "boardingPrompt";
+  const displayedBusIsLive = !!visibleRoute?.bus && !visibleRoute.bus.simulated && liveBusIds.has(visibleRoute.bus.id);
+
   useEffect(() => {
     if (selectedPlace) {
       sheetRef.current?.open();
     }
   }, [selectedPlace]);
 
+  useEffect(() => {
+    if (!isMapReady || !selectedPlace || visibleRoute || !walkingOrigin || !walkingTarget) return;
+    mapRef.current?.fitToCoordinates([walkingOrigin, walkingTarget, selectedPlace.coordinate], {
+      edgePadding: { top: 190, right: 50, bottom: 280, left: 50 },
+      animated: true,
+    });
+  }, [isMapReady, selectedPlace, visibleRoute, walkingOrigin, walkingTarget]);
+
+  useEffect(() => {
+    if (passengerJourney.phase === "boardingPrompt" || passengerJourney.phase === "exitPrompt") {
+      sheetRef.current?.open();
+    }
+  }, [passengerJourney.phase]);
+
   const resetJourney = passengerJourney.resetJourney;
   const followRoute = useCallback((
     recommendation: RouteRecommendation,
-    coordinates: Coordinate[],
+    placeId: string,
+    roadLegs?: Coordinate[][],
   ) => {
+    const availableBuses = catalogBuses?.filter((bus) => isBusAvailableForRoute(bus, recommendation.route.id));
+    const registeredBus = availableBuses?.find((bus) => bus.id === recommendation.bus?.id) ??
+      availableBuses?.[0];
+    const simulation = registeredBus ? buildJourneySimulation(recommendation, roadLegs) : null;
+    const routeStops = recommendation.orderedStops.map((stop) => stop.adress);
+    const coordinates = roadLegs
+      ? roadLegs.flatMap((leg, index) => index ? leg.slice(1) : leg)
+      : routeStops;
     resetJourney();
-    setActiveRoute(recommendation);
+    setActiveJourney({
+      route: registeredBus ? { ...recommendation, bus: { ...registeredBus, simulated: true } } : recommendation,
+      placeId,
+      simulation,
+      coordinates,
+    });
     sheetRef.current?.collapse();
-    mapRef.current?.fitToCoordinates(coordinates, {
+    const tripStops = routeStops.slice(0, recommendation.destinationIndex + 1);
+    mapRef.current?.fitToCoordinates(userLocation ? [userLocation, ...tripStops] : tripStops, {
       edgePadding: { top: 190, right: 45, bottom: 130, left: 45 },
       animated: true,
     });
-  }, [resetJourney]);
+  }, [catalogBuses, resetJourney, userLocation]);
 
   useMapNavigationRequest({
     isMapReady,
@@ -164,27 +225,11 @@ export default function Map() {
     destination: selectedPlace,
     stops: stopsQuery.data,
     routes: routesQuery.data,
-    buses: busesQuery.data,
+    buses: catalogBuses,
     simulatedBuses,
     userLocation,
     followRoute,
   });
-
-  const liveBusIds = new Set(liveBuses.map((bus) => bus.busId));
-  const busesForPlanning = [...(busesQuery.data ?? [])].sort(
-    (first, second) => Number(liveBusIds.has(second.id)) - Number(liveBusIds.has(first.id)),
-  );
-  const routePlanner = useRoutePlanner({
-    stops: stopsQuery.data ?? [],
-    routes: routesQuery.data ?? [],
-    buses: busesForPlanning,
-    selectedPlace: selectedPlace,
-    getUserLocation: getFreshUserLocation,
-    onRouteFound: focusRoute,
-  });
-  const visibleRoute = activeRoute ?? routePlanner.recommendation;
-  const roadRoute = useRoadRoute(visibleRoute);
-  const displayedBusIsLive = !!visibleRoute?.bus && liveBusIds.has(visibleRoute.bus.id);
 
   const handlePoiClick = useCallback(
     (event: PoiClickEvent) => {
@@ -221,17 +266,17 @@ export default function Map() {
   }, [userLocation, getFreshUserLocation]);
 
   const handleStartRoute = () => {
-    if (!routePlanner.recommendation || roadRoute.coordinates.length < 2)
+    if (!selectedPlace || !routePlanner.recommendation || roadRoute.isLoading || !catalogBuses)
       return;
 
-    followRoute(routePlanner.recommendation, roadRoute.coordinates);
+    followRoute(routePlanner.recommendation, selectedPlace.id, roadRoute.legs);
   };
 
   const clearRouteAndPlace = useCallback(() => {
     clearRouteStop();
-    setActiveRoute(null);
+    setActiveJourney(null);
     passengerJourney.resetJourney();
-    routePlanner.setRecommendation(null);
+    routePlanner.clearRecommendation();
     placeSearch.clearSelectedPlace();
     sheetRef.current?.close();
   }, [
@@ -248,8 +293,8 @@ export default function Map() {
   }, [activeRoute, clearRouteAndPlace, openFeedback]);
 
   useEffect(() => {
-    if (passengerJourney.phase === "exitPrompt") finishRoute();
-  }, [finishRoute, passengerJourney.phase]);
+    if (!activeJourney?.simulation && passengerJourney.phase === "exitPrompt") finishRoute();
+  }, [activeJourney, finishRoute, passengerJourney.phase]);
 
   const handleRequestSheetClose = useCallback(() => {
     if (activeRoute) {
@@ -268,7 +313,7 @@ export default function Map() {
       return;
     }
 
-    routePlanner.setRecommendation(null);
+    routePlanner.clearRecommendation();
     placeSearch.clearSelectedPlace();
     sheetRef.current?.close();
   }, [activeRoute, finishRoute, placeSearch, routePlanner]);
@@ -324,17 +369,22 @@ export default function Map() {
         stops={stopsQuery.data ?? []}
         selectedPlace={selectedPlace}
         displayedRoute={visibleRoute}
-        routeCoordinates={roadRoute.coordinates.length > 0 || !activeRoute
-          ? roadRoute.coordinates
-          : activeRoute.orderedStops.map((stop) => stop.adress)}
+        routeCoordinates={activeJourney?.coordinates ?? roadRoute.coordinates}
+        simulatedPassenger={displayingWalk ? walking : null}
         trackedBuses={[
-          ...liveBuses,
+          ...liveBuses.filter((bus) => !simulatedBusCoordinate || bus.busId !== activeRoute?.bus?.id),
           ...simulatedBuses.map((bus) => ({
             busId: bus.id,
             coordinate: { latitude: bus.latitude, longitude: bus.longitude },
             licensePlate: `Bus simulado ${bus.number}`,
             simulated: true,
           })),
+          ...(simulatedBusCoordinate && activeRoute?.bus ? [{
+            busId: activeRoute.bus.id,
+            coordinate: simulatedBusCoordinate,
+            licensePlate: activeRoute.bus.publicTransportPlate || activeRoute.bus.licensePlate,
+            simulated: true,
+          }] : []),
         ]}
         defaultLocation={DEFAULT_LOCATION}
         proBusinesses={proBusinesses}
@@ -400,7 +450,7 @@ export default function Map() {
         isLoadingPlace={placeSearch.isLoadingPlace}
         isFindingRoute={routePlanner.isFindingRoute}
         isLoadingRoad={roadRoute.isLoading}
-        canStartRoute={roadRoute.coordinates.length >= 2}
+        canStartRoute={!roadRoute.isLoading && !!catalogBuses}
         isRouteActive={activeRoute !== null}
         activeRoute={activeRoute}
         activeRouteStatus={passengerJourney.phase === "exitPrompt" ? "arrived" : "running"}
@@ -414,8 +464,9 @@ export default function Map() {
                 ? "En vivo"
                 : visibleRoute?.bus ? "Sin ubicación en vivo" : "Sin bus asignado"
         }
-        hasLiveBus={displayedBusIsLive || !!activeSimulation}
-        error={routePlanner.error ?? roadRoute.error ?? placeSearch.error}
+        hasLiveBus={displayedBusIsLive || !!activeSimulation || !!simulatedBusCoordinate}
+        error={routePlanner.error ?? roadRoute.error ?? placeSearch.error ??
+          (busesQuery.isLoadingError ? "No se pudo cargar el registro de buses." : null)}
         onFindRoute={() => {
           placeSearch.clearError();
           void routePlanner.findRouteToPlace();

@@ -1,5 +1,5 @@
-import AlternativeHeader from "@/src/shared/ui/headers/alternativeHeader";
 import PricingCard from "@/src/shared/ui/Cards/pricingCard";
+import AlternativeHeader from "@/src/shared/ui/headers/alternativeHeader";
 import { router } from "expo-router";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -36,5 +36,6 @@ export const styles = StyleSheet.create((theme) => ({
   container: {
     marginHorizontal: 20,
     marginTop: 20,
+    gap: 20,
   },
 }));

@@ -1,6 +1,6 @@
 const appJson = require("./app.json");
 
-module.exports = () => {
+module.exports = ({ config }) => {
   const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
   const googlePlacesApiKey =
     process.env.GOOGLE_PLACES_API_KEY || googleMapsApiKey;
@@ -14,25 +14,26 @@ module.exports = () => {
   const stripeFunctionsUrl = process.env.EXPO_PUBLIC_STRIPE_FUNCTIONS_URL;
   const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
   const googleAdsAppId = process.env.GOOGLE_ADS_APP_ID;
+  const defaultAds = appJson["react-native-google-mobile-ads"];
 
   if (!googleMapsApiKey) {
     throw new Error("Falta GOOGLE_MAPS_API_KEY en el archivo .env");
   }
 
   return {
-    ...appJson.expo,
+    ...config,
     plugins: [
-      ...(appJson.expo.plugins || []),
+      ...(config.plugins || []),
       [
         "react-native-google-mobile-ads",
         {
-          androidAppId: googleAdsAppId,
-          iosAppId: googleAdsAppId,
+          androidAppId: googleAdsAppId || defaultAds.android_app_id,
+          iosAppId: googleAdsAppId || defaultAds.ios_app_id,
         },
       ],
     ],
     extra: {
-      ...appJson.expo.extra,
+      ...config.extra,
       googlePlacesApiKey,
       googleRoutesApiKey,
       cloudinaryCloudName,
@@ -43,24 +44,20 @@ module.exports = () => {
       backendUrl,
     },
     ios: {
-      ...appJson.expo.ios,
+      ...config.ios,
       config: {
-        ...appJson.expo.ios?.config,
+        ...config.ios?.config,
         googleMapsApiKey,
       },
     },
     android: {
-      ...appJson.expo.android,
+      ...config.android,
       config: {
-        ...appJson.expo.android.config,
+        ...config.android?.config,
         googleMaps: {
           apiKey: googleMapsApiKey,
         },
       },
-    },
-    "react-native-google-mobile-ads": {
-      android_app_id: googleAdsAppId,
-      ios_app_id: googleAdsAppId, // Mismo ID aquí también
     },
   };
 };

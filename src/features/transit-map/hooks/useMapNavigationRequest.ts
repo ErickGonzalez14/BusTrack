@@ -15,7 +15,7 @@ type MapNavigationOptions = {
   buses?: Bus[];
   simulatedBuses: SimulatedBus[];
   userLocation: Coordinate | null;
-  followRoute: (recommendation: RouteRecommendation, coordinates: Coordinate[]) => void;
+  followRoute: (recommendation: RouteRecommendation, placeId: string) => void;
 };
 
 const getSearchParam = (value: string | string[] | undefined) =>
@@ -128,8 +128,7 @@ export function useMapNavigationRequest({
       destinationDistanceMeters: distanceInMeters(destination.coordinate, destinationStop.adress),
       estimatedRideMinutes: null,
     };
-    followRoute(recommendation, plan.orderedStops.slice(boardingIndex, destinationIndex + 1)
-      .map((stop) => stop.adress));
+    followRoute(recommendation, destination.id);
   }, [favoriteParams, isMapReady, destination, stops,
     routes, buses, simulatedBuses, userLocation, followRoute]);
 }

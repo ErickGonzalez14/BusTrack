@@ -56,7 +56,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['token', 'origin'])
         && request.resource.data.token is string
         && request.resource.data.token.size() <= 200
-        && request.resource.data.origin is latlng;
+        && (!('origin' in request.resource.data) || request.resource.data.origin is latlng);
     }
 
     function premium() {

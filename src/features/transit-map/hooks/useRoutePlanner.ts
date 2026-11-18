@@ -8,7 +8,7 @@ import {
 import { Stop } from "@/src/features/transit-map/domain/stop.type";
 import { findBestRoute, getRoutableDirections } from "@/src/features/transit-map/domain/mapRouting";
 import { getStopWalkingDistances } from "@/src/features/transit-map/data/walkingRoute.service";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type UseRoutePlannerOptions = {
   stops: Stop[];
@@ -30,23 +30,31 @@ export function useRoutePlanner({
   getUserLocation,
   onRouteFound,
 }: UseRoutePlannerOptions) {
-  const [recommendation, setRecommendation] =
-    useState<RouteRecommendation | null>(null);
+  const [result, setResult] =
+    useState<{ place: GooglePlace; recommendation: RouteRecommendation } | null>(null);
   const [isFindingRoute, setIsFindingRoute] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestRevision = useRef(0);
+  const clearRecommendation = useCallback(() => {
+    requestRevision.current++;
+    setResult(null);
+    setError(null);
+    setIsFindingRoute(false);
+  }, []);
 
   useEffect(() => {
-    setRecommendation(null);
-    setError(null);
-  }, [selectedPlace?.id]);
+    clearRecommendation();
+  }, [selectedPlace, clearRecommendation]);
 
   const findRouteToPlace = useCallback(async () => {
     if (!selectedPlace) return;
+    const request = ++requestRevision.current;
     setError(null);
     setIsFindingRoute(true);
 
     try {
       const currentPosition = await getUserLocation();
+      if (request !== requestRevision.current) return;
       const directions = getRoutableDirections(stops, routes);
       if (!directions.length) {
         throw new Error("No hay rutas activas con dos paradas disponibles en el mismo sentido.");
@@ -58,31 +66,32 @@ export function useRoutePlanner({
         selectedPlace.coordinate,
         candidateStops,
       );
-      const result = findBestRoute(
+      if (request !== requestRevision.current) return;
+      const recommendation = findBestRoute(
         directions,
         buses,
         selectedPlace.coordinate,
         walkingDistances,
       );
 
-      if (!result) {
+      if (!recommendation) {
         throw new Error(
           "No encontramos una ruta con paradas a las que puedas llegar caminando por calles o cruces válidos.",
         );
       }
 
-      setRecommendation(result);
-      onRouteFound(result, currentPosition);
+      setResult({ place: selectedPlace, recommendation });
+      onRouteFound(recommendation, currentPosition);
     } catch (routeError) {
-      setError((routeError as Error).message);
+      if (request === requestRevision.current) setError((routeError as Error).message);
     } finally {
-      setIsFindingRoute(false);
+      if (request === requestRevision.current) setIsFindingRoute(false);
     }
   }, [buses, getUserLocation, onRouteFound, routes, selectedPlace, stops]);
 
   return {
-    recommendation,
-    setRecommendation,
+    recommendation: result?.place === selectedPlace ? result?.recommendation ?? null : null,
+    clearRecommendation,
     isFindingRoute,
     error,
     findRouteToPlace,

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { doc, GeoPoint, getFirestore, runTransaction, setDoc } from "@react-native-firebase/firestore";
+import { doc, getFirestore, runTransaction, setDoc } from "@react-native-firebase/firestore";
 
 const deviceRef = (userId: string) => doc(getFirestore(), "routinePushDevices", userId);
 const localTokenKey = (userId: string) => `@bustrack/routine-push/${userId}`;
@@ -32,14 +32,10 @@ export function isRoutinePushSigningOut(userId: string) {
 export async function saveRoutinePushDevice(
   userId: string,
   token: string,
-  coordinate: { latitude: number; longitude: number },
   canRegister: () => boolean,
 ) {
   await AsyncStorage.setItem(localTokenKey(userId), token);
   if (canRegister()) {
-    await setDoc(deviceRef(userId), {
-      token,
-      origin: new GeoPoint(coordinate.latitude, coordinate.longitude),
-    });
+    await setDoc(deviceRef(userId), { token });
   }
 }

@@ -67,6 +67,11 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "12010848-0263-4893-8ef3-5096e3f25bbc"
+      }
     }
   },
   "react-native-google-mobile-ads": {
