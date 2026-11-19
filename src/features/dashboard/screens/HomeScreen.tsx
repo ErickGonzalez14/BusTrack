@@ -9,22 +9,29 @@ import { useGetRoutines } from "@/src/features/routines/hooks/useRoutine";
 import Empty from "@/src/shared/ui/empty";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Dimensions, ScrollView, Text, View } from "react-native";
+import { Dimensions, Pressable, ScrollView, Text, View } from "react-native";
 import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 export default function Home() {
   const { sites, isLoading, error } = useFavoriteSites();
   const windowWidth = Dimensions.get("window").width;
   const { businessPublications } = useBusinessPublications();
   const { routines } = useGetRoutines();
-
+  const { theme } = useUnistyles();
   const [selectedProduct, setSelectedProduct] = useState<
     (typeof businessPublications)[number] | null
   >(null);
 
-  const { data: business } = useBusinessFromPublication(
-    selectedProduct?.businessId,
-  );
+  const {
+    data: business,
+    isLoading: isBusinessLoading,
+    isLoadingError: isBusinessLoadingError,
+  } = useBusinessFromPublication(selectedProduct?.businessId);
+  const businessStatus = isBusinessLoading
+    ? "Cargando datos de la empresa…"
+    : isBusinessLoadingError
+      ? "No se pudieron cargar los datos de la empresa."
+      : undefined;
 
   return (
     <View style={styles.mainContainer}>
@@ -43,7 +50,28 @@ export default function Home() {
           }}
         />
         <View style={styles.container}>
-          <Text style={styles.Titles}>Promociones</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginRight: 20,
+            }}
+          >
+            <Text style={styles.Titles}>Promociones</Text>
+            <Pressable onPress={() => router.push("/productCatalog")}>
+              <Text
+                style={{
+                  color: theme.text.contrast,
+                  fontFamily: theme.fonts.heavy,
+                  fontSize: 16,
+                }}
+              >
+                Ver Publicaciones
+              </Text>
+            </Pressable>
+          </View>
+
           {/* carrucel de promociones */}
           <ScrollView
             horizontal={true}
@@ -68,24 +96,6 @@ export default function Home() {
               <Empty message="Vaya, aún no se han registrado promociones" />
             )}
           </ScrollView>
-          {selectedProduct && (
-            <ProductModal
-              title={selectedProduct.name}
-              description={selectedProduct.description}
-              img={selectedProduct.imageUrl}
-              cardType={selectedProduct.type}
-              color={selectedProduct.cardColor}
-              price={selectedProduct.price ?? ""}
-              currentPrice={selectedProduct.currentPrice}
-              lastPrice={selectedProduct.lastPrice}
-              onClose={() => setSelectedProduct(null)}
-              visible
-              businessName={business?.businessName ?? ""}
-              businessLogo={business?.logoUrl ?? ""}
-              businessPhone={business?.phoneNumber ?? ""}
-            />
-          )}
-
           {/*   Carrucel para Lugares Favoritos */}
           <Text style={styles.Titles}>Lugares Favoritos</Text>
           {isLoading && (
@@ -123,6 +133,24 @@ export default function Home() {
           </ScrollView>
         </View>
       </ScrollView>
+      {selectedProduct && (
+        <ProductModal
+          title={selectedProduct.name}
+          description={selectedProduct.description}
+          img={selectedProduct.imageUrl}
+          cardType={selectedProduct.type}
+          color={selectedProduct.cardColor}
+          price={selectedProduct.price ?? ""}
+          currentPrice={selectedProduct.currentPrice}
+          lastPrice={selectedProduct.lastPrice}
+          onClose={() => setSelectedProduct(null)}
+          visible
+          businessName={business?.businessName}
+          businessLogo={business?.logoUrl ?? undefined}
+          businessPhone={business?.phoneNumber}
+          businessStatus={businessStatus}
+        />
+      )}
     </View>
   );
 }

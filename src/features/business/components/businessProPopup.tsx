@@ -152,7 +152,14 @@ export default function BusinessProPopup({
                   style={[styles.detailButton, { flex: 1 }]}
                   accessibilityRole="button"
                   onPress={() => {
-                    router.push("/productCatalog");
+                    onClose();
+                    router.push({
+                      pathname: "/productCatalog",
+                      params: {
+                        businessId: business.id,
+                        businessName: business.businessName,
+                      },
+                    });
                   }}
                 >
                   <Text style={styles.detailButtonText}>Ver Catálogo</Text>

@@ -1,9 +1,18 @@
 import { adjustColor } from "../domain/publicationColors";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Modal, Pressable, Text, View } from "react-native";
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet as NativeStyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
-type ProductCardProps = {
+
+type ProductModalProps = {
   title: string;
   description: string;
   img: string;
@@ -12,14 +21,14 @@ type ProductCardProps = {
   price: string;
   currentPrice?: string;
   lastPrice?: string;
-  onPress?: () => void;
   businessName?: string;
   businessLogo?: string;
   businessPhone?: string;
+  businessStatus?: string;
   visible: boolean;
   onClose: () => void;
 };
-export default function ProductCatalog({
+export default function ProductModal({
   title,
   description,
   img,
@@ -31,9 +40,10 @@ export default function ProductCatalog({
   businessName,
   businessLogo,
   businessPhone,
+  businessStatus,
   visible,
   onClose,
-}: ProductCardProps) {
+}: ProductModalProps) {
   const lighterColor = adjustColor(color, {
     lightness: 12,
   });
@@ -46,108 +56,124 @@ export default function ProductCatalog({
     <Modal
       visible={visible}
       animationType="fade"
-      transparent={true}
+      transparent
       statusBarTranslucent
+      navigationBarTranslucent
       onRequestClose={onClose}
     >
-      <Pressable onPress={onClose}>
-        <Pressable onPress={() => {}}>
-          <View style={styles.backdrop}>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </Pressable>
+      <SafeAreaProvider style={styles.backdrop}>
+        <Pressable
+          accessible={false}
+          style={NativeStyleSheet.absoluteFill}
+          onPress={onClose}
+        />
+        <SafeAreaView style={styles.centeredContent} pointerEvents="box-none">
+          <LinearGradient
+            colors={[darkerColor, lighterColor]}
+            style={styles.container}
+            start={{ x: 0.05, y: 0 }}
+            end={{ x: 0.95, y: 1 }}
+            locations={[0, 0.7]}
+            accessibilityViewIsModal
+          >
             <LinearGradient
+              pointerEvents="none"
               colors={[darkerColor, lighterColor]}
-              style={styles.container}
+              style={[styles.circle, styles.circle1]}
               start={{ x: 0.05, y: 0 }}
               end={{ x: 0.95, y: 1 }}
               locations={[0, 0.7]}
+            />
+            <LinearGradient
+              pointerEvents="none"
+              colors={[darkerColor, lighterColor]}
+              style={[styles.circle, styles.circle2]}
+              start={{ x: 0.05, y: 0 }}
+              end={{ x: 0.95, y: 1 }}
+              locations={[0, 0.7]}
+            />
+            <LinearGradient
+              pointerEvents="none"
+              colors={[darkerColor, lighterColor]}
+              style={[styles.circle, styles.circle3]}
+              start={{ x: 0.05, y: 0 }}
+              end={{ x: 0.95, y: 1 }}
+              locations={[0, 0.7]}
+            />
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Cerrar detalles de la publicación"
+              onPress={onClose}
+              style={styles.closeButton}
             >
-              <LinearGradient
-                colors={[darkerColor, lighterColor]}
-                style={[styles.circle, styles.circle1]}
-                start={{ x: 0.05, y: 0 }}
-                end={{ x: 0.95, y: 1 }}
-                locations={[0, 0.7]}
-              />
-
-              <LinearGradient
-                colors={[darkerColor, lighterColor]}
-                style={[styles.circle, styles.circle2]}
-                start={{ x: 0.05, y: 0 }}
-                end={{ x: 0.95, y: 1 }}
-                locations={[0, 0.7]}
-              />
-
-              <LinearGradient
-                colors={[darkerColor, lighterColor]}
-                style={[styles.circle, styles.circle3]}
-                start={{ x: 0.05, y: 0 }}
-                end={{ x: 0.95, y: 1 }}
-                locations={[0, 0.7]}
-              />
-
-              <View style={styles.contentContainer}>
-                <View style={styles.infoContainer}>
-                  <Text
-                    style={styles.title}
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
-                  >
-                    {title}
-                  </Text>
-                  <Text
-                    style={styles.description}
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
-                  >
-                    {description}
-                  </Text>
-                  {cardType === "product" || cardType === "service" ? (
-                    <Text style={styles.price}>{price}</Text>
-                  ) : cardType === "discount" ? (
-                    <View style={styles.pricesContainer}>
-                      <Text style={styles.previousPrice}>{lastPrice}</Text>
-                      <Text style={styles.currentPrice}>{currentPrice}</Text>
-                    </View>
+              <Text style={styles.closeButtonText}>×</Text>
+            </Pressable>
+            <ScrollView
+              style={styles.scroll}
+              contentContainerStyle={styles.content}
+            >
+              {img ? (
+                <Image
+                  source={{ uri: img }}
+                  style={styles.productImage}
+                  contentFit="contain"
+                />
+              ) : null}
+              <Text accessibilityRole="header" style={styles.title}>
+                {title}
+              </Text>
+              <Text style={styles.description}>{description}</Text>
+              {cardType === "discount" ? (
+                <View style={styles.pricesContainer}>
+                  {lastPrice ? (
+                    <Text style={styles.previousPrice}>{lastPrice}</Text>
+                  ) : null}
+                  {currentPrice ? (
+                    <Text style={styles.price}>{currentPrice}</Text>
                   ) : null}
                 </View>
-                <View>
-                  {/* Se debe poner el url que viene del cloudinary*/}
-                  <Image
-                    source={{ uri: img }}
-                    style={styles.productImage}
-                    contentFit="contain"
-                  />
+              ) : price ? (
+                <Text style={styles.price}>{price}</Text>
+              ) : null}
+              {businessStatus ? (
+                <Text accessibilityLiveRegion="polite" style={styles.description}>
+                  {businessStatus}
+                </Text>
+              ) : null}
+              {businessLogo || businessName || businessPhone ? (
+                <View style={styles.businessDetails}>
+                  {businessLogo ? (
+                    <Image
+                      source={{ uri: businessLogo }}
+                      style={styles.businessLogo}
+                      contentFit="contain"
+                    />
+                  ) : null}
+                  <View style={styles.businessText}>
+                    {businessName ? (
+                      <Text style={styles.title}>{businessName}</Text>
+                    ) : null}
+                    {businessPhone ? (
+                      <Text style={styles.description}>{businessPhone}</Text>
+                    ) : null}
+                  </View>
                 </View>
-              </View>
-              <View>
-                <View style={styles.contentContainer}>
-                  <Image
-                    source={{ uri: businessLogo }}
-                    style={styles.businessLogo}
-                    contentFit="contain"
-                  />
-                  <Text style={styles.title}>{businessName}</Text>
-                </View>
-
-                <Text style={styles.description}>{businessPhone}</Text>
-              </View>
-            </LinearGradient>
-          </View>
-        </Pressable>
-      </Pressable>
+              ) : null}
+            </ScrollView>
+          </LinearGradient>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </Modal>
   );
 }
 
 export const styles = StyleSheet.create((theme) => ({
   container: {
-    width: "90%",
-    maxWidth: 350,
-    minHeight: 220,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    width: "100%",
+    maxWidth: 420,
+    maxHeight: "100%",
+    flexShrink: 1,
     overflow: "hidden",
     borderRadius: theme.size_rounded.md,
   },
@@ -158,38 +184,37 @@ export const styles = StyleSheet.create((theme) => ({
     borderRadius: 50,
   },
   circle1: {
-    left: 275,
+    right: -25,
     top: 70,
   },
 
   circle2: {
-    left: 225,
+    right: 25,
     top: 120,
   },
 
   circle3: {
-    left: 270,
+    right: -20,
     top: 100,
   },
   title: {
     fontSize: 20,
     fontFamily: theme.fonts.heavy,
     color: theme.text.Secondary,
-    paddingBottom: 5,
   },
   description: {
     fontSize: 16,
-    fontFamily: "Roboto_400Regular",
+    fontFamily: theme.fonts.regular,
     color: theme.text.Secondary,
-    width: "70%",
-    textAlign: "left",
-    paddingBottom: 15,
   },
-  contentContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
+  scroll: {
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  content: {
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   price: {
     fontSize: 16,
@@ -198,26 +223,31 @@ export const styles = StyleSheet.create((theme) => ({
   },
   previousPrice: {
     fontSize: 14,
-    fontFamily: "Roboto_400Regular",
+    fontFamily: theme.fonts.regular,
     color: theme.text.Secondary,
     textDecorationLine: "line-through",
   },
-  currentPrice: {
-    fontSize: 16,
-    fontFamily: theme.fonts.heavy,
-    color: theme.text.Secondary,
-  },
   pricesContainer: {
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
     gap: 10,
   },
-  infoContainer: {
+  businessDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.35)",
+    paddingTop: 12,
+  },
+  businessText: {
     flex: 1,
+    gap: 4,
   },
   productImage: {
-    width: 120,
-    height: 120,
+    width: "100%",
+    height: 160,
   },
   businessLogo: {
     width: 50,
@@ -225,15 +255,21 @@ export const styles = StyleSheet.create((theme) => ({
   },
   backdrop: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+  },
   closeButton: {
-    position: "absolute",
-    top: 8,
-    right: 12,
-    zIndex: 2,
+    alignSelf: "flex-end",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 44,
+    height: 44,
+    marginRight: 6,
   },
 
   closeButtonText: {

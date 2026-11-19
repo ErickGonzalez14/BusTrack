@@ -1,5 +1,15 @@
 import { getBusinessId } from "@/src/features/business/data/businessProfile";
-import { doc, getDoc, getFirestore, updateDoc } from "@react-native-firebase/firestore";
+import {
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  updateDoc,
+  where,
+} from "@react-native-firebase/firestore";
 import { uploadImageToCloudinary } from "@/src/shared/lib/uploadImage.service";
 import { type Publication } from "@/src/features/business/data/businessPublications";
 
@@ -99,3 +109,26 @@ export const getBusinessFromPublication = async (
     phoneNumber: data.phoneNumber,
   };
 };
+
+export async function getPublicationBusinessNames(businessIds: readonly string[]) {
+  const names = new Map<string, string>();
+  if (businessIds.length === 0) return names;
+
+  const businesses = collection(getFirestore(), "business");
+  const batchSize = 30; // Límite de valores para una consulta "in" de Firestore.
+  const requests = [];
+
+  for (let offset = 0; offset < businessIds.length; offset += batchSize) {
+    const ids = businessIds.slice(offset, offset + batchSize);
+    requests.push(getDocs(query(businesses, where(documentId(), "in", ids))));
+  }
+
+  for (const snapshot of await Promise.all(requests)) {
+    for (const business of snapshot.docs) {
+      const name = business.data().businessName;
+      if (typeof name === "string") names.set(business.id, name);
+    }
+  }
+
+  return names;
+}
