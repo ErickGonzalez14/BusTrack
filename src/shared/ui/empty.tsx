@@ -11,7 +11,9 @@ export default function Empty({ message }: EmptyProps) {
         source={require("@/assets/images/empty.png")}
         style={{ width: 100, height: 100 }}
       />
-      <Text style={styles.message}>{message}</Text>
+      <Text style={styles.message} numberOfLines={2}>
+        {message}
+      </Text>
     </View>
   );
 }
@@ -23,8 +25,9 @@ export const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
   },
   message: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: theme.fonts.heavy,
-    color: theme.text.Body,
+    color: theme.text.placeholder,
+    width: "70%",
   },
 }));

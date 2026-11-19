@@ -13,7 +13,11 @@ export default function FavoriteCard({
   onPress,
 }: FavoriteCardProps) {
   return (
-    <Pressable style={styles.container} onPress={onPress}>
+    <Pressable
+      accessibilityRole={onPress ? "button" : undefined}
+      style={styles.container}
+      onPress={onPress}
+    >
       <LinearGradient
         colors={["#ffffff8e", "#ffffff00"]}
         style={[styles.circle, styles.circlePosition]}

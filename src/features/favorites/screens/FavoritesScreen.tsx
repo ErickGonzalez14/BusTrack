@@ -1,16 +1,38 @@
-import AddFavoritePlace from "@/src/features/favorites/components/addFavoritePlace";
-import AlternativeHeader from "@/src/shared/ui/headers/alternativeHeader";
 import FavoriteCard from "@/src/features/favorites/components/favoriteCard";
-import RoutineCard from "@/src/features/routines/components/routineCard";
+import { FavoriteNameModal } from "@/src/features/favorites/components/FavoriteNameModal";
+import { useFavoriteSiteEditor } from "@/src/features/favorites/hooks/useFavoriteSiteEditor";
 import { useFavoriteSites } from "@/src/features/favorites/hooks/useFavoriteSites";
-import { useGetRoutines } from "@/src/features/routines/hooks/useRoutine";
+import ButtonPrimary from "@/src/shared/ui/buttons/buttonPrimary";
+import Empty from "@/src/shared/ui/empty";
+import AlternativeHeader from "@/src/shared/ui/headers/alternativeHeader";
 import { router } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 export default function Favorite() {
   const { sites, isLoading, error } = useFavoriteSites();
-  const { routines } = useGetRoutines();
+  const { selectedSite, openFavoriteModal, ...editor } =
+    useFavoriteSiteEditor();
+  const siteOnMap = sites.find((site) => site.id === selectedSite?.id);
+
+  function viewOnMap() {
+    if (!siteOnMap) return;
+
+    editor.closeFavoriteModal();
+    router.push({
+      pathname: "/(tabs)/map",
+      params: {
+        favoriteRequest: String(Date.now()),
+        favoritePlaceId: siteOnMap.placeId,
+        favoriteName: siteOnMap.name,
+        favoriteAddress: siteOnMap.address ?? "",
+        favoriteLatitude: String(siteOnMap.coordinate.latitude),
+        favoriteLongitude: String(siteOnMap.coordinate.longitude),
+        favoriteType: siteOnMap.placeType ?? "",
+      },
+    });
+  }
+
   return (
     <View style={styles.mainContainer}>
       <AlternativeHeader
@@ -30,57 +52,30 @@ export default function Favorite() {
             <Text style={styles.Titles}>Cargando sitios favoritos...</Text>
           )}
           {error && <Text style={styles.Titles}>Error: {error}</Text>}
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabContainer}
-          >
+          <View style={styles.gridContainer}>
             {sites.map((site) => (
-              <FavoriteCard
-                key={site.placeId}
-                routeName={site.name}
-                onPress={() => {
-                  router.push({
-                    pathname: "/(tabs)/map",
-                    params: {
-                      favoriteRequest: String(Date.now()),
-                      favoritePlaceId: site.placeId,
-                      favoriteName: site.name,
-                      favoriteAddress: site.address ?? "",
-                      favoriteLatitude: String(site.coordinate.latitude),
-                      favoriteLongitude: String(site.coordinate.longitude),
-                      favoriteType: site.placeType ?? "",
-                    },
-                  });
-                }}
-              />
+              <View key={site.id} style={styles.gridItem}>
+                <FavoriteCard
+                  routeName={site.name}
+                  onPress={() => openFavoriteModal(site)}
+                />
+              </View>
             ))}
-          </ScrollView>
-          {/* Add new Favorite site */}
-          <Text style={styles.Titles}>Agregar un nuevo lugar</Text>
-          <AddFavoritePlace />
-          {/* Routines and Add new routines*/}
-          <View style={styles.routineTextContainer}>
-            <Text style={[styles.Titles, { marginTop: 20 }]}>Tus Rutinas</Text>
-            <Pressable
-              onPress={() => router.push("/Settings/Favorites/createRoutine")}
-            >
-              <Text style={styles.createRoutineText}>+ Agregar Rutina</Text>
-            </Pressable>
+            {!isLoading && !error && sites.length === 0 && (
+              <Empty message="Vaya, aún no has guardado ningun lugar" />
+            )}
           </View>
-          <View style={styles.routinesCardContainer}>
-            {routines.map((routine) => (
-              <RoutineCard
-                routineName={routine.name}
-                routineHour={routine.time}
-                firstDay={routine.days[0]}
-                lastDay={routine.days[routine.days.length - 1]}
-                key={routine.id}
-              />
-            ))}
-          </View>
+          <ButtonPrimary
+            text="Agregar Lugar"
+            onPress={() => router.push("/(tabs)/map")}
+          />
         </View>
       </KeyboardAwareScrollView>
+      <FavoriteNameModal
+        {...editor}
+        isEditing
+        onViewOnMap={siteOnMap ? viewOnMap : undefined}
+      />
     </View>
   );
 }
@@ -113,20 +108,14 @@ export const styles = StyleSheet.create((theme) => ({
     flex: 1,
     backgroundColor: theme.surface.neutral,
   },
-  mainTabContainer: {
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: 10,
     marginBottom: 20,
   },
-  createRoutineText: {
-    fontSize: 16,
-    fontFamily: "Roboto_400Regular",
-    color: theme.surface.brand,
-  },
-  routineTextContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  routinesCardContainer: {
-    gap: 10,
+  gridItem: {
+    width: "48%",
   },
 }));

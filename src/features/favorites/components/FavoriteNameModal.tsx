@@ -1,16 +1,37 @@
-import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { useFavoritePlaceEditor } from "../hooks/useFavoritePlaceEditor";
 
-type FavoriteNameModalProps = Pick<ReturnType<typeof useFavoritePlaceEditor>,
-  "isFavoriteModalOpen" | "closeFavoriteModal" | "favoriteName" | "setFavoriteName" |
-  "isSavingFavorite" | "handleSaveFavorite"
->;
+type FavoriteNameModalProps = {
+  isFavoriteModalOpen: boolean;
+  closeFavoriteModal: () => void;
+  favoriteName: string;
+  setFavoriteName: (name: string) => void;
+  isSavingFavorite: boolean;
+  handleSaveFavorite: () => Promise<void>;
+  isEditing?: boolean;
+  isDeletingFavorite?: boolean;
+  handleDeleteFavorite?: () => Promise<void>;
+  onViewOnMap?: () => void;
+  error?: string | null;
+};
 
 export function FavoriteNameModal({
   isFavoriteModalOpen, closeFavoriteModal, favoriteName, setFavoriteName,
-  isSavingFavorite, handleSaveFavorite,
+  isSavingFavorite, handleSaveFavorite, isEditing = false,
+  isDeletingFavorite = false, handleDeleteFavorite, onViewOnMap, error,
 }: FavoriteNameModalProps) {
+  const isBusy = isSavingFavorite || isDeletingFavorite;
+  const canSave = Boolean(favoriteName.trim()) && !isBusy;
+
+  function confirmDelete() {
+    if (!handleDeleteFavorite || isBusy) return;
+
+    Alert.alert("Eliminar favorito", "¿Quieres quitar este lugar de tus favoritos?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Eliminar", style: "destructive", onPress: () => void handleDeleteFavorite() },
+    ]);
+  }
+
   return (
     <Modal
       visible={isFavoriteModalOpen}
@@ -23,38 +44,46 @@ export function FavoriteNameModal({
         style={styles.modalOverlay}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.modalCard}>
-          <Text style={styles.modalTitle}>Guardar lugar favorito</Text>
+        <View style={styles.modalCard} accessibilityViewIsModal>
+          <Text accessibilityRole="header" style={styles.modalTitle}>
+            {isEditing ? "Editar lugar favorito" : "Guardar lugar favorito"}
+          </Text>
           <Text style={styles.modalDescription}>
-            Ponle un nombre personalizado para encontrarlo fácilmente.
+            {isEditing
+              ? "Nombre del lugar"
+              : "Ponle un nombre personalizado para encontrarlo fácilmente."}
           </Text>
           <TextInput
-            autoFocus
+            accessibilityLabel="Nombre del lugar"
+            autoFocus={!handleDeleteFavorite}
             value={favoriteName}
             onChangeText={setFavoriteName}
             placeholder="Ejemplo: Casa de mamá"
             placeholderTextColor="#7B8794"
             maxLength={80}
-            editable={!isSavingFavorite}
+            editable={!isBusy}
             returnKeyType="done"
             style={styles.favoriteNameInput}
-            onSubmitEditing={() => void handleSaveFavorite()}
+            onSubmitEditing={() => canSave && void handleSaveFavorite()}
           />
+          {error && <Text accessibilityRole="alert" style={styles.modalDescription}>{error}</Text>}
           <View style={styles.modalActions}>
             <Pressable
+              accessibilityRole="button"
               style={styles.modalCancelButton}
-              disabled={isSavingFavorite}
+              disabled={isBusy}
               onPress={closeFavoriteModal}
             >
               <Text style={styles.modalCancelText}>Cancelar</Text>
             </Pressable>
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Guardar"
               style={[
                 styles.modalSaveButton,
-                (!favoriteName.trim() || isSavingFavorite) &&
-                  styles.buttonDisabled,
+                !canSave && styles.buttonDisabled,
               ]}
-              disabled={!favoriteName.trim() || isSavingFavorite}
+              disabled={!canSave}
               onPress={() => void handleSaveFavorite()}
             >
               {isSavingFavorite ? (
@@ -64,6 +93,35 @@ export function FavoriteNameModal({
               )}
             </Pressable>
           </View>
+          {(onViewOnMap || handleDeleteFavorite) && (
+            <View style={styles.additionalActions}>
+              {onViewOnMap && (
+                <Pressable
+                  accessibilityRole="button"
+                  style={styles.modalCancelButton}
+                  disabled={isBusy}
+                  onPress={onViewOnMap}
+                >
+                  <Text style={styles.modalCancelText}>Ver en el mapa</Text>
+                </Pressable>
+              )}
+              {handleDeleteFavorite && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Eliminar favorito"
+                  style={styles.modalCancelButton}
+                  disabled={isBusy}
+                  onPress={confirmDelete}
+                >
+                  {isDeletingFavorite ? (
+                    <ActivityIndicator size="small" color="#D63C3C" />
+                  ) : (
+                    <Text style={[styles.modalCancelText, styles.deleteText]}>Eliminar favorito</Text>
+                  )}
+                </Pressable>
+              )}
+            </View>
+          )}
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -116,6 +174,17 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "flex-end",
     gap: 10,
     marginTop: 4,
+  },
+  additionalActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: theme.text.placeHolderLight,
+    paddingTop: 4,
+  },
+  deleteText: {
+    color: "#D63C3C",
   },
   modalCancelButton: {
     minHeight: 44,

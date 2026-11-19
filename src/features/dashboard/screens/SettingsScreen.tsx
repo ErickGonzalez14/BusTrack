@@ -8,7 +8,9 @@ import { router } from "expo-router";
 import {
   Barcode,
   CreditCard,
-  GitCompare
+  GitCompare,
+  Heart,
+  Palette,
 } from "iconoir-react-native";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -46,6 +48,21 @@ export default function Settings() {
             onTouch={() => router.push("/Settings/editProfile")}
           />
         </View>
+        {/* Seccion de preferencias*/}
+        <View style={styles.settingsContainer}>
+          <Text style={styles.text}>Preferencias</Text>
+          <View style={styles.settings}>
+            <OptionLabel
+              settingsName="Tema"
+              icon={Palette}
+              iconColor="#5856D6"
+              isToggle={true}
+              separator={false}
+              toggleValue={notificationsEnabled}
+              onToggleChange={setNotificationsEnabled}
+            />
+          </View>
+        </View>
 
         {/* Seccion de Servicios*/}
         <View style={styles.settingsContainer}>
@@ -59,6 +76,14 @@ export default function Settings() {
               separator={true}
               onPress={() => router.push("/Settings/Subscriptions/dashBoard")}
             />
+            <OptionLabel
+              settingsName="Favoritos"
+              icon={Heart}
+              iconColor="#FF2D55"
+              isToggle={false}
+              separator={true}
+              onPress={() => router.push("/Settings/Favorites/favorite")}
+            />
 
             <OptionLabel
               settingsName="Solicitudes"
@@ -71,6 +96,7 @@ export default function Settings() {
               }
               onPress={() => router.push("/Settings/UserRequests/requests")}
             />
+
             {isBusApproved && (
               <OptionLabel
                 settingsName="BusTracking"

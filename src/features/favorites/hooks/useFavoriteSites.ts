@@ -1,72 +1,38 @@
 import { useAuth } from "@/src/features/auth/context/authContext";
-import {
-    type FavoriteSite,
-    getAllFavoriteSites,
-} from "@/src/features/favorites/data/favoriteSites.service";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { type FavoriteSite, watchFavoriteSites } from "../data/favoriteSites.service";
 
-export function useFavoriteSites() {
+type FavoriteSitesResult = {
+  userId: string;
+  sites: FavoriteSite[];
+  error: string | null;
+};
+
+export function useFavoriteSites(enabled = true) {
   const { user } = useAuth();
+  const userId = enabled ? user?.uid : undefined;
+  const [result, setResult] = useState<FavoriteSitesResult | null>(null);
 
-  const [sites, setSites] = useState<FavoriteSite[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchSites = useCallback(async () => {
-    if (!user) {
-      setSites([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await getAllFavoriteSites();
-      setSites(result);
-    } catch (fetchError) {
-      setError((fetchError as Error).message);
-      setSites([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  // Carga automática al montar o cuando cambia el usuario
   useEffect(() => {
-    let active = true;
+    if (!userId) return;
 
-    if (!user) {
-      setSites([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    void getAllFavoriteSites()
-      .then((result) => {
-        if (active) setSites(result);
-      })
-      .catch((fetchError) => {
-        if (active) {
-          setError((fetchError as Error).message);
-          setSites([]);
-        }
-      })
-      .finally(() => {
-        if (active) setIsLoading(false);
-      });
+    const unsubscribe = watchFavoriteSites(
+      userId,
+      (sites) => setResult({ userId, sites, error: null }),
+      (error) => setResult({ userId, sites: [], error: error.message }),
+    );
 
     return () => {
-      active = false;
+      unsubscribe();
+      setResult(null);
     };
-  }, [user]);
+  }, [userId]);
+
+  const currentResult = result?.userId === userId ? result : null;
 
   return {
-    sites,
-    isLoading,
-    error,
-    refresh: fetchSites,
+    sites: currentResult?.sites ?? [],
+    isLoading: Boolean(userId) && !currentResult,
+    error: currentResult?.error ?? null,
   };
 }

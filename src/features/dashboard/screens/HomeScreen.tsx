@@ -6,6 +6,7 @@ import PrimaryHeader from "@/src/features/dashboard/components/primaryHeader/pri
 import FavoriteCard from "@/src/features/favorites/components/favoriteCard";
 import { useFavoriteSites } from "@/src/features/favorites/hooks/useFavoriteSites";
 import { useGetRoutines } from "@/src/features/routines/hooks/useRoutine";
+import Empty from "@/src/shared/ui/empty";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
@@ -63,6 +64,9 @@ export default function Home() {
                 onPress={() => setSelectedProduct(publication)}
               />
             ))}
+            {businessPublications.length === 0 && (
+              <Empty message="Vaya, aún no se han registrado promociones" />
+            )}
           </ScrollView>
           {selectedProduct && (
             <ProductModal
@@ -81,6 +85,7 @@ export default function Home() {
               businessPhone={business?.phoneNumber ?? ""}
             />
           )}
+
           {/*   Carrucel para Lugares Favoritos */}
           <Text style={styles.Titles}>Lugares Favoritos</Text>
           {isLoading && (
@@ -112,6 +117,9 @@ export default function Home() {
                 }}
               />
             ))}
+            {sites.length === 0 && (
+              <Empty message="Vaya, aún no has guardado ningun lugar" />
+            )}
           </ScrollView>
         </View>
       </ScrollView>
