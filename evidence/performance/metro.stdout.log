@@ -1,0 +1,51 @@
+env: load .env.local .env
+env: export GOOGLE_MAPS_API_KEY EAS_PROYECT_PACKAGE CLOUDINARY_CLOUD_NAME CLOUDINARY_UPLOAD_PRESET STRIPE_PUBLISHABLE_KEY GOOGLE_ADS_APP_ID REVENUECAT_ALLOW_SANDBOX EXPO_PUBLIC_REVENUECAT_TEST_API_KEY EXPO_PUBLIC_BACKEND_URL
+Starting project at C:\BusTrack
+React Compiler enabled
+Metro is running in CI mode, reloads are disabled. Remove CI=true to enable watch mode.
+Starting Metro Bundler
+Waiting on http://localhost:8091
+Logs for your project will appear below.
+Android .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+| (node:35116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+Android .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:22032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:37468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:21372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:37904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:41908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android .\index.ts ▓▓▓▓░░░░░░░░░░░░ 25.0% ( 21/141)
+| (node:8936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:34728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android .\index.ts ▓▓▓▓░░░░░░░░░░░░ 25.0% ( 71/319)
+Android .\index.ts ▓▓▓▓░░░░░░░░░░░░ 25.0% (222/490)
+Android .\index.ts ▓▓▓▓░░░░░░░░░░░░ 29.8% (336/622)
+Android .\index.ts ▓▓▓▓▓░░░░░░░░░░░ 33.9% ( 433/2440)
+Android .\index.ts ▓▓▓▓▓░░░░░░░░░░░ 33.9% ( 502/2695)
+Android .\index.ts ▓▓▓▓▓░░░░░░░░░░░ 33.9% ( 674/2816)
+Android .\index.ts ▓▓▓▓▓░░░░░░░░░░░ 33.9% (1127/2889)
+Android .\index.ts ▓▓▓▓▓▓░░░░░░░░░░ 37.8% (1776/2889)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.5% (2521/2946)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.6% (2653/3119)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.6% (2743/3287)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.9% (2952/3435)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 80.4% (3223/3609)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 82.3% (3373/3781)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 84.2% (3605/3928)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 87.5% (3755/4062)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 87.5% (3829/4285)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 87.5% (4008/4454)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 91.9% (4384/4583)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 91.9% (4480/4740)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 94.3% (4741/4883)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 98.3% (4971/5014)
+Android Bundled 132492ms index.ts (5065 modules)
+Android .\index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (5065/5065)

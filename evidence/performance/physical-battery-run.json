@@ -1,0 +1,183 @@
+{
+  "startedAt": "2026-11-18T18:39:14.4477737-05:00",
+  "phone": "SM-A366E",
+  "nativeBuild": "Expo development client, JavaScript minificado y sin modo de desarrollo",
+  "brightnessSetting": "94",
+  "brightnessMode": "1",
+  "secondsPerPhase": 180,
+  "samples": [
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 0.0,
+      "chargeMicroAh": 4445000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 15.5,
+      "chargeMicroAh": 4440000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 31.0,
+      "chargeMicroAh": 4440000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 46.4,
+      "chargeMicroAh": 4440000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 61.8,
+      "chargeMicroAh": 4440000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 77.2,
+      "chargeMicroAh": 4435000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 92.6,
+      "chargeMicroAh": 4435000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 108.0,
+      "chargeMicroAh": 4435000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 123.5,
+      "chargeMicroAh": 4435000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 138.8,
+      "chargeMicroAh": 4430000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 154.2,
+      "chargeMicroAh": 4430000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 169.7,
+      "chargeMicroAh": 4430000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "inicio-bustrack",
+      "elapsedSeconds": 180.2,
+      "chargeMicroAh": 4430000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 0.0,
+      "chargeMicroAh": 4425000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 15.3,
+      "chargeMicroAh": 4425000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 30.7,
+      "chargeMicroAh": 4425000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 46.2,
+      "chargeMicroAh": 4425000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 61.7,
+      "chargeMicroAh": 4420000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 77.2,
+      "chargeMicroAh": 4420000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 92.7,
+      "chargeMicroAh": 4415000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 108.3,
+      "chargeMicroAh": 4415000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 123.7,
+      "chargeMicroAh": 4415000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 139.1,
+      "chargeMicroAh": 4415000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 154.8,
+      "chargeMicroAh": 4410000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 170.3,
+      "chargeMicroAh": 4410000,
+      "levelPercent": 88
+    },
+    {
+      "phase": "mapa-bustrack",
+      "elapsedSeconds": 179.7,
+      "chargeMicroAh": 4410000,
+      "levelPercent": 88
+    }
+  ],
+  "phases": [
+    {
+      "name": "inicio-bustrack",
+      "elapsedSeconds": 180.2,
+      "deviceDrainMah": 15,
+      "appEstimatedMahBefore": 28.4,
+      "appEstimatedMahAfter": 37.4
+    },
+    {
+      "name": "mapa-bustrack",
+      "elapsedSeconds": 179.7,
+      "deviceDrainMah": 15,
+      "appEstimatedMahBefore": 38.4,
+      "appEstimatedMahAfter": 50.5
+    }
+  ],
+  "completed": true
+}

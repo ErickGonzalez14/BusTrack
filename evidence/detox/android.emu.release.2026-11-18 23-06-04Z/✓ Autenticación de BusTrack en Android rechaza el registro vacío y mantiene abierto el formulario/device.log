@@ -1,0 +1,518 @@
+--------- beginning of main
+11-18 23:07:56.543  7857  7857 I rick12.BusTrack: Using CollectorTypeCMC GC.
+11-18 23:07:56.545  7857  7857 W rick12.BusTrack: Unexpected CPU variant for x86: x86_64.
+11-18 23:07:56.545  7857  7857 W rick12.BusTrack: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-18 23:07:56.548  7857  7857 E rick12.BusTrack: Not starting debugger since process cannot load the jdwp agent.
+11-18 23:07:56.554  7857  7857 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+--------- beginning of system
+11-18 23:07:56.587  7857  7857 W ActivityThread: Package uses different ABI(s) than its instrumentation: package[com.erick12.BusTrack]: x86_64, null instrumentation[com.erick12.BusTrack.test]: null, null
+11-18 23:07:56.588  7857  7857 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar
+11-18 23:07:56.589  7857  7857 W rick12.BusTrack: ClassLoaderContext shared library size mismatch. Expected=2, found=1 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.592  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.593  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=2 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.594  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=3 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}} | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.610  7857  7857 I rick12.BusTrack: Failed to add image file: Dex cache count and dex file count mismatch while trying to initialize from image
+11-18 23:07:56.612  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=4 (PCL[]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]} | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.631  7857  7857 D nativeloader: Configuring clns-7 for other apk /system/framework/android.test.runner.jar:/system/framework/android.test.mock.jar:/system/framework/android.test.base.jar:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/lib/x86_64:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/lib/x86_64:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk!/lib/x86_64:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.erick12.BusTrack
+11-18 23:07:56.657  7857  7857 V GraphicsEnvironment: Currently set values for:
+11-18 23:07:56.657  7857  7857 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-18 23:07:56.657  7857  7857 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-18 23:07:56.658  7857  7857 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-18 23:07:56.658  7857  7857 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-18 23:07:56.662  7857  7857 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.test.base.jar
+11-18 23:07:56.665  7857  7857 D nativeloader: Configuring clns-8 for other apk /system/framework/android.test.mock.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/lib/x86_64:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/lib/x86_64, permitted_path=/data:/mnt/expand
+11-18 23:07:56.665  7857  7857 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/android.test.base.jar
+11-18 23:07:56.666  7857  7857 D nativeloader: Configuring clns-9 for other apk /system/framework/android.test.runner.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/lib/x86_64:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/lib/x86_64, permitted_path=/data:/mnt/expand
+11-18 23:07:56.667  7857  7857 W rick12.BusTrack: ClassLoaderContext shared library size mismatch. Expected=2, found=3 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]} | PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}};PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk*1337639921]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.668  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}};PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk*1337639921]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.669  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=2 (PCL[] | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}};PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk*1337639921]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.671  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=3 (PCL[]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}} | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}};PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk*1337639921]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.684  7857  7857 I rick12.BusTrack: Failed to add image file: Dex cache count and dex file count mismatch while trying to initialize from image
+11-18 23:07:56.687  7857  7857 W rick12.BusTrack: ClassLoaderContext classpath size mismatch. expected=0, found=4 (PCL[]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]} | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}};PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk*1337639921]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.706  7857  7857 W rick12.BusTrack: ClassLoaderContext shared library size mismatch. Expected=1, found=3 (PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]} | PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]#PCL[/system/framework/android.test.runner.jar*2496447986]{PCL[/system/framework/android.test.base.jar*724373495]#PCL[/system/framework/android.test.mock.jar*1452759902]}};PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709:/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk*1337639921]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]})
+11-18 23:07:56.706  7857  7857 I rick12.BusTrack: Failed to add image file: Class loader contexts don't match: PCL[/system/framework/android.test.runner.jar*2496447986:/system/framework/android.test.mock.jar*1452759902:/system/framework/android.test.base.jar*724373495:/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk*1541867709]{PCL[/system/framework/org.apache.http.legacy.jar*437079508]}
+11-18 23:07:56.720  7857  7857 I AndroidJUnitRunner: newApplication com.erick12.BusTrack.MainApplication
+11-18 23:07:56.736  7857  7857 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-18 23:07:56.743  7857  7857 I FirebaseInitProvider: FirebaseApp initialization successful
+11-18 23:07:56.744  7857  7857 D ReactNativeFirebaseApp: received application context.
+11-18 23:07:56.757  7857  7873 W GooglePlayServicesUtil: Google Play services out of date for com.erick12.BusTrack.  Requires 261200000 but found 242335041
+11-18 23:07:56.757  7857  7873 W GoogleApiManager: The service for com.google.android.gms.internal.cloudmessaging.zzd is not available: ConnectionResult{statusCode=SERVICE_VERSION_UPDATE_REQUIRED, resolution=null, message=null, clientMethodKey=null}
+11-18 23:07:56.768  7857  7857 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-18 23:07:56.791  7857  7857 I AndroidJUnitRunner: onCreate Bundle[mParcelledData.dataSize=240]
+11-18 23:07:56.793  7857  7857 D AndroidJUnitRunner: Use the raw file system for managing file I/O.
+11-18 23:07:56.805  7857  7857 V TestEventClient: No service name argument was given (testDiscoveryService, testRunEventService or orchestratorService)
+11-18 23:07:56.806  7857  7890 D AndroidJUnitRunner: onStart is called.
+11-18 23:07:56.806  7857  7857 W SoLoader: Initializing SoLoader: 0
+11-18 23:07:56.806  7857  7857 W SoLoader: Recording new base apk path: /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk
+11-18 23:07:56.806  7857  7857 W SoLoader: Previously recorded 0 base apk paths.
+11-18 23:07:56.807  7857  7857 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+11-18 23:07:56.808  7857  7857 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+11-18 23:07:56.808  7857  7857 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64]]
+11-18 23:07:56.811  7857  7857 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/lib/x86_64 flags = 0]]
+11-18 23:07:56.811  7857  7857 I SoLoader: init finish: 4 SO sources prepared
+11-18 23:07:56.812  7857  7857 W SoLoader: SoLoader initialized: 8
+11-18 23:07:56.826  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libc++_shared.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.830  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libjsi.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.835  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libfbjni.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.837  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libreactnative.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.837  7857  7857 D jni_lib_merge: Entering merged library JNI_OnLoad.
+11-18 23:07:56.838  7857  7857 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+11-18 23:07:56.838  7857  7857 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x764d404afba0
+11-18 23:07:56.838  7857  7857 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x764d4058b530
+11-18 23:07:56.838  7857  7857 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x764d4059e0a0
+11-18 23:07:56.838  7857  7857 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x764d405c4fa0
+11-18 23:07:56.839  7857  7857 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x764d4066ca50
+11-18 23:07:56.839  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x764d406878c0
+11-18 23:07:56.839  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x764d4068e150
+11-18 23:07:56.839  7857  7857 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x764d406ac450
+11-18 23:07:56.840  7857  7857 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x764d40757b80
+11-18 23:07:56.840  7857  7857 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x764d4075fab0
+11-18 23:07:56.840  7857  7857 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x764d40767130
+11-18 23:07:56.840  7857  7857 D jni_lib_merge: About to register 11 actual methods.
+11-18 23:07:56.855  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libreact_codegen_rnscreens.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.855  7857  7857 D jni_lib_merge: Entering merged library JNI_OnLoad.
+11-18 23:07:56.855  7857  7857 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+11-18 23:07:56.855  7857  7857 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x764d404afba0
+11-18 23:07:56.855  7857  7857 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x764d4058b530
+11-18 23:07:56.856  7857  7857 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x764d4059e0a0
+11-18 23:07:56.856  7857  7857 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x764d405c4fa0
+11-18 23:07:56.856  7857  7857 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x764d4066ca50
+11-18 23:07:56.856  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x764d406878c0
+11-18 23:07:56.856  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x764d4068e150
+11-18 23:07:56.857  7857  7857 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x764d406ac450
+11-18 23:07:56.857  7857  7857 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x764d40757b80
+11-18 23:07:56.857  7857  7857 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x764d4075fab0
+11-18 23:07:56.857  7857  7857 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x764d40767130
+11-18 23:07:56.857  7857  7857 D jni_lib_merge: About to register 11 actual methods.
+11-18 23:07:56.862  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libreact_codegen_rnsvg.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.863  7857  7857 D jni_lib_merge: Entering merged library JNI_OnLoad.
+11-18 23:07:56.863  7857  7857 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+11-18 23:07:56.863  7857  7857 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x764d404afba0
+11-18 23:07:56.863  7857  7857 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x764d4058b530
+11-18 23:07:56.863  7857  7857 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x764d4059e0a0
+11-18 23:07:56.863  7857  7857 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x764d405c4fa0
+11-18 23:07:56.864  7857  7857 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x764d4066ca50
+11-18 23:07:56.864  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x764d406878c0
+11-18 23:07:56.864  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x764d4068e150
+11-18 23:07:56.864  7857  7857 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x764d406ac450
+11-18 23:07:56.865  7857  7857 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x764d40757b80
+11-18 23:07:56.865  7857  7857 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x764d4075fab0
+11-18 23:07:56.865  7857  7857 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x764d40767130
+11-18 23:07:56.865  7857  7857 D jni_lib_merge: About to register 11 actual methods.
+11-18 23:07:56.869  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libreact_codegen_safeareacontext.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.873  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libreact_codegen_reactnativekeyboardcontroller.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.873  7857  7857 D jni_lib_merge: Entering merged library JNI_OnLoad.
+11-18 23:07:56.874  7857  7857 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+11-18 23:07:56.874  7857  7857 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x764d404afba0
+11-18 23:07:56.874  7857  7857 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x764d4058b530
+11-18 23:07:56.874  7857  7857 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x764d4059e0a0
+11-18 23:07:56.874  7857  7857 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x764d405c4fa0
+11-18 23:07:56.875  7857  7857 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x764d4066ca50
+11-18 23:07:56.875  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x764d406878c0
+11-18 23:07:56.875  7857  7857 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x764d4068e150
+11-18 23:07:56.875  7857  7857 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x764d406ac450
+11-18 23:07:56.875  7857  7857 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x764d40757b80
+11-18 23:07:56.875  7857  7857 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x764d4075fab0
+11-18 23:07:56.876  7857  7857 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x764d40767130
+11-18 23:07:56.876  7857  7857 D jni_lib_merge: About to register 11 actual methods.
+11-18 23:07:56.879  7857  7857 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libappmodules.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:56.906  7857  7890 I InstrConnection: Could not send broadcast or register receiver (isolatedProcess?)
+11-18 23:07:56.914  7857  7890 D TestRequestBuilder: Using class path scanning to discover tests
+11-18 23:07:56.914  7857  7890 I TestRequestBuilder: Scanning classpath to find tests in paths [/data/app/~~NtKVSpnbfTNAFPESixJAIA==/com.erick12.BusTrack.test-z_VFH7q2Cavp--OWtSwm4w==/base.apk]
+11-18 23:07:56.915  7857  7890 W rick12.BusTrack: Opening an oat file without a class loader. Are you using the deprecated DexFile APIs?
+11-18 23:07:57.218  7857  7890 I TestRunner: run started: 1 tests
+11-18 23:07:57.220  7857  7890 I TestRunner: started: runDetoxTests(com.erick12.BusTrack.DetoxTest)
+11-18 23:07:57.226  7857  7890 I Detox   : Detox server connection details: url=ws://localhost:10464, sessionId=807ed05d-c438-4b75-3fd0-759848a2630a
+11-18 23:07:57.232  7857  7890 W FileTestStorage: Output properties is not supported.
+11-18 23:07:57.232  7857  7890 I Tracing : Tracer added: class androidx.test.platform.tracing.AndroidXTracer
+11-18 23:07:57.239  7857  7890 D EventInjectionStrategy: Creating injection strategy with input manager.
+11-18 23:07:57.245  7857  7890 I Detox   : Connecting to server...
+11-18 23:07:57.246  7857  7890 I DetoxWSClient: At connectToServer
+11-18 23:07:57.254  7857  7903 D TrafficStats: tagSocket(106) with statsTag=0xffffffff, statsUid=-1
+11-18 23:07:57.265  7857  7903 D DetoxWSClient: At onOpen
+11-18 23:07:57.266  7857  7903 I DetoxWSClient: Sending out action 'login' (ID #0)
+11-18 23:07:57.266  7857  7903 I Detox   : Connected to server!
+11-18 23:07:57.272  7857  7903 D DetoxWSClient: Received action 'loginSuccess' (ID #0, params={"testerConnected":true,"appConnected":true})
+11-18 23:07:57.273  7857  7899 I DetoxDispatcher: Handling action 'loginSuccess' (ID #0)...
+11-18 23:07:57.274  7857  7899 I DetoxDispatcher: Done with action 'loginSuccess'
+11-18 23:07:57.274  7857  7890 I Detox   : Launching the tested activity!
+11-18 23:07:57.311  7857  7903 D DetoxWSClient: Received action 'isReady' (ID #-1000, params={})
+11-18 23:07:57.320  7857  7899 I DetoxDispatcher: Handling action 'isReady' (ID #-1000)...
+11-18 23:07:57.362  7857  7857 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-18 23:07:57.373  7857  7857 D LifecycleMonitor: Lifecycle status change: com.erick12.BusTrack.MainActivity@3a540c1 in: PRE_ON_CREATE
+11-18 23:07:57.469  7857  7857 W unknown:BridgelessReact: ReactHost{0}.startSurface(surfaceId = 0): Schedule
+11-18 23:07:57.470  7857  7857 W unknown:BridgelessReact: ReactHost{0}.attachSurface(surfaceId = 0)
+11-18 23:07:57.472  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask()
+11-18 23:07:57.472  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Start
+11-18 23:07:57.472  7857  7914 D Detox.RNMarker: REACT_BRIDGELESS_LOADING_START (null)
+11-18 23:07:57.473  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getJSBundleLoader()
+11-18 23:07:57.473  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactContext(): Creating BridgelessReactContext
+11-18 23:07:57.473  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Creating ReactInstance
+11-18 23:07:57.474  7857  7857 D LifecycleMonitor: Lifecycle status change: com.erick12.BusTrack.MainActivity@3a540c1 in: CREATED
+11-18 23:07:57.481  7857  7857 D LifecycleMonitor: Lifecycle status change: com.erick12.BusTrack.MainActivity@3a540c1 in: STARTED
+11-18 23:07:57.485  7857  7857 W unknown:BridgelessReact: ReactHost{0}.onHostResume(activity)
+11-18 23:07:57.486  7857  7857 W unknown:BridgelessReact: ReactContext.onHostResume()
+11-18 23:07:57.486  7857  7857 D LifecycleMonitor: Lifecycle status change: com.erick12.BusTrack.MainActivity@3a540c1 in: RESUMED
+11-18 23:07:57.489  7857  7914 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libhermes.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:57.491  7857  7914 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libhermestooling.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:57.491  7857  7914 D jni_lib_merge: Entering merged library JNI_OnLoad.
+11-18 23:07:57.491  7857  7914 D jni_lib_merge: Preparing 4 pre-merged libs (including stub)
+11-18 23:07:57.491  7857  7914 D jni_lib_merge: Preparing to register libhermes_executor_so.  onload_func: 0x764d41465730
+11-18 23:07:57.491  7857  7914 D jni_lib_merge: Preparing to register libhermesinstancejni_so.  onload_func: 0x764d4146cdb0
+11-18 23:07:57.491  7857  7914 D jni_lib_merge: Preparing to register libjsijniprofiler_so.  onload_func: 0x764d4146d540
+11-18 23:07:57.491  7857  7914 D jni_lib_merge: About to register 3 actual methods.
+11-18 23:07:57.497  7857  7857 W HWUI    : Unknown dataspace 0
+11-18 23:07:57.537  7857  7909 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-18 23:07:57.538  7857  7909 I EGL_emulation: Opening libGLESv2_emulation.so
+11-18 23:07:57.543  7857  7914 I NitroGoogleSigninOnLoad: Loading NitroGoogleSignin C++ library...
+11-18 23:07:57.566  7857  7914 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libNitroGoogleSignin.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes6.dex): ok
+11-18 23:07:57.566  7857  7914 I NitroGoogleSigninOnLoad: Successfully loaded NitroGoogleSignin C++ library!
+11-18 23:07:57.569  7857  7909 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-18 23:07:57.600  7857  7914 I ExpoModulesCore: ✅ AppContext was initialized
+11-18 23:07:57.601  7857  7909 I Gralloc4: mapper 4.x is not supported
+11-18 23:07:57.637  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Loading JS Bundle
+11-18 23:07:57.637  7857  7914 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Calling DevSupportManagerBase.onNewReactContextCreated(reactContext)
+11-18 23:07:57.637  7857  7914 W unknown:BridgelessReact: ReactHost{0}.startSurface(surfaceId = 0): Execute
+11-18 23:07:57.639  7857  7915 D Detox.RNMarker: RUN_JS_BUNDLE_START (index.android.bundle)
+11-18 23:07:57.653  7857  7916 I RNFB_EMITTER: ReactContext changed: @0 -> @72618411
+11-18 23:07:57.653  7857  7916 D Auth    : instance-initialized
+11-18 23:07:57.653  7857  7916 I unistylesOnLoad: Loading unistyles C++ library...
+11-18 23:07:57.655  7857  7857 W unknown:BridgelessReact: ReactContext.onHostResume()
+11-18 23:07:57.659  7857  7857 W unknown:BridgelessReact: ReactHost{0}.getOrCreateReactInstanceTask(): Executing ReactInstanceEventListeners
+11-18 23:07:57.662  7857  7916 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libunistyles.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes6.dex): ok
+11-18 23:07:57.662  7857  7916 I unistylesOnLoad: Successfully loaded unistyles C++ library!
+11-18 23:07:57.665  7857  7916 W BridgelessReactContext: [WARNING] Bridgeless doesn't support CatalystInstance. Accessing an API that's not part of the new architecture is not encouraged usage.
+11-18 23:07:57.680  7857  7915 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libexpo-modules-core.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:57.695  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativekeyboardcontroller.OverKeyboardViewManager
+11-18 23:07:57.696  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativekeyboardcontroller.views.overlay.OverKeyboardHostShadowNode
+11-18 23:07:57.697  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapUrlTileManager
+11-18 23:07:57.698  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.uimanager.LayoutShadowNode
+11-18 23:07:57.699  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.CardFormViewManager
+11-18 23:07:57.699  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenFooterManager
+11-18 23:07:57.700  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.tabs.TabScreenViewManager
+11-18 23:07:57.700  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.EmbeddedPaymentElementViewManager
+11-18 23:07:57.701  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapManager
+11-18 23:07:57.702  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenContainerViewManager
+11-18 23:07:57.702  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class expo.modules.kotlin.views.GroupViewManagerWrapper
+11-18 23:07:57.704  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.gamma.tabs.TabsHostViewManager
+11-18 23:07:57.705  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.StripeContainerManager
+11-18 23:07:57.706  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapMarkerManager
+11-18 23:07:57.707  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapLocalTileManager
+11-18 23:07:57.708  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsNativeAdViewManager
+11-18 23:07:57.708  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ModalScreenViewManager
+11-18 23:07:57.709  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapPolylineManager
+11-18 23:07:57.710  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapCircleManager
+11-18 23:07:57.710  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativekeyboardcontroller.KeyboardGestureAreaViewManager
+11-18 23:07:57.711  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsMultiFormatBannerViewManager
+11-18 23:07:57.712  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.th3rdwave.safeareacontext.SafeAreaViewManager
+11-18 23:07:57.712  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.th3rdwave.safeareacontext.SafeAreaViewShadowNode
+11-18 23:07:57.712  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenViewManager
+11-18 23:07:57.713  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class expo.modules.kotlin.views.SimpleViewManagerWrapper
+11-18 23:07:57.713  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.CardFieldViewManager
+11-18 23:07:57.714  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenStackViewManager
+11-18 23:07:57.714  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapCalloutManager
+11-18 23:07:57.714  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.addresssheet.AddressSheetViewManager
+11-18 23:07:57.715  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.th3rdwave.safeareacontext.SafeAreaProviderManager
+11-18 23:07:57.715  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.SearchBarManager
+11-18 23:07:57.715  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapGradientPolylineManager
+11-18 23:07:57.715  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapHeatmapManager
+11-18 23:07:57.716  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.nitrogooglesignin.GoogleSignInButtonViewManager
+11-18 23:07:57.716  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.nitrogooglesignin.GoogleSignInButtonShadowNode
+11-18 23:07:57.716  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.shopify.reactnative.skia.SkiaPictureViewManager
+11-18 23:07:57.716  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativekeyboardcontroller.KeyboardControllerViewManager
+11-18 23:07:57.717  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapWMSTileManager
+11-18 23:07:57.717  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenStackHeaderConfigViewManager
+11-18 23:07:57.718  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenContentWrapperManager
+11-18 23:07:57.718  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.GooglePayButtonManager
+11-18 23:07:57.719  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsMediaViewManager
+11-18 23:07:57.720  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class io.invertase.googlemobileads.ReactNativeGoogleMobileAdsBannerAdViewManager
+11-18 23:07:57.720  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapPolygonManager
+11-18 23:07:57.721  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.AuBECSDebitFormViewManager
+11-18 23:07:57.721  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.rnscreens.ScreenStackHeaderSubviewManager
+11-18 23:07:57.721  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.rnmaps.maps.MapOverlayManager
+11-18 23:07:57.721  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativestripesdk.pushprovisioning.AddToWalletButtonManager
+11-18 23:07:57.722  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.reactnativekeyboardcontroller.KeyboardBackgroundViewManager
+11-18 23:07:57.755  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$DefsViewManager
+11-18 23:07:57.756  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.VirtualViewManager$RenderableShadowNode
+11-18 23:07:57.758  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeMergeManager
+11-18 23:07:57.760  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.safeareaview.ReactSafeAreaViewManager
+11-18 23:07:57.761  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.safeareaview.ReactSafeAreaViewShadowNode
+11-18 23:07:57.762  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$LinearGradientManager
+11-18 23:07:57.764  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeGaussianBlurManager
+11-18 23:07:57.765  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.progressbar.ReactProgressBarViewManager
+11-18 23:07:57.766  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.progressbar.ProgressBarShadowNode
+11-18 23:07:57.767  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactHorizontalScrollViewManager
+11-18 23:07:57.769  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactTextViewManager
+11-18 23:07:57.769  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactTextShadowNode
+11-18 23:07:57.771  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeColorMatrixManager
+11-18 23:07:57.772  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactHorizontalScrollContainerViewManager
+11-18 23:07:57.773  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ClipPathViewManager
+11-18 23:07:57.774  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$SymbolManager
+11-18 23:07:57.776  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$PatternManager
+11-18 23:07:57.778  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeBlendManager
+11-18 23:07:57.781  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.view.ReactViewManager
+11-18 23:07:57.782  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.SvgViewManager
+11-18 23:07:57.783  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.switchview.ReactSwitchManager
+11-18 23:07:57.784  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.switchview.ReactSwitchShadowNode
+11-18 23:07:57.786  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$UseViewManager
+11-18 23:07:57.788  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$CircleViewManager
+11-18 23:07:57.790  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TSpanViewManager
+11-18 23:07:57.792  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FilterManager
+11-18 23:07:57.794  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$MarkerManager
+11-18 23:07:57.796  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.gesturehandler.react.RNGestureHandlerButtonViewManager
+11-18 23:07:57.802  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.modal.ReactModalHostManager
+11-18 23:07:57.804  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ForeignObjectManager
+11-18 23:07:57.806  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$EllipseViewManager
+11-18 23:07:57.807  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$LineViewManager
+11-18 23:07:57.809  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.frescosupport.FrescoBasedReactTextInlineImageViewManager
+11-18 23:07:57.809  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.frescosupport.FrescoBasedReactTextInlineImageShadowNode
+11-18 23:07:57.811  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeFloodManager
+11-18 23:07:57.812  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$GroupViewManager
+11-18 23:07:57.813  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TextViewManager
+11-18 23:07:57.814  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$ImageViewManager
+11-18 23:07:57.816  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeCompositeManager
+11-18 23:07:57.818  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.image.ReactImageManager
+11-18 23:07:57.819  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$RadialGradientManager
+11-18 23:07:57.821  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$MaskManager
+11-18 23:07:57.823  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.unimplementedview.ReactUnimplementedViewManager
+11-18 23:07:57.824  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$RectViewManager
+11-18 23:07:57.826  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$TextPathViewManager
+11-18 23:07:57.829  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.scroll.ReactScrollViewManager
+11-18 23:07:57.831  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$FeOffsetManager
+11-18 23:07:57.832  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.horcrux.svg.RenderableViewManager$PathViewManager
+11-18 23:07:57.834  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.drawer.ReactDrawerLayoutManager
+11-18 23:07:57.836  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactVirtualTextViewManager
+11-18 23:07:57.836  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactVirtualTextShadowNode
+11-18 23:07:57.838  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.swiperefresh.SwipeRefreshLayoutManager
+11-18 23:07:57.840  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactRawTextManager
+11-18 23:07:57.840  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.text.ReactRawTextShadowNode
+11-18 23:07:57.841  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.textinput.ReactTextInputManager
+11-18 23:07:57.843  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.facebook.react.views.textinput.ReactTextInputShadowNode
+11-18 23:07:57.844  7857  7915 W unknown:ViewManagerPropertyUpdater: Could not find generated setter for class com.swmansion.gesturehandler.react.RNGestureHandlerRootViewManager
+11-18 23:07:57.856  7857  7915 W BridgelessReactContext: [WARNING] Bridgeless doesn't support CatalystInstance. Accessing an API that's not part of the new architecture is not encouraged usage.
+11-18 23:07:57.860  7857  7915 I ExpoModulesCore: ✅ JSI interop was installed
+11-18 23:07:57.871  7857  7915 I ExpoModulesCore: ✅ Constants were exported
+11-18 23:07:57.875  7857  7915 V AsyncStorageExpoMigration: No scoped database found
+11-18 23:07:57.966  7857  7915 I NitroModules: Loading NitroModules C++ library...
+11-18 23:07:57.967  7857  7915 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libNitroModules.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes6.dex): ok
+11-18 23:07:57.968  7857  7915 I NitroModules: Successfully loaded NitroModules C++ library!
+11-18 23:07:57.976  7857  7915 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libworklets.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:58.022  7857  7915 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/librnscreens.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes8.dex): ok
+11-18 23:07:58.028  7857  7915 D Detox.RNMarker: RUN_JS_BUNDLE_END (index.android.bundle)
+11-18 23:07:58.028  7857  7915 I ReactNativeJS: Running "main"
+11-18 23:07:58.189  7857  7916 D Auth    : addAuthStateListener
+11-18 23:07:58.190  7857  7916 D Auth    : addIdTokenListener
+11-18 23:07:58.190  7857  7916 D Auth    : configureAuthDomain
+11-18 23:07:58.190  7857  7916 D Auth    : configureAuthDomain - app [DEFAULT] domain? null
+11-18 23:07:58.203  7857  7857 D Auth    : addAuthStateListener:eventBody {"appName":"[DEFAULT]"}
+11-18 23:07:58.210  7857  7915 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libreanimated.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:58.279  7857  7915 E StripePushProvisioning: PushProvisioning dependency not found
+11-18 23:07:58.305  7857  7915 D Detox.RNMarker: REACT_BRIDGELESS_LOADING_END (null)
+11-18 23:07:58.311  7857  7857 D Detox.RNMarker: CONTENT_APPEARED (main)
+11-18 23:07:58.334  7857  7916 W unknown:ReactNative: StatusBarModule: Ignored status bar change, current activity is edge-to-edge.
+11-18 23:07:58.335  7857  7916 W unknown:ReactNative: StatusBarModule: Ignored status bar change, current activity is edge-to-edge.
+11-18 23:07:58.343  7857  7857 I ReactNative: [GESTURE HANDLER] Initialize gesture handler for root view com.facebook.react.runtime.ReactSurfaceView{489be97 V.E...... ......ID 0,0-1080,2400 #1}
+11-18 23:07:58.358  7857  7857 W [RNScreens]: backTitleVisible prop is not available on Android
+11-18 23:07:58.358  7857  7857 W [RNScreens]: backTitleFontFamily prop is not available on Android
+11-18 23:07:58.358  7857  7857 W [RNScreens]: disableBackButtonMenu prop is not available on Android
+11-18 23:07:58.358  7857  7857 W [RNScreens]: largeTitleFontFamily prop is not available on Android
+11-18 23:07:58.359  7857  7857 W [RNScreens]: largeTitleFontWeight prop is not available on Android
+11-18 23:07:58.359  7857  7857 W [RNScreens]: largeTitleHideShadow prop is not available on Android
+11-18 23:07:58.360  7857  7916 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-18 23:07:58.360  7857  7916 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-18 23:07:58.408  7857  7916 I WebViewFactory: Loading com.google.android.webview version 124.0.6367.219 (code 636771938)
+11-18 23:07:58.412  7857  7916 V ResourcesManager: The following library key has been added: ResourcesKey{ mHash=5372abc4 mResDir=null mSplitDirs=[] mOverlayDirs=[/product/overlay/EmulationPixel6/EmulationPixel6Overlay.apk,/product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk] mLibDirs=[/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk,/data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v35 mCompatInfo={420dpi always-compat} mLoaders=[]}
+11-18 23:07:58.414  7857  7916 W ziparchive: Unable to open '/data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.dm': No such file or directory
+11-18 23:07:58.414  7857  7916 W ziparchive: Unable to open '/data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.dm': No such file or directory
+11-18 23:07:58.415  7857  7916 W rick12.BusTrack: Entry not found
+11-18 23:07:58.416  7857  7916 D nativeloader: Configuring clns-10 for other apk /data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/lib/x86_64:/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+11-18 23:07:58.426  7857  7916 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-18 23:07:58.432  7857  7916 D nativeloader: Configuring clns-11 for other apk /data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/lib/x86_64:/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+11-18 23:07:58.477  7857  7915 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libgesturehandler.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:58.478  7857  7915 D jni_lib_merge: Entering merged library JNI_OnLoad.
+11-18 23:07:58.478  7857  7915 D jni_lib_merge: Preparing 12 pre-merged libs (including stub)
+11-18 23:07:58.478  7857  7915 D jni_lib_merge: Preparing to register libfabricjni_so.  onload_func: 0x764d404afba0
+11-18 23:07:58.479  7857  7915 D jni_lib_merge: Preparing to register libreact_devsupportjni_so.  onload_func: 0x764d4058b530
+11-18 23:07:58.479  7857  7915 D jni_lib_merge: Preparing to register libreact_featureflagsjni_so.  onload_func: 0x764d4059e0a0
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libreact_newarchdefaults_so.  onload_func: 0x764d405c4fa0
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libreactnativeblob_so.  onload_func: 0x764d4066ca50
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libreactnativejni_so.  onload_func: 0x764d406878c0
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libreactnativejni_common_so.  onload_func: 0x764d4068e150
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register librninstance_so.  onload_func: 0x764d406ac450
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libturbomodulejsijni_so.  onload_func: 0x764d40757b80
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libuimanagerjni_so.  onload_func: 0x764d4075fab0
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: Preparing to register libyoga_so.  onload_func: 0x764d40767130
+11-18 23:07:58.480  7857  7915 D jni_lib_merge: About to register 11 actual methods.
+11-18 23:07:58.482  7857  7916 I cr_WVCFactoryProvider: Loaded version=124.0.6367.219 minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+11-18 23:07:58.489  7857  7916 D nativeloader: Load /data/app/~~qlh3ncVlPtPogFh9M977TA==/com.google.android.trichromelibrary_636771938-f3Sh92B2dLjy0RYXkgTgEA==/TrichromeLibrary.apk!/lib/x86_64/libmonochrome_64.so using ns clns-11 from class loader (caller=/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk): ok
+11-18 23:07:58.495  7857  7916 D nativeloader: Load /system/lib64/libwebviewchromium_plat_support.so using ns clns-11 from class loader (caller=/data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk): ok
+11-18 23:07:58.502  7857  7930 I chromium: [1118/230758.502154:INFO:variations_seed_loader.cc(66)] Failed to open file for reading.: No such file or directory (2)
+11-18 23:07:58.503  7857  7930 I cr_VariationsUtils: Failed reading seed file "/data/user/0/com.erick12.BusTrack/app_webview/variations_seed_new"
+11-18 23:07:58.503  7857  7857 W [RNScreens]: backTitleVisible prop is not available on Android
+11-18 23:07:58.504  7857  7857 W [RNScreens]: backTitleFontFamily prop is not available on Android
+11-18 23:07:58.504  7857  7857 W [RNScreens]: disableBackButtonMenu prop is not available on Android
+11-18 23:07:58.504  7857  7857 W [RNScreens]: largeTitleFontFamily prop is not available on Android
+11-18 23:07:58.505  7857  7857 W [RNScreens]: largeTitleFontWeight prop is not available on Android
+11-18 23:07:58.505  7857  7857 W [RNScreens]: largeTitleHideShadow prop is not available on Android
+11-18 23:07:58.629  7857  7857 I cr_LibraryLoader: Successfully loaded native library
+11-18 23:07:58.631  7857  7857 I cr_CachingUmaRecorder: Flushed 6 samples from 6 histograms, 0 samples were dropped.
+11-18 23:07:58.635  7857  7857 I cr_VariationsUtils: Loaded seed with age 603s
+11-18 23:07:58.639  7857  7857 I cr_CombinedPProvider: #registerProvider() provider:WV.V7@dfdbbee isPolicyCacheEnabled:false policyProvidersSize:0
+11-18 23:07:58.640  7857  7857 I cr_PolicyProvider: #setManagerAndSource() 0
+11-18 23:07:58.683  7857  7857 I cr_CombinedPProvider: #linkNativeInternal() 1
+11-18 23:07:58.684  7857  7857 I cr_AppResProvider: #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+11-18 23:07:58.684  7857  7857 I cr_PolicyProvider: #notifySettingsAvailable() 0
+11-18 23:07:58.684  7857  7857 I cr_CombinedPProvider: #onSettingsAvailable() 0
+11-18 23:07:58.684  7857  7857 I cr_CombinedPProvider: #flushPolicies()
+11-18 23:07:58.866  7857  7979 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libimagepipeline.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:58.868  7857  7867 E adservices: onNullBinding android.adservices.MEASUREMENT_SERVICE
+11-18 23:07:58.885  7857  7857 D SplashScreenView: Building from parcel drawable: android.graphics.drawable.BitmapDrawable@fc4b21e
+11-18 23:07:58.894  7857  7971 E adservices: Failed to bind to measurement service: com.android.adservices.shared.common.exception.ServiceUnavailableException: Service is not available.
+11-18 23:07:58.898  7857  7857 D SplashScreenView: Build android.window.SplashScreenView{7f781b V.E...... ......ID 0,0-0,0}
+11-18 23:07:58.898  7857  7857 D SplashScreenView: Icon: view: androidx.appcompat.widget.AppCompatImageView{cc08db8 V.ED..... ......I. 0,0-0,0 #1020504 android:id/splashscreen_icon_view} drawable: android.graphics.drawable.BitmapDrawable@fc4b21e size: 504
+11-18 23:07:58.898  7857  7857 D SplashScreenView: Branding: view: android.view.View{d7a9791 G.ED..... ......I. 0,0-0,0 #1020503 android:id/splashscreen_branding_view} drawable: null size w: 0 h: 0
+11-18 23:07:58.916  7857  7977 D nativeloader: Load /data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!/lib/x86_64/libnative-imagetranscoder.so using ns clns-7 from class loader (caller=/data/app/~~Ry06uSvrUdhFjN-oKe4DMw==/com.erick12.BusTrack-5oUdsaerw2XAgZ4FPh6Gmw==/base.apk!classes3.dex): ok
+11-18 23:07:59.034  7857  7857 D SplashScreenView: remove starting view
+11-18 23:08:00.041  7857  7909 D EGL_emulation: app_time_stats: avg=472.08ms min=128.51ms max=1022.51ms count=3
+11-18 23:08:00.059  7857  7866 I HWUI    : Davey! duration=1044ms; Flags=0, FrameTimelineVsyncId=240349, IntendedVsync=1688259010964, Vsync=1688275677630, InputEventId=0, HandleInputStart=1688276784700, AnimationStart=1688276812000, PerformTraversalsStart=1688279056500, DrawStart=1688279339300, FrameDeadline=1688392344292, FrameInterval=1688276768100, FrameStartTime=16666666, SyncQueued=1688280738500, SyncStart=1688348498000, IssueDrawCommandsStart=1688353670600, SwapBuffers=1689365902100, FrameCompleted=1689371155500, DequeueBufferDuration=52800, QueueBufferDuration=445600, GpuCompleted=1689370728800, SwapBuffersCompleted=1689371155500, DisplayPresentTime=0, CommandSubmissionCompleted=1689365902100, 
+11-18 23:08:00.131  7857  7857 D AutofillManager: Fill dialog is enabled:false, hints=[password, passwordAuto, creditCardNumber, creditCardSecurityCode, creditCardExpirationDate]
+11-18 23:08:00.146  7857  7857 I Choreographer: Skipped 67 frames!  The application may be doing too much work on its main thread.
+11-18 23:08:00.400  7857  7867 I HWUI    : Davey! duration=1250ms; Flags=0, FrameTimelineVsyncId=240430, IntendedVsync=1688359010960, Vsync=1689475677582, InputEventId=0, HandleInputStart=1689476600500, AnimationStart=1689476644400, PerformTraversalsStart=1689480178800, DrawStart=1689480435800, FrameDeadline=1689625677576, FrameInterval=1689475877600, FrameStartTime=16666666, SyncQueued=1689482036300, SyncStart=1689595202400, IssueDrawCommandsStart=1689595348700, SwapBuffers=1689610391000, FrameCompleted=1689722351900, DequeueBufferDuration=21700, QueueBufferDuration=314900, GpuCompleted=1689722351900, SwapBuffersCompleted=1689696628100, DisplayPresentTime=0, CommandSubmissionCompleted=1689610391000, 
+11-18 23:08:00.443  7857  7948 W cr_media: BLUETOOTH_CONNECT permission is missing.
+11-18 23:08:00.443  7857  7948 W cr_media: registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+11-18 23:08:00.897  7857  7857 D DetoxRNLoading: Got new RN-context directly and immediately
+11-18 23:08:00.897  7857  7890 I DetoxRNIdleRes: Setting up Espresso Idling Resources for React Native
+11-18 23:08:00.907  7857  7890 D IdlingRegistry: Registering idling resources: [com.wix.detox.reactnative.idlingresources.uimodule.fabric.FabricUIManagerIdlingResources@bdb8c2]
+11-18 23:08:00.907  7857  7890 D IdlingRegistry: Registering idling resources: [com.wix.detox.reactnative.idlingresources.animations.AnimatedModuleIdlingResource@71ef6d3]
+11-18 23:08:00.907  7857  7890 D IdlingRegistry: Registering idling resources: [com.wix.detox.reactnative.idlingresources.timers.FabricTimersIdlingResource@1959210]
+11-18 23:08:00.908  7857  7890 D IdlingRegistry: Registering idling resources: [com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource@7904109]
+11-18 23:08:00.908  7857  7890 D IdlingRegistry: Registering idling resources: [com.wix.detox.reactnative.idlingresources.StabilizedIdlingResource@2329f0e]
+11-18 23:08:01.050  7857  7899 W rick12.BusTrack: Long monitor contention with owner Instr: androidx.test.runner.AndroidJUnitRunner (7890) at void com.wix.detox.DetoxMain.launchActivityOnCue(android.content.Context, com.wix.detox.ActivityLaunchHelper)(DetoxMain.kt:53) waiters=0 in void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long) for 3.722s
+11-18 23:08:01.051  7857  7857 I Ads     : JS: The jsLoaded GMSG has been sent (https://googleads.g.doubleclick.net/mads/static/sdk/native/sdk-core-v40.html:1117)
+11-18 23:08:01.051  7857  7857 I chromium: [INFO:CONSOLE(1117)] "The jsLoaded GMSG has been sent", source: https://googleads.g.doubleclick.net/mads/static/sdk/native/sdk-core-v40.html (1117)
+11-18 23:08:02.116  7857  7903 D DetoxWSClient: Received action 'currentStatus' (ID #22, params={})
+11-18 23:08:02.117  7857  7900 I DetoxDispatcher: Handling action 'currentStatus' (ID #22)...
+11-18 23:08:02.365  7857  8014 D ProfileInstaller: Skipping profile installation for com.erick12.BusTrack
+11-18 23:08:02.455  7857  7857 W UiControllerImpl: Waiting for: DYNAMIC_TASKS_HAVE_IDLED for 100 iterations.
+11-18 23:08:04.099  7857  7857 W UiControllerImpl: Waiting for: DYNAMIC_TASKS_HAVE_IDLED for 200 iterations.
+11-18 23:08:05.790  7857  7857 W UiControllerImpl: Waiting for: DYNAMIC_TASKS_HAVE_IDLED for 300 iterations.
+11-18 23:08:06.069  7857  7857 I Detox   : Wait is over: App is now idle!
+11-18 23:08:06.070  7857  7899 I DetoxWSClient: Sending out action 'ready' (ID #-1000)
+11-18 23:08:06.071  7857  7899 I DetoxDispatcher: Done with action 'isReady'
+11-18 23:08:06.071  7857  7900 W rick12.BusTrack: Long monitor contention with owner detox.primary (7899) at void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long)(DetoxMain.kt:77) waiters=0 in void com.wix.detox.DetoxMain$setupActionHandlers$SynchronizedActionHandler.handle(java.lang.String, long) for 3.953s
+11-18 23:08:06.076  7857  7900 I DetoxWSClient: Sending out action 'currentStatusResult' (ID #22)
+11-18 23:08:06.076  7857  7900 I DetoxDispatcher: Done with action 'currentStatus'
+11-18 23:08:06.079  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #23, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"waitForAssertMatcher","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Bienvenido a BusTrack",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}},{"type":"Double","value":20}]})
+11-18 23:08:06.080  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #23)...
+11-18 23:08:06.080  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Bienvenido a BusTrack, false]
+11-18 23:08:06.082  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Bienvenido a BusTrack" and view has effective visibility <VISIBLE>)]
+11-18 23:08:06.083  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:06.083  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, waitForAssertMatcher, [androidx.test.espresso.ViewInteraction@5941064, (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area), 20.0]
+11-18 23:08:06.088  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Bienvenido a BusTrack" and view has effective visibility <VISIBLE>)
+11-18 23:08:06.095  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #23)
+11-18 23:08:06.095  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:06.134  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #24, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"waitForAssertMatcherWithSearchAction","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Registrarse",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAction"},"method":"scrollInDirectionStaleAtEdge","args":[{"type":"Integer","value":4},{"type":"Double","value":200},{"type":"Double","value":-1},{"type":"Double","value":-1}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForTestId","args":["login-form",{"type":"boolean","value":false}]}}]})
+11-18 23:08:06.135  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #24)...
+11-18 23:08:06.135  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Registrarse, false]
+11-18 23:08:06.136  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>)]
+11-18 23:08:06.137  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:06.137  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAction, scrollInDirectionStaleAtEdge, [4, 200.0, -1.0, -1.0]
+11-18 23:08:06.137  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForTestId, [login-form, false]
+11-18 23:08:06.139  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, waitForAssertMatcherWithSearchAction, [androidx.test.espresso.ViewInteraction@5912e93, (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area), com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge@3b3ced0, (view.getTag() is "login-form" and view has effective visibility <VISIBLE>)]
+11-18 23:08:06.145  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>)
+11-18 23:08:06.148  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #24)
+11-18 23:08:06.149  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:06.157  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #25, params={"target":{"type":"Class","value":"com.wix.detox.espresso.EspressoDetox"},"method":"perform","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Registrarse",{"type":"boolean","value":false}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxViewActions"},"method":"click","args":[]}}]})
+11-18 23:08:06.158  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #25)...
+11-18 23:08:06.158  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Registrarse, false]
+11-18 23:08:06.158  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxViewActions, click, []
+11-18 23:08:06.160  7857  7899 D Detox   : class com.wix.detox.espresso.EspressoDetox, perform, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>), com.wix.detox.espresso.action.RNClickAction@2a509ce]
+11-18 23:08:06.166  7857  7857 I ViewInteraction: Performing 'com.wix.detox.espresso.action.detoxsingletap@c9620ef click' action on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>)
+11-18 23:08:06.311  7857  7857 W [RNScreens]: backTitleVisible prop is not available on Android
+11-18 23:08:06.311  7857  7857 W [RNScreens]: backTitleFontFamily prop is not available on Android
+11-18 23:08:06.311  7857  7857 W [RNScreens]: disableBackButtonMenu prop is not available on Android
+11-18 23:08:06.311  7857  7857 W [RNScreens]: largeTitleFontFamily prop is not available on Android
+11-18 23:08:06.311  7857  7857 W [RNScreens]: largeTitleFontWeight prop is not available on Android
+11-18 23:08:06.312  7857  7857 W [RNScreens]: largeTitleHideShadow prop is not available on Android
+11-18 23:08:06.380  7857  7909 D EGL_emulation: app_time_stats: avg=419.81ms min=13.13ms max=5512.82ms count=15
+11-18 23:08:06.688  7857  7861 W rick12.BusTrack: Cleared Reference was only reachable from finalizer (only reported once)
+11-18 23:08:06.767  7857  7861 I rick12.BusTrack: Background concurrent mark compact GC freed 23MB AllocSpace bytes, 61(3260KB) LOS objects, 49% free, 10117KB/19MB, paused 957us,4.397ms total 185.685ms
+11-18 23:08:06.769  7857  7863 W rick12.BusTrack: ApkAssets: Deleting an ApkAssets object '<empty> and /product/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk' with 2 weak references
+11-18 23:08:06.770  7857  7863 W rick12.BusTrack: ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~PDXvle4E3qmOV_TW5UeUug==/com.google.android.webview-pSI6XJyoa2Dr5u2TYVQytQ==/WebViewGoogle.apk' with 2 weak references
+11-18 23:08:06.774  7857  7863 W System  : A resource failed to call release. 
+11-18 23:08:06.995  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #25)
+11-18 23:08:06.996  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:07.003  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #26, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"waitForAssertMatcherWithSearchAction","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Registrarse",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAction"},"method":"scrollInDirectionStaleAtEdge","args":[{"type":"Integer","value":4},{"type":"Double","value":200},{"type":"Double","value":-1},{"type":"Double","value":-1}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForTestId","args":["register-form",{"type":"boolean","value":false}]}}]})
+11-18 23:08:07.005  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #26)...
+11-18 23:08:07.006  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Registrarse, false]
+11-18 23:08:07.006  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>)]
+11-18 23:08:07.007  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:07.008  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAction, scrollInDirectionStaleAtEdge, [4, 200.0, -1.0, -1.0]
+11-18 23:08:07.008  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForTestId, [register-form, false]
+11-18 23:08:07.009  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, waitForAssertMatcherWithSearchAction, [androidx.test.espresso.ViewInteraction@e51811d, (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area), com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge@778ff92, (view.getTag() is "register-form" and view has effective visibility <VISIBLE>)]
+11-18 23:08:07.013  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>)
+11-18 23:08:07.015  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #26)
+11-18 23:08:07.016  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:07.023  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #27, params={"target":{"type":"Class","value":"com.wix.detox.espresso.EspressoDetox"},"method":"perform","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Registrarse",{"type":"boolean","value":false}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxViewActions"},"method":"click","args":[]}}]})
+11-18 23:08:07.024  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #27)...
+11-18 23:08:07.024  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Registrarse, false]
+11-18 23:08:07.025  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxViewActions, click, []
+11-18 23:08:07.026  7857  7899 D Detox   : class com.wix.detox.espresso.EspressoDetox, perform, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>), com.wix.detox.espresso.action.RNClickAction@c9ebd60]
+11-18 23:08:07.031  7857  7857 I ViewInteraction: Performing 'com.wix.detox.espresso.action.detoxsingletap@58a1219 click' action on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Registrarse" and view has effective visibility <VISIBLE>)
+11-18 23:08:07.132  7857  7857 W WindowOnBackDispatcher: OnBackInvokedCallback is not enabled for the application.
+11-18 23:08:07.132  7857  7857 W WindowOnBackDispatcher: Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+11-18 23:08:07.469  7857  7909 D EGL_emulation: app_time_stats: avg=58.68ms min=15.88ms max=331.03ms count=18
+11-18 23:08:07.601  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #27)
+11-18 23:08:07.602  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:07.608  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #28, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"assertMatcher","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["No pudimos registrarte",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}}]})
+11-18 23:08:07.609  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #28)...
+11-18 23:08:07.609  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [No pudimos registrarte, false]
+11-18 23:08:07.610  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "No pudimos registrarte" and view has effective visibility <VISIBLE>)]
+11-18 23:08:07.611  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:07.612  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, assertMatcher, [androidx.test.espresso.ViewInteraction@a4e9db2, (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)]
+11-18 23:08:07.615  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "No pudimos registrarte" and view has effective visibility <VISIBLE>)
+11-18 23:08:07.617  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #28)
+11-18 23:08:07.617  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:07.624  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #29, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"assertMatcher","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Correo inválido",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}}]})
+11-18 23:08:07.624  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #29)...
+11-18 23:08:07.625  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Correo inválido, false]
+11-18 23:08:07.625  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Correo inválido" and view has effective visibility <VISIBLE>)]
+11-18 23:08:07.626  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:07.626  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, assertMatcher, [androidx.test.espresso.ViewInteraction@79bd880, (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)]
+11-18 23:08:07.630  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Correo inválido" and view has effective visibility <VISIBLE>)
+11-18 23:08:07.633  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #29)
+11-18 23:08:07.633  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:07.640  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #30, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"assertMatcher","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Intentar de nuevo",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}}]})
+11-18 23:08:07.640  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #30)...
+11-18 23:08:07.641  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Intentar de nuevo, false]
+11-18 23:08:07.641  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Intentar de nuevo" and view has effective visibility <VISIBLE>)]
+11-18 23:08:07.642  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:07.643  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, assertMatcher, [androidx.test.espresso.ViewInteraction@404e2fe, (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)]
+11-18 23:08:07.645  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Intentar de nuevo" and view has effective visibility <VISIBLE>)
+11-18 23:08:07.647  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #30)
+11-18 23:08:07.647  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:08.518  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #31, params={"target":{"type":"Class","value":"com.wix.detox.espresso.EspressoDetox"},"method":"perform","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Intentar de nuevo",{"type":"boolean","value":false}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxViewActions"},"method":"click","args":[]}}]})
+11-18 23:08:08.518  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #31)...
+11-18 23:08:08.519  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Intentar de nuevo, false]
+11-18 23:08:08.519  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxViewActions, click, []
+11-18 23:08:08.520  7857  7899 D Detox   : class com.wix.detox.espresso.EspressoDetox, perform, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Intentar de nuevo" and view has effective visibility <VISIBLE>), com.wix.detox.espresso.action.RNClickAction@b25fcac]
+11-18 23:08:08.525  7857  7857 I ViewInteraction: Performing 'com.wix.detox.espresso.action.detoxsingletap@b312d75 click' action on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "Intentar de nuevo" and view has effective visibility <VISIBLE>)
+11-18 23:08:08.565  7857  7909 D EGL_emulation: app_time_stats: avg=559.74ms min=49.89ms max=1069.59ms count=2
+11-18 23:08:08.600  7857  7857 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda11@f8c7c7c
+11-18 23:08:08.650  7857  7909 D EGL_emulation: app_time_stats: avg=81.25ms min=17.50ms max=423.05ms count=14
+11-18 23:08:08.958  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #31)
+11-18 23:08:08.958  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:08.964  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #32, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"assertMatcher","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["No pudimos registrarte",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForNot","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}}]}}]})
+11-18 23:08:08.964  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #32)...
+11-18 23:08:08.965  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [No pudimos registrarte, false]
+11-18 23:08:08.965  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of android.widget.TextView and view.getText() with or without transformation to match: is "No pudimos registrarte" and view has effective visibility <VISIBLE>)]
+11-18 23:08:08.966  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForSufficientlyVisible, [75]
+11-18 23:08:08.967  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForNot, [(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)]
+11-18 23:08:08.968  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxAssertion, assertMatcher, [androidx.test.espresso.ViewInteraction@9a95de5, not (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)]
+11-18 23:08:08.989  7857  7857 I ViewInteraction: Checking 'MatchesViewAssertion(Detox){viewMatcher=not (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)}' assertion on view (an instance of android.widget.TextView and view.getText() with or without transformation to match: is "No pudimos registrarte" and view has effective visibility <VISIBLE>)
+11-18 23:08:08.989  7857  7899 I DetoxWSClient: Sending out action 'invokeResult' (ID #32)
+11-18 23:08:08.990  7857  7899 I DetoxDispatcher: Done with action 'invoke'
+11-18 23:08:08.995  7857  7903 D DetoxWSClient: Received action 'invoke' (ID #33, params={"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxAssertion"},"method":"assertMatcher","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"androidx.test.espresso.Espresso"},"method":"onView","args":[{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForText","args":["Registrarse",{"type":"boolean","value":false}]}}]}},{"type":"Invocation","value":{"target":{"type":"Class","value":"com.wix.detox.espresso.DetoxMatcher"},"method":"matcherForSufficientlyVisible","args":[{"type":"Integer","value":75}]}}]})
+11-18 23:08:08.996  7857  7899 I DetoxDispatcher: Handling action 'invoke' (ID #33)...
+11-18 23:08:08.997  7857  7899 D Detox   : class com.wix.detox.espresso.DetoxMatcher, matcherForText, [Registrarse, false]
+11-18 23:08:08.997  7857  7899 D Detox   : class androidx.test.espresso.Espresso, onView, [(an instance of and

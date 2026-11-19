@@ -1,0 +1,62 @@
+
+> bustrack@1.0.0 test:detox
+> detox test -c android.emu.release
+
+17:56:51.476 detox[19136] B jest --config e2e/jest.config.cjs --json --outputFile evidence/detox/results.json
+17:57:46.125 detox[6796] i auth.e2e.js is assigned to emulator-5554 (BusTrack_Detox_API_35)
+17:57:46.132 detox[6796] i Autenticación de BusTrack en Android: abre la pantalla de inicio de sesión al arrancar sin cuenta
+17:58:01.048 detox[6796] i The app seems to be idle
+17:58:01.691 detox[6796] i Autenticación de BusTrack en Android: abre la pantalla de inicio de sesión al arrancar sin cuenta [OK]
+17:58:01.694 detox[6796] i Autenticación de BusTrack en Android: rechaza el inicio de sesión vacío y vuelve al formulario al cerrar el aviso
+17:58:11.645 detox[6796] i The app seems to be idle
+17:58:13.989 detox[6796] i Autenticación de BusTrack en Android: rechaza el inicio de sesión vacío y vuelve al formulario al cerrar el aviso [OK]
+17:58:13.990 detox[6796] i Autenticación de BusTrack en Android: abre el registro y regresa al inicio de sesión
+17:58:23.932 detox[6796] i The app seems to be idle
+17:58:26.829 detox[6796] i Autenticación de BusTrack en Android: abre el registro y regresa al inicio de sesión [OK]
+17:58:26.831 detox[6796] i Autenticación de BusTrack en Android: rechaza el registro vacío y mantiene abierto el formulario
+17:58:36.474 detox[6796] i The app seems to be idle
+17:58:38.924 detox[6796] i Autenticación de BusTrack en Android: rechaza el registro vacío y mantiene abierto el formulario [FAIL]
+
+FAIL e2e/auth.e2e.js (94.407 s)
+  Autenticación de BusTrack en Android
+    √ abre la pantalla de inicio de sesión al arrancar sin cuenta (15023 ms)
+    √ rechaza el inicio de sesión vacío y vuelve al formulario al cerrar el aviso (11889 ms)
+    √ abre el registro y regresa al inicio de sesión (12450 ms)
+    × rechaza el registro vacío y mantiene abierto el formulario (11702 ms)
+
+  ● Autenticación de BusTrack en Android › rechaza el registro vacío y mantiene abierto el formulario
+
+    Test Failed: '(view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)' doesn't match the selected view.
+    Expected: (view has effective visibility <VISIBLE> and view.getGlobalVisibleRect() covers at least <75> percent of the view's area)
+         Got: com.facebook.react.views.text.ReactTextView{b25fcac V.ED..... ........ 157,-101-923,-16 #c0}
+    View Details: ReactTextView{id=192, visibility=VISIBLE, width=766, height=85, has-focus=false, has-focusable=false, has-window-focus=true, is-clickable=false, is-enabled=true, is-focused=false, is-focusable=false, is-layout-requested=false, is-selected=false, layout-params=android.view.ViewGroup$LayoutParams@YYYYYY, tag=null, root-is-layout-requested=false, has-input-connection=false, x=157.0, y=-101.0, text=No pudimos registrarte, input-type=0, ime-target=false, has-links=false}
+
+      44 |     await showInForm("Registrarse", "register-form");
+      45 |     await element(by.text("Registrarse")).tap();
+    > 46 |     await expect(element(by.text("No pudimos registrarte"))).toBeVisible();
+         |                                                              ^
+      47 |     await device.takeScreenshot("validacion-de-registro");
+      48 |     await element(by.text("Intentar de nuevo")).tap();
+      49 |     await expect(element(by.text("No pudimos registrarte"))).not.toBeVisible();
+
+      at createErrorWithUserStack (node_modules/detox/src/utils/errorUtils.js:36:27)
+      at Client._doSendAction (node_modules/detox/src/client/Client.js:169:32)
+      at Client._sendMonitoredAction (node_modules/detox/src/client/Client.js:162:25)
+      at Client.sendAction (node_modules/detox/src/client/Client.js:148:14)
+      at Client.execute (node_modules/detox/src/client/Client.js:133:25)
+      at InvocationManager.execute (node_modules/detox/src/invoke.js:11:39)
+      at MatcherAssertionInteraction.execute (node_modules/detox/src/android/interactions/native.js:23:31)
+      at NativeExpectElement.toBeVisible (node_modules/detox/src/android/core/NativeExpect.js:25:137)
+      at Object.<anonymous> (e2e/auth.e2e.js:46:62)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 passed, 4 total
+Snapshots:   0 total
+Time:        97.247 s
+Ran all test suites.
+Test results written to: evidence\detox\results.json
+17:58:40.430 detox[6796] i Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+17:58:46.508 detox[19136] E Command failed with exit code = 1:
+jest --config e2e/jest.config.cjs --json --outputFile evidence/detox/results.json

@@ -1,0 +1,145 @@
+{
+  "coldStartMs": {
+    "n": 20,
+    "min": 941,
+    "median": 1018.5,
+    "p95": 1129,
+    "max": 1157
+  },
+  "registerMs": {
+    "n": 20,
+    "min": 666.6,
+    "median": 687.7,
+    "p95": 703,
+    "max": 750.7
+  },
+  "validationMs": {
+    "n": 20,
+    "min": 409.8,
+    "median": 412.29999999999995,
+    "p95": 414.8,
+    "max": 419
+  },
+  "memory": [
+    {
+      "stage": "login-inicial",
+      "cycle": 0,
+      "pssMiB": 205.46
+    },
+    {
+      "stage": "registro",
+      "cycle": 1,
+      "pssMiB": 217.13
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 1,
+      "pssMiB": 216.45
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 2,
+      "pssMiB": 220.58
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 3,
+      "pssMiB": 222.4
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 4,
+      "pssMiB": 223.58
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 5,
+      "pssMiB": 225.01
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 6,
+      "pssMiB": 226.26
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 7,
+      "pssMiB": 227.6
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 8,
+      "pssMiB": 228.81
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 9,
+      "pssMiB": 230.0
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 10,
+      "pssMiB": 231.19
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 11,
+      "pssMiB": 232.39
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 12,
+      "pssMiB": 233.64
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 13,
+      "pssMiB": 235.64
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 14,
+      "pssMiB": 235.85
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 15,
+      "pssMiB": 236.94
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 16,
+      "pssMiB": 238.71
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 17,
+      "pssMiB": 239.68
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 18,
+      "pssMiB": 241.58
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 19,
+      "pssMiB": 241.36
+    },
+    {
+      "stage": "registro",
+      "cycle": 20,
+      "pssMiB": 240.31
+    },
+    {
+      "stage": "regreso-login",
+      "cycle": 20,
+      "pssMiB": 238.5
+    },
+    {
+      "stage": "login-reposo-10s",
+      "cycle": 20,
+      "pssMiB": 236.58
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-11-18T18:31:16.1169354-05:00",
+  "model": "SM-A366E",
+  "androidApi": "37",
+  "package": "com.erick12.BusTrack",
+  "appUid": "10471",
+  "battery": [
+    "AC powered: false",
+    "USB powered: false",
+    "Wireless powered: false",
+    "Dock powered: false",
+    "Charge counter: 4485000",
+    "status: 3",
+    "level: 89",
+    "scale: 100"
+  ],
+  "historical": [
+    "Estimated battery capacity: 5000 mAh",
+    "Time on battery: 36s 234ms (100.0%) realtime, 36s 233ms (100.0%) uptime"
+  ]
+}

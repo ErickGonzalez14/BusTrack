@@ -1,0 +1,13 @@
+18:32:00.131 detox[41604] B jest --config e2e/jest.performance.config.cjs --json --outputFile evidence/performance/detox-results.json
+18:32:21.045 detox[35288] i guest.perf.js is assigned to emulator-5554 (BusTrack_Detox_API_35)
+18:32:21.051 detox[35288] i mide la respuesta y el PSS al recorrer el registro de invitado
+18:33:35.228 detox[35288] i mide la respuesta y el PSS al recorrer el registro de invitado [OK]
+PASS e2e/guest.perf.js (89.438 s)
+  √ mide la respuesta y el PSS al recorrer el registro de invitado (73849 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        89.897 s
+Ran all test suites.
+Test results written to: evidence\performance\detox-results.json

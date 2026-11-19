@@ -1,0 +1,102 @@
+[
+  {
+    "run": 1,
+    "totalTimeMs": 1062,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1062\r\nWaitTime: 1067\r\nComplete\r\n"
+  },
+  {
+    "run": 2,
+    "totalTimeMs": 1094,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1094\r\nWaitTime: 1096\r\nComplete\r\n"
+  },
+  {
+    "run": 3,
+    "totalTimeMs": 1157,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1157\r\nWaitTime: 1159\r\nComplete\r\n"
+  },
+  {
+    "run": 4,
+    "totalTimeMs": 945,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 945\r\nWaitTime: 949\r\nComplete\r\n"
+  },
+  {
+    "run": 5,
+    "totalTimeMs": 968,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 968\r\nWaitTime: 971\r\nComplete\r\n"
+  },
+  {
+    "run": 6,
+    "totalTimeMs": 978,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 978\r\nWaitTime: 984\r\nComplete\r\n"
+  },
+  {
+    "run": 7,
+    "totalTimeMs": 972,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 972\r\nWaitTime: 974\r\nComplete\r\n"
+  },
+  {
+    "run": 8,
+    "totalTimeMs": 959,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 959\r\nWaitTime: 962\r\nComplete\r\n"
+  },
+  {
+    "run": 9,
+    "totalTimeMs": 1086,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1086\r\nWaitTime: 1090\r\nComplete\r\n"
+  },
+  {
+    "run": 10,
+    "totalTimeMs": 1020,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1020\r\nWaitTime: 1032\r\nComplete\r\n"
+  },
+  {
+    "run": 11,
+    "totalTimeMs": 1042,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1042\r\nWaitTime: 1044\r\nComplete\r\n"
+  },
+  {
+    "run": 12,
+    "totalTimeMs": 1026,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1026\r\nWaitTime: 1029\r\nComplete\r\n"
+  },
+  {
+    "run": 13,
+    "totalTimeMs": 941,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 941\r\nWaitTime: 944\r\nComplete\r\n"
+  },
+  {
+    "run": 14,
+    "totalTimeMs": 1096,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1096\r\nWaitTime: 1100\r\nComplete\r\n"
+  },
+  {
+    "run": 15,
+    "totalTimeMs": 1045,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1045\r\nWaitTime: 1048\r\nComplete\r\n"
+  },
+  {
+    "run": 16,
+    "totalTimeMs": 1017,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1017\r\nWaitTime: 1019\r\nComplete\r\n"
+  },
+  {
+    "run": 17,
+    "totalTimeMs": 1129,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1129\r\nWaitTime: 1131\r\nComplete\r\n"
+  },
+  {
+    "run": 18,
+    "totalTimeMs": 973,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 973\r\nWaitTime: 975\r\nComplete\r\n"
+  },
+  {
+    "run": 19,
+    "totalTimeMs": 1015,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 1015\r\nWaitTime: 1018\r\nComplete\r\n"
+  },
+  {
+    "run": 20,
+    "totalTimeMs": 941,
+    "raw": "Stopping: com.erick12.BusTrack\r\nStarting: Intent { cmp=com.erick12.BusTrack/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: com.erick12.BusTrack/.MainActivity\r\nTotalTime: 941\r\nWaitTime: 943\r\nComplete\r\n"
+  }
+]

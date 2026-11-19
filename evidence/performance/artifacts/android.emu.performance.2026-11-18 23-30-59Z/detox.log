@@ -1,0 +1,125 @@
+18:30:59.807 detox[36404] B node_modules\detox\local-cli\cli.js test -c android.emu.performance
+  data: {
+    "id": "7c062141-5144-ec06-825b-e565f1eb4408",
+    "detoxConfig": {
+      "configurationName": "android.emu.performance",
+      "apps": {
+        "default": {
+          "type": "android.apk",
+          "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+          "testBinaryPath": "android/app/build/outputs/apk/androidTest/release/app-release-androidTest.apk",
+          "build": "node e2e/build-android.cjs"
+        }
+      },
+      "artifacts": {
+        "rootDir": "evidence\\performance\\artifacts\\android.emu.performance.2026-11-18 23-30-59Z",
+        "plugins": {
+          "log": {
+            "enabled": true,
+            "keepOnlyFailedTestsArtifacts": false
+          },
+          "screenshot": {
+            "enabled": true,
+            "shouldTakeAutomaticSnapshots": true,
+            "keepOnlyFailedTestsArtifacts": false
+          },
+          "video": {
+            "enabled": false,
+            "keepOnlyFailedTestsArtifacts": false
+          },
+          "instruments": {
+            "enabled": false,
+            "keepOnlyFailedTestsArtifacts": false
+          },
+          "uiHierarchy": {
+            "enabled": false,
+            "keepOnlyFailedTestsArtifacts": false
+          }
+        }
+      },
+      "behavior": {
+        "init": {
+          "keepLockFile": false,
+          "reinstallApp": true,
+          "exposeGlobals": true
+        },
+        "cleanup": {
+          "shutdownDevice": false
+        },
+        "launchApp": "auto"
+      },
+      "cli": {
+        "configuration": "android.emu.performance",
+        "start": true
+      },
+      "commands": [
+        {
+          "appName": "default",
+          "build": "node e2e/build-android.cjs"
+        }
+      ],
+      "device": {
+        "type": "android.emulator",
+        "device": {
+          "avdName": "BusTrack_Detox_API_35"
+        },
+        "headless": true,
+        "gpuMode": "swiftshader_indirect"
+      },
+      "logger": {
+        "level": "info",
+        "overrideConsole": true,
+        "options": {
+          "showLoggerName": true,
+          "showPid": true,
+          "showLevel": false,
+          "showMetadata": false,
+          "basepath": "C:\\BusTrack\\node_modules\\detox\\src",
+          "prefixers": {},
+          "stringifiers": {}
+        }
+      },
+      "testRunner": {
+        "retries": 0,
+        "forwardEnv": false,
+        "detached": false,
+        "bail": false,
+        "noRetryArgs": [
+          "shard"
+        ],
+        "jest": {
+          "setupTimeout": 300000,
+          "teardownTimeout": 30000,
+          "retryAfterCircusRetries": false,
+          "reportWorkerAssign": true
+        },
+        "args": {
+          "$0": "jest",
+          "_": [],
+          "config": "e2e/jest.performance.config.cjs",
+          "json": true,
+          "outputFile": "evidence/performance/detox-results.json",
+          "--": []
+        }
+      },
+      "session": {
+        "autoStart": true,
+        "debugSynchronization": 10000
+      }
+    },
+    "detoxIPCServer": "primary-36404",
+    "testResults": [],
+    "testSessionIndex": 0,
+    "workersCount": 0
+  }
+18:30:59.840 detox[36404] i Server path not specified, so defaulting to ipc.config.socketRoot + ipc.config.appspace + ipc.config.id /tmp/detox.primary-36404
+18:30:59.844 detox[36404] i starting server on  /tmp/detox.primary-36404 
+18:30:59.844 detox[36404] i starting TLS server false
+18:30:59.845 detox[36404] i starting server as Unix || Windows Socket
+18:30:59.852 detox[36404] i Detox server listening on localhost:37085...
+18:30:59.856 detox[36404] i Serialized the session state at: C:\Users\ragna\AppData\Local\Temp\7c062141-5144-ec06-825b-e565f1eb4408.detox.json
+18:30:59.858 detox[36404] B jest --config e2e/jest.performance.config.cjs --json --outputFile evidence/performance/detox-results.json
+18:30:59.920 detox[36404] E Command failed with exit code = 1:
+jest --config e2e/jest.performance.config.cjs --json --outputFile evidence/performance/detox-results.json
+18:30:59.921 detox[36404] i Detox server has been closed gracefully
+18:30:59.923 detox[36404] E node_modules\detox\local-cli\cli.js test -c android.emu.performance
