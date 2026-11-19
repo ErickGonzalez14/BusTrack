@@ -25,6 +25,18 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Android sin Metro
+
+Para instalar una versión local de BusTrack con JavaScript y recursos incluidos, conecta el dispositivo por USB o ADB inalámbrico y ejecuta:
+
+```bash
+npm run android:standalone -- --device
+```
+
+Selecciona el teléfono cuando Expo lo solicite. Después de instalarse, BusTrack arranca desde su icono sin el servidor Metro. Los servicios en línea, como el inicio de sesión y la consulta de mapas, siguen usando internet por Wi-Fi o datos móviles.
+
+Para habilitar los pagos de negocios en esta compilación, configura `EXPO_PUBLIC_STRIPE_FUNCTIONS_URL` con el endpoint de pagos. La clave privada de Stripe se configura en el servidor.
+
 ## Estado de BusTrack Premium
 
 Premium y las publicaciones comunitarias usan un servicio HTTP en Render para verificar RevenueCat y escribir Firestore. Las compras simuladas no requieren Cloud Functions ni el plan Blaze de Firebase. Consulta [la guía de configuración](docs/render-premium.md) para desplegarlo y conectar la app.

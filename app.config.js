@@ -1,6 +1,7 @@
 const appJson = require("./app.json");
 
 module.exports = ({ config }) => {
+  const detoxEnabled = process.env.BUSTRACK_DETOX === "1";
   const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
   const googlePlacesApiKey =
     process.env.GOOGLE_PLACES_API_KEY || googleMapsApiKey;
@@ -9,8 +10,9 @@ module.exports = ({ config }) => {
   const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
   const cloudinaryUploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
   const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
-  const stripeSecretKey =
-    process.env.EXPO_PUBLIC_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+  const stripeSecretKey = detoxEnabled
+    ? undefined
+    : process.env.EXPO_PUBLIC_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
   const stripeFunctionsUrl = process.env.EXPO_PUBLIC_STRIPE_FUNCTIONS_URL;
   const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
   const googleAdsAppId = process.env.GOOGLE_ADS_APP_ID;
@@ -24,6 +26,9 @@ module.exports = ({ config }) => {
     ...config,
     plugins: [
       ...(config.plugins || []),
+      ...(process.platform === "win32" ? ["./plugins/withAndroidCmakeStaging"] : []),
+      ...(detoxEnabled ? ["expo-detox-config-plugin"] : []),
+      "./plugins/withAndroidDebugNetworking",
       [
         "react-native-google-mobile-ads",
         {

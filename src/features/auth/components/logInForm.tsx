@@ -106,6 +106,7 @@ export default function LogInForm() {
   return (
     <>
       <KeyboardAwareScrollView
+        testID="login-form"
         style={styles.container}
         contentContainerStyle={styles.cotent}
         keyboardShouldPersistTaps="handled"
