@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
+import { ZodError } from "zod";
 import AlertCard, { type AlertCardVariant } from "@/src/shared/ui/Cards/alertCard";
 import ButtonPrimary from "@/src/shared/ui/buttons/buttonPrimary";
 import IconTextButton from "@/src/shared/ui/buttons/iconTextButton";
@@ -41,12 +42,17 @@ export default function RegisterForm() {
         },
         onError: (registerError) => {
           finishAuthFlow();
-          console.error("No se pudo completar el registro:", registerError);
+          const isValidationError = registerError instanceof ZodError;
+          if (!isValidationError) {
+            console.error("No se pudo completar el registro:", registerError);
+          }
           setAlert({
             variant: "error",
             title: "No pudimos registrarte",
             message:
-              registerError instanceof Error
+              isValidationError
+                ? registerError.issues[0]?.message ?? "Revisa los campos del formulario."
+                : registerError instanceof Error
                 ? registerError.message
                 : "Ocurrió un error al guardar el perfil del usuario.",
           });
@@ -105,6 +111,7 @@ export default function RegisterForm() {
   return (
     <>
       <KeyboardAwareScrollView
+        testID="register-form"
         style={styles.container}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"

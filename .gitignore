@@ -10,6 +10,7 @@ web-build/
 expo-env.d.ts
 
 # Native
+/.cxx/
 .kotlin/
 *.orig.*
 *.jks
@@ -41,6 +42,12 @@ ui-debug*.log
 
 # typescript
 *.tsbuildinfo
+
+# Generated test evidence and Android tools
+/evidence/jest/
+/evidence/detox/
+/evidence/detox-tools/
+/evidence/performance/
 
 app-example
 
