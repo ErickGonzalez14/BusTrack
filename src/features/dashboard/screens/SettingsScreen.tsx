@@ -2,6 +2,7 @@ import { getProfileAvatarSource } from "@/src/features/auth/components/profileAv
 import { useAuth } from "@/src/features/auth/context/authContext";
 import { useActiveBusiness } from "@/src/features/business/hooks/useBusinessProfile";
 import { useActiveBus } from "@/src/features/tracking/hooks/useDriverApplication";
+import { useAppTheme } from "@/src/shared/theme/useAppTheme";
 import SecundaryHeader from "@/src/shared/ui/headers/secundaryHeader";
 import OptionLabel from "@/src/shared/ui/Labels/optionLabel";
 import ProfileLabel from "@/src/shared/ui/Labels/profileLabel";
@@ -13,7 +14,6 @@ import {
   Heart,
   Palette,
 } from "iconoir-react-native";
-import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
@@ -21,7 +21,7 @@ const BUSINESS_PRO_PLAN = "BusTrack Business Pro";
 const BUSINESS_LIGHT_PLAN = "BusTrack Business Light";
 export default function Settings() {
   const { profile } = useAuth();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const { isDarkMode, setDarkMode } = useAppTheme();
   const { isBusinessApproved, businessPlan } = useActiveBusiness();
   const { isBusApproved } = useActiveBus();
 
@@ -40,7 +40,7 @@ export default function Settings() {
         <SecundaryHeader headerName="Ajustes" />
         <View style={{ paddingHorizontal: 15 }}>
           <ProfileLabel
-            userName={profile?.fullName || "Usuario"}
+            userName={profile?.nickname || "Usuario"}
             greeting="Buenos Días"
             imageSource={getProfileAvatarSource(profile?.photo?.url)}
             onTouch={() => router.push("/Settings/editProfile")}
@@ -51,13 +51,13 @@ export default function Settings() {
           <Text style={styles.text}>Preferencias</Text>
           <View style={styles.settings}>
             <OptionLabel
-              settingsName="Tema"
+              settingsName="Tema oscuro"
               icon={Palette}
               iconColor="#5856D6"
               isToggle={true}
               separator={false}
-              toggleValue={notificationsEnabled}
-              onToggleChange={setNotificationsEnabled}
+              toggleValue={isDarkMode}
+              onToggleChange={setDarkMode}
             />
           </View>
         </View>

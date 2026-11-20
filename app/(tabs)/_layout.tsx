@@ -1,13 +1,15 @@
+import { useAppTheme } from "@/src/shared/theme/useAppTheme";
 import { Tabs, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Crown, Home, Map, Settings } from "iconoir-react-native";
 import React from "react";
 
 export default function TabLayout() {
+  const { isDarkMode } = useAppTheme();
   const statusBarStyles = {
     home: "light",
-    settings: "dark",
-    profile: "dark",
+    settings: isDarkMode ? "light" : "dark",
+    profile: isDarkMode ? "light" : "dark",
     notifications: "light",
   } as const;
   const pathname = usePathname();

@@ -31,7 +31,7 @@ export default function PrincingCard({
 
 export const styles = StyleSheet.create((theme) => ({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.surface.background,
     borderRadius: 24,
     padding: 16,
     minHeight: 130,
@@ -49,6 +49,6 @@ export const styles = StyleSheet.create((theme) => ({
   description: {
     fontSize: 14,
     font: theme.fonts.regular,
-    color: theme.text.placeholder,
+    color: theme.text.muted,
   },
 }));

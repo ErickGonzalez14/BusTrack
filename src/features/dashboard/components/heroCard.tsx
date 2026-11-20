@@ -49,7 +49,7 @@ export default function HeroCard({ disabled }: HeroCardProps) {
 
 export const styles = StyleSheet.create((theme) => ({
   heroBentoCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.surface.background,
     borderRadius: 26,
     padding: 18,
     gap: 12,
@@ -88,7 +88,7 @@ export const styles = StyleSheet.create((theme) => ({
   heroCardTitle: {
     fontSize: 20,
     fontFamily: theme.fonts.heavy,
-    color: "#1C1C1E",
+    color: theme.text.Body,
   },
   heroIconCircle: {
     width: 44,
@@ -101,7 +101,7 @@ export const styles = StyleSheet.create((theme) => ({
   heroDescription: {
     fontSize: 13,
     fontFamily: "Roboto_400Regular",
-    color: "#64748B",
+    color: theme.text.muted,
     lineHeight: 18,
   },
   heroFooter: {
@@ -111,7 +111,7 @@ export const styles = StyleSheet.create((theme) => ({
     marginTop: 4,
   },
   tagCapsule: {
-    backgroundColor: "#F1F5F9",
+    backgroundColor: theme.surface.neutral,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -119,7 +119,7 @@ export const styles = StyleSheet.create((theme) => ({
   tagCapsuleText: {
     fontSize: 11,
     fontFamily: "Roboto_700Bold",
-    color: "#475569",
+    color: theme.text.Body,
   },
   appleActionPill: {
     flexDirection: "row",

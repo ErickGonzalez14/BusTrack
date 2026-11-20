@@ -76,7 +76,7 @@ export default function LightDashboard() {
 export const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: "#F5F6FA",
+    backgroundColor: theme.surface.neutral,
   },
   scrollContent: {
     paddingHorizontal: 16,
@@ -97,13 +97,13 @@ export const styles = StyleSheet.create((theme) => ({
   sectionTitle: {
     fontSize: 19,
     fontFamily: theme.fonts.heavy,
-    color: "#1C1C1E",
+    color: theme.text.Body,
     letterSpacing: -0.3,
   },
   sectionSubtitle: {
     fontSize: 13,
     fontFamily: "Roboto_400Regular",
-    color: "#8E8E93",
+    color: theme.text.muted,
   },
   bentoRow: {
     flexDirection: "row",

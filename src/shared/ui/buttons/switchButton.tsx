@@ -9,11 +9,13 @@ import Animated, {
 import { StyleSheet } from "react-native-unistyles";
 
 type CustomSwitchProps = {
+  accessibilityLabel?: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
 };
 
 export default function SwitchButton({
+  accessibilityLabel,
   value,
   onValueChange,
 }: CustomSwitchProps) {
@@ -36,6 +38,9 @@ export default function SwitchButton({
   });
   return (
     <Pressable
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: value }}
       onPress={() => onValueChange(!value)}
       style={[styles.container, value ? styles.active : styles.inactive]}
     >

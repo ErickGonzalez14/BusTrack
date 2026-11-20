@@ -52,7 +52,7 @@ export default function MiniCard({
 export const styles = StyleSheet.create((theme) => ({
   squareBentoCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.surface.background,
     borderRadius: 24,
     padding: 16,
     justifyContent: "space-between",
@@ -74,7 +74,7 @@ export const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
   },
   miniPill: {
-    backgroundColor: "#F8F9FD",
+    backgroundColor: theme.surface.neutral,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create((theme) => ({
   miniPillText: {
     fontSize: 10,
     fontFamily: "Roboto_700Bold",
-    color: "#8E8E93",
+    color: theme.text.muted,
   },
   squareTopRow: {
     flexDirection: "row",
@@ -92,13 +92,13 @@ export const styles = StyleSheet.create((theme) => ({
   squareTitle: {
     fontSize: 15,
     fontFamily: theme.fonts.heavy,
-    color: "#1C1C1E",
+    color: theme.text.Body,
     flexShrink: 1,
   },
   squareSubtitle: {
     fontSize: 11,
     fontFamily: "Roboto_400Regular",
-    color: "#8E8E93",
+    color: theme.text.muted,
   },
   squareContent: {
     marginTop: 14,

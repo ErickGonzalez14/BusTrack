@@ -8,7 +8,10 @@ import { Plus } from "iconoir-react-native";
 import { useRef } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { PROFILE_AVATARS, type ProfileAvatarPath } from "../domain/profileAvatar";
+import {
+  PROFILE_AVATARS,
+  type ProfileAvatarPath,
+} from "../domain/profileAvatar";
 import { useEditProfileAvatar } from "../hooks/useEditProfileAvatar";
 import { getProfileAvatarSource } from "./profileAvatarSource";
 
@@ -52,8 +55,10 @@ export default function EditPhoto() {
           </View>
         </Pressable>
 
-        <Text style={styles.name}>{profile?.fullName || "Usuario"}</Text>
-        {profile?.email ? <Text style={styles.email}>{profile.email}</Text> : null}
+        <Text style={styles.name}>{profile?.nickname || "Usuario"}</Text>
+        {profile?.email ? (
+          <Text style={styles.email}>{profile.email}</Text>
+        ) : null}
       </View>
 
       <BottomSheetModal
@@ -70,7 +75,9 @@ export default function EditPhoto() {
         ref={bottomSheetRef}
       >
         <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
-          <Text accessibilityRole="header" style={styles.sheetTitle}>Elige tu avatar</Text>
+          <Text accessibilityRole="header" style={styles.sheetTitle}>
+            Elige tu avatar
+          </Text>
           <View style={styles.avatarGrid}>
             {PROFILE_AVATARS.map(({ path, label }) => {
               const selected = path === photoPath;
@@ -78,18 +85,29 @@ export default function EditPhoto() {
                 <Pressable
                   key={path}
                   accessibilityRole="radio"
-                  accessibilityState={{ checked: selected, disabled: isPending }}
+                  accessibilityState={{
+                    checked: selected,
+                    disabled: isPending,
+                  }}
                   disabled={isPending}
                   onPress={() => chooseAvatar(path)}
-                  style={[styles.avatarOption, selected && styles.selectedAvatar]}
+                  style={[
+                    styles.avatarOption,
+                    selected && styles.selectedAvatar,
+                  ]}
                 >
-                  <Image source={getProfileAvatarSource(path)} style={styles.avatarImage} />
+                  <Image
+                    source={getProfileAvatarSource(path)}
+                    style={styles.avatarImage}
+                  />
                   <Text style={styles.avatarLabel}>{label}</Text>
                 </Pressable>
               );
             })}
           </View>
-          {isPending && <ActivityIndicator accessibilityLabel="Guardando avatar" />}
+          {isPending && (
+            <ActivityIndicator accessibilityLabel="Guardando avatar" />
+          )}
           {isError && (
             <Text accessibilityRole="alert" style={styles.avatarLabel}>
               No se pudo guardar el avatar. Inténtalo de nuevo.

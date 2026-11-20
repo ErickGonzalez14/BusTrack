@@ -9,7 +9,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export type PrimaryBottomSheetRef = {
   open: () => void;
@@ -34,6 +34,7 @@ export default function PrimaryBottomSheet({
   enablePanDownToClose = true,
   onChange,
 }: PrimaryBottomSheetProps) {
+  const { theme } = useUnistyles();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const points = useMemo(() => snapPoints, [snapPoints]);
 
@@ -49,6 +50,8 @@ export default function PrimaryBottomSheet({
 
   return (
     <BottomSheet
+      backgroundStyle={{ backgroundColor: theme.surface.background }}
+      handleIndicatorStyle={{ backgroundColor: theme.text.placeHolderLight }}
       index={-1}
       ref={bottomSheetRef}
       snapPoints={points}

@@ -201,7 +201,7 @@ export default function BusinessInfoCard({ business }: BusinessInfoCardProps) {
 
 export const styles = StyleSheet.create((theme) => ({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.surface.background,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.05)",
@@ -278,13 +278,13 @@ export const styles = StyleSheet.create((theme) => ({
   title: {
     fontSize: 16,
     fontFamily: theme.fonts.heavy,
-    color: "#1C1C1E",
+    color: theme.text.Body,
     letterSpacing: -0.2,
   },
   subtitle: {
     fontSize: 12,
     fontFamily: theme.fonts.regular,
-    color: "#8E8E93",
+    color: theme.text.muted,
     lineHeight: 16,
   },
   disabledCard: {

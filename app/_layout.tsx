@@ -2,12 +2,14 @@ import { AuthProvider, useAuth } from "@/src/features/auth/context/authContext";
 import { useLocationPermission } from "@/src/shared/hooks/useLocationPermission";
 import { useRoutineNotifications } from "@/src/features/routines/hooks/useRoutineNotifications";
 import { queryClient } from "@/src/shared/lib/queryClient";
+import { useAppTheme, useRestoreAppTheme } from "@/src/shared/theme/useAppTheme";
 import {
   Roboto_300Light,
   Roboto_400Regular,
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import Constants from "expo-constants";
@@ -145,6 +147,21 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+  const isThemeReady = useRestoreAppTheme();
+  const { theme, isDarkMode } = useAppTheme();
+  const baseNavigationTheme = isDarkMode ? DarkTheme : DefaultTheme;
+  const navigationTheme = {
+    ...baseNavigationTheme,
+    colors: {
+      ...baseNavigationTheme.colors,
+      background: theme.surface.neutral,
+      card: theme.surface.background,
+      text: theme.text.Body,
+      primary: theme.icons.brand,
+      border: isDarkMode ? theme.surface.inputs : theme.text.placeHolderLight,
+    },
+  };
+
   useFonts({
     ObjectSansHeavy: require("@/Fonts/ObjectSansHeavy.otf"),
     ObjectSansRegular: require("@/Fonts/ObjectSansRegular.otf"),
@@ -166,9 +183,11 @@ export default function RootLayout() {
       <KeyboardProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AuthProvider>
-            <RootNavigator />
+            <ThemeProvider value={navigationTheme}>
+              {isThemeReady && <RootNavigator />}
+            </ThemeProvider>
           </AuthProvider>
-          <StatusBar style="auto" />
+          <StatusBar style={isDarkMode ? "light" : "dark"} />
         </GestureHandlerRootView>
       </KeyboardProvider>
     </QueryClientProvider>

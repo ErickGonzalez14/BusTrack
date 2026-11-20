@@ -1,4 +1,5 @@
 import BusinessProMarker from "@/src/features/business/components/businessProMarker";
+import { darkMapStyle, defaultMapStyle } from "@/src/features/transit-map/domain/mapAppearance";
 import { Stop } from "@/src/features/transit-map/domain/stop.type";
 import {
   Coordinate,
@@ -57,7 +58,7 @@ export default function TransitMap({
   onProBusinessPress,
   onMapReady,
 }: TransitMapProps) {
-  const { theme } = useUnistyles();
+  const { theme, rt } = useUnistyles();
   const validStops = useMemo(
     () => stops.filter((stop) => isValidCoordinate(stop.adress)),
     [stops],
@@ -68,6 +69,7 @@ export default function TransitMap({
       ref={mapRef}
       style={styles.map}
       provider={PROVIDER_GOOGLE}
+      customMapStyle={rt.themeName === "dark" ? darkMapStyle : defaultMapStyle}
       showsUserLocation
       showsMyLocationButton={false}
       onPoiClick={onPoiClick}

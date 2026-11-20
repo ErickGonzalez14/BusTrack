@@ -45,6 +45,7 @@ export default function Settings({
   const { theme } = useUnistyles();
   return (
     <Pressable
+      accessible={isToggle ? false : undefined}
       style={[styles.container, separator && styles.separator]}
       onPress={onPress}
     >
@@ -62,13 +63,17 @@ export default function Settings({
               contentFit="contain"
             />
           ) : (
-            <Icon width={24} height={24} color={theme.surface.background} />
+            <Icon width={24} height={24} color={theme.text.Secondary} />
           )}
         </View>
         <Text style={styles.text}>{settingsName}</Text>
       </View>
       {isToggle ? (
-        <SwitchButton value={toggleValue} onValueChange={onToggleChange!} />
+        <SwitchButton
+          accessibilityLabel={settingsName}
+          value={toggleValue}
+          onValueChange={onToggleChange!}
+        />
       ) : (
         <NavArrowRight
           width={24}

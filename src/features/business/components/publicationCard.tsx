@@ -94,7 +94,7 @@ export const styles = StyleSheet.create((theme) => ({
   publicationCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.surface.background,
     borderRadius: 22,
     padding: 13,
     gap: 12,
@@ -110,7 +110,7 @@ export const styles = StyleSheet.create((theme) => ({
     width: 72,
     height: 72,
     borderRadius: 16,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: theme.surface.neutral,
   },
   pubMain: {
     flex: 1,
@@ -133,18 +133,18 @@ export const styles = StyleSheet.create((theme) => ({
   pubDate: {
     fontSize: 11,
     fontFamily: "Roboto_400Regular",
-    color: "#8E8E93",
+    color: theme.text.muted,
   },
   pubTitle: {
     fontSize: 14,
     fontFamily: theme.fonts.heavy,
-    color: "#1C1C1E",
+    color: theme.text.Body,
     marginTop: 2,
   },
   pubDescription: {
     fontSize: 11,
     fontFamily: "Roboto_400Regular",
-    color: "#64748B",
+    color: theme.text.muted,
   },
   pubFooter: {
     flexDirection: "row",
@@ -153,7 +153,7 @@ export const styles = StyleSheet.create((theme) => ({
     marginTop: 4,
   },
   pubValuePill: {
-    backgroundColor: "#F1F5F9",
+    backgroundColor: theme.surface.neutral,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -161,7 +161,7 @@ export const styles = StyleSheet.create((theme) => ({
   pubValueText: {
     fontSize: 11,
     fontFamily: "Roboto_700Bold",
-    color: "#1C1C1E",
+    color: theme.text.Body,
   },
   pubStatsRow: {
     flexDirection: "row",
@@ -171,7 +171,7 @@ export const styles = StyleSheet.create((theme) => ({
   pubStatsText: {
     fontSize: 11,
     fontFamily: "Roboto_400Regular",
-    color: "#8E8E93",
+    color: theme.text.muted,
   },
   activeDot: {
     width: 5,
@@ -189,7 +189,7 @@ export const styles = StyleSheet.create((theme) => ({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#F8F9FD",
+    backgroundColor: theme.surface.neutral,
     alignItems: "center",
     justifyContent: "center",
   },
