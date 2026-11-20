@@ -1,4 +1,10 @@
 import { UserProfile } from "@/src/features/auth/domain/user.type";
+import { nicknameSchema } from "../domain/auth.schema";
+import {
+  DEFAULT_PROFILE_AVATAR,
+  isProfileAvatarPath,
+  type ProfileAvatarPath,
+} from "../domain/profileAvatar";
 import { getAuth } from "@react-native-firebase/auth";
 import {
   doc,
@@ -6,6 +12,7 @@ import {
   getFirestore,
   runTransaction,
   serverTimestamp,
+  updateDoc,
 } from "@react-native-firebase/firestore";
 const auth = getAuth();
 
@@ -16,7 +23,6 @@ export interface CreateUserProfileData {
   nickname: string;
   fullName: string;
   email?: string;
-  photoUrl?: string;
 }
 
 const normalizeNickname = (nickname: string) =>
@@ -32,7 +38,6 @@ export const createUserProfile = async ({
   nickname,
   fullName,
   email = "",
-  photoUrl = "",
 }: CreateUserProfileData) => {
   const cleanNickname = nickname.trim();
   const normalizedNickname = normalizeNickname(cleanNickname);
@@ -84,8 +89,7 @@ export const createUserProfile = async ({
         theme: "system",
       },
       photo: {
-        url: photoUrl,
-        publicId: "",
+        url: DEFAULT_PROFILE_AVATAR,
       },
 
       createdAt: serverTimestamp(),
@@ -94,6 +98,61 @@ export const createUserProfile = async ({
     });
   });
 };
+
+export async function updateUserAvatar(uid: string, avatarPath: ProfileAvatarPath) {
+  if (auth.currentUser?.uid !== uid) {
+    throw new Error("Debes iniciar sesión para cambiar tu avatar.");
+  }
+  if (!isProfileAvatarPath(avatarPath)) {
+    throw new Error("Selecciona un avatar de la lista.");
+  }
+
+  await updateDoc(doc(db, "Users", uid), {
+    photo: { url: avatarPath },
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function updateUserNickname(uid: string, input: string) {
+  if (auth.currentUser?.uid !== uid) {
+    throw new Error("Debes iniciar sesión para cambiar tu nombre de usuario.");
+  }
+
+  const parsed = nicknameSchema.safeParse(input);
+  if (!parsed.success) throw new Error(parsed.error.issues[0].message);
+
+  const nickname = parsed.data;
+  const normalizedNickname = normalizeNickname(nickname);
+  const userRef = doc(db, "Users", uid);
+  const usernameRef = doc(db, "usernames", normalizedNickname);
+
+  await runTransaction(db, async (transaction) => {
+    const profile = (await transaction.get(userRef)).data();
+    if (!profile) throw new Error("No se encontró tu perfil.");
+
+    const username = await transaction.get(usernameRef);
+    if (username.exists() && username.data()?.uid !== uid) {
+      throw new Error("Este nombre de usuario ya está registrado.");
+    }
+
+    const previousName = profile.normalizedNickname || profile.nickname;
+    const previousId = typeof previousName === "string" ? normalizeNickname(previousName) : "";
+    const previousRef = previousId && previousId !== normalizedNickname
+      ? doc(db, "usernames", previousId)
+      : null;
+    const previousUsername = previousRef ? await transaction.get(previousRef) : null;
+
+    if (!username.exists()) {
+      transaction.set(usernameRef, { uid, createdAt: serverTimestamp() });
+    }
+    if (previousRef && previousUsername?.data()?.uid === uid) {
+      transaction.delete(previousRef);
+    }
+    transaction.update(userRef, { nickname, normalizedNickname, updatedAt: serverTimestamp() });
+  });
+
+  return { nickname, normalizedNickname };
+}
 
 export const userProfileExists = async (uid: string) => {
   const profileSnapshot = await getDoc(doc(db, "Users", uid));
@@ -111,6 +170,11 @@ export const getUserProfile = async (
     return null;
   }
   const data = snapshot.data();
+  const savedPhoto = typeof data.photo?.url === "string" ? data.photo.url.trim() : "";
+  const legacyPhoto = typeof data.photoUrl === "string" ? data.photoUrl.trim() : "";
+  const photoUrl = isProfileAvatarPath(savedPhoto)
+    ? savedPhoto
+    : legacyPhoto || savedPhoto || DEFAULT_PROFILE_AVATAR;
   return {
     uid: snapshot.id,
     fullName: data.fullName ?? "",
@@ -120,8 +184,10 @@ export const getUserProfile = async (
     accountStatus: data.accountStatus ?? "active",
 
     photo: {
-      url: data.photoUrl ?? data.photo?.url ?? "",
-      publicId: data.photoPublicId ?? data.photo?.publicId ?? "",
+      url: photoUrl,
+      publicId: isProfileAvatarPath(photoUrl)
+        ? ""
+        : data.photoPublicId ?? data.photo?.publicId ?? "",
     },
 
     roles: {

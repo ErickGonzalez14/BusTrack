@@ -1,24 +1,24 @@
-import { Image } from "expo-image";
+import { Image, type ImageSource } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 type ProfileLabelProps = {
   userName: string;
   greeting: string;
-  imageUrl: string;
+  imageSource: ImageSource | number;
   onTouch?: () => void;
 };
 
 export default function ProfileLabel({
   userName,
   greeting,
-  imageUrl,
+  imageSource,
   onTouch,
 }: ProfileLabelProps) {
   return (
     <Pressable style={styles.container} onPress={onTouch}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: imageUrl }} style={styles.userImage} />
+        <Image source={imageSource} style={styles.userImage} />
       </View>
       <View>
         <Text style={styles.userName}>{userName}</Text>
@@ -39,9 +39,8 @@ export const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.size_rounded.md,
   },
   userImage: {
-    width: 40,
-    height: 40,
-    transform: [{ translateY: 9 }, { translateX: 5 }],
+    width: "100%",
+    height: "100%",
   },
   imageContainer: {
     width: 50,

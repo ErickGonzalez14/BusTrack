@@ -1,6 +1,7 @@
 import { removeRoutinePushDevice } from "@/src/features/routines/data/routinePushDevices";
 import { UserProfile } from "@/src/features/auth/domain/user.type";
-import { getUserProfile } from "@/src/features/auth/data/user.service";
+import { getUserProfile, updateUserAvatar, updateUserNickname } from "@/src/features/auth/data/user.service";
+import type { ProfileAvatarPath } from "@/src/features/auth/domain/profileAvatar";
 import { stopBusTracking } from "@/src/features/tracking/data/busTrackingControl.service";
 import {
   getAuth,
@@ -28,6 +29,8 @@ type AuthContextValue = {
   beginAuthFlow: () => void;
   finishAuthFlow: () => void;
   refreshUserProfile: () => Promise<boolean>;
+  updateProfileAvatar: (avatarPath: ProfileAvatarPath) => Promise<void>;
+  updateProfileNickname: (nickname: string) => Promise<void>;
   logOut: () => Promise<void>;
 };
 
@@ -100,6 +103,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return currentProfile !== null;
   }, []);
 
+  const updateProfileAvatar = useCallback(async (avatarPath: ProfileAvatarPath) => {
+    const uid = user?.uid;
+    if (!uid) throw new Error("Debes iniciar sesión para cambiar tu avatar.");
+
+    await updateUserAvatar(uid, avatarPath);
+    setProfile((currentProfile) =>
+      currentProfile?.uid === uid
+        ? { ...currentProfile, photo: { url: avatarPath, publicId: "" } }
+        : currentProfile,
+    );
+  }, [user?.uid]);
+
+  const updateProfileNickname = useCallback(async (nickname: string) => {
+    const uid = user?.uid;
+    if (!uid) throw new Error("Debes iniciar sesión para cambiar tu nombre de usuario.");
+
+    const names = await updateUserNickname(uid, nickname);
+    setProfile((currentProfile) =>
+      currentProfile?.uid === uid ? { ...currentProfile, ...names } : currentProfile,
+    );
+  }, [user?.uid]);
+
   const logOut = useCallback(async () => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
@@ -157,6 +182,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       beginAuthFlow: () => setIsAuthFlowInProgress(true),
       finishAuthFlow: () => setIsAuthFlowInProgress(false),
       refreshUserProfile,
+      updateProfileAvatar,
+      updateProfileNickname,
       logOut,
     }),
     [
@@ -165,6 +192,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isAuthLoading,
       logOut,
       refreshUserProfile,
+      updateProfileAvatar,
+      updateProfileNickname,
       user,
     ],
   );

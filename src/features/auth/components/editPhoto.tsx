@@ -1,101 +1,50 @@
-import { useAuth } from "@/src/features/auth/context/authContext";
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
-  BottomSheetView,
+  BottomSheetModal,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
-import * as ImagePicker from "expo-image-picker";
-import { Camera, MediaImage, Plus } from "iconoir-react-native";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Plus } from "iconoir-react-native";
+import { useRef } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { PROFILE_AVATARS, type ProfileAvatarPath } from "../domain/profileAvatar";
+import { useEditProfileAvatar } from "../hooks/useEditProfileAvatar";
+import { getProfileAvatarSource } from "./profileAvatarSource";
 
-const DEFAULT_PHOTO =
-  "https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png";
+export default function EditPhoto() {
+  const { profile, mutate, isPending, isError, reset } = useEditProfileAvatar();
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const photoPath = profile?.photo?.url;
 
-type EditPhotoProps = {
-  initialPhotoUrl?: string;
-  userName?: string;
-  email?: string;
-  onPhotoChange?: (uri: string) => void;
-};
+  function openSheet() {
+    reset();
+    bottomSheetRef.current?.present();
+  }
 
-export default function EditPhoto({
-  initialPhotoUrl = DEFAULT_PHOTO,
-  userName = "Roberto Díaz",
-  email = "Roberto@gmail.com",
-  onPhotoChange,
-}: EditPhotoProps) {
-  const { profile } = useAuth();
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["34%"], []);
-  const [photoUri, setPhotoUri] = useState(initialPhotoUrl);
-
-  const closeSheet = useCallback(() => bottomSheetRef.current?.close(), []);
-
-  const savePhoto = useCallback(
-    (result: ImagePicker.ImagePickerResult) => {
-      if (!result.canceled) {
-        const uri = result.assets[0].uri;
-        setPhotoUri(uri);
-        onPhotoChange?.(uri);
-      }
-      closeSheet();
-    },
-    [closeSheet, onPhotoChange],
-  );
-
-  const chooseFromLibrary = useCallback(async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-
-    savePhoto(result);
-  }, [savePhoto]);
-
-  const takePhoto = useCallback(async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (!permission.granted) {
-      Alert.alert(
-        "Permiso necesario",
-        "Permite el acceso a la cámara para tomar una foto de perfil.",
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-      cameraType: ImagePicker.CameraType.front,
-    });
-
-    savePhoto(result);
-  }, [savePhoto]);
+  function chooseAvatar(path: ProfileAvatarPath) {
+    if (isPending) return;
+    mutate(path, { onSuccess: () => bottomSheetRef.current?.dismiss() });
+  }
 
   return (
     <>
       <View style={styles.profileSection}>
         <Pressable
-          accessibilityHint="Abre las opciones para cambiar la foto"
-          accessibilityLabel="Cambiar foto de perfil"
+          accessibilityHint="Abre la lista de avatares"
+          accessibilityLabel="Cambiar avatar de perfil"
           accessibilityRole="button"
+          disabled={!profile}
           hitSlop={12}
-          onPress={() => bottomSheetRef.current?.expand()}
+          onPress={openSheet}
           style={({ pressed }) => [
             styles.photoButton,
             pressed && styles.photoButtonPressed,
           ]}
         >
           <Image
-            accessibilityLabel={`Foto de perfil de ${userName}`}
             contentFit="cover"
-            source={{ uri: photoUri }}
+            source={getProfileAvatarSource(photoPath)}
             style={styles.photo}
           />
           <View style={styles.addBadge}>
@@ -103,49 +52,59 @@ export default function EditPhoto({
           </View>
         </Pressable>
 
-        <Text style={styles.name}>{profile?.fullName || userName}</Text>
-        <Text style={styles.email}>{profile?.email || email}</Text>
+        <Text style={styles.name}>{profile?.fullName || "Usuario"}</Text>
+        {profile?.email ? <Text style={styles.email}>{profile.email}</Text> : null}
       </View>
 
-      <BottomSheet
+      <BottomSheetModal
+        backgroundStyle={styles.sheetBackground}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}
             appearsOnIndex={0}
             disappearsOnIndex={-1}
-            pressBehavior="close"
+            pressBehavior={isPending ? "none" : "close"}
           />
         )}
-        enablePanDownToClose
-        index={-1}
+        enablePanDownToClose={!isPending}
         ref={bottomSheetRef}
-        snapPoints={snapPoints}
       >
-        <BottomSheetView style={styles.sheetContent}>
-          <Text style={styles.sheetTitle}>Cambiar foto de perfil</Text>
-          <Text style={styles.sheetDescription}>
-            Elige cómo quieres actualizar tu foto.
-          </Text>
-
-          <Pressable onPress={takePhoto} style={styles.action}>
-            <View style={styles.actionIcon}>
-              <Camera color="#4D7EFF" height={22} width={22} />
-            </View>
-            <Text style={styles.actionText}>Tomar una foto</Text>
-          </Pressable>
-
-          <Pressable onPress={chooseFromLibrary} style={styles.action}>
-            <View style={styles.actionIcon}>
-              <MediaImage color="#4D7EFF" height={22} width={22} />
-            </View>
-            <Text style={styles.actionText}>Elegir de la galería</Text>
-          </Pressable>
-
-          <Pressable onPress={closeSheet} style={styles.cancelButton}>
+        <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
+          <Text accessibilityRole="header" style={styles.sheetTitle}>Elige tu avatar</Text>
+          <View style={styles.avatarGrid}>
+            {PROFILE_AVATARS.map(({ path, label }) => {
+              const selected = path === photoPath;
+              return (
+                <Pressable
+                  key={path}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected, disabled: isPending }}
+                  disabled={isPending}
+                  onPress={() => chooseAvatar(path)}
+                  style={[styles.avatarOption, selected && styles.selectedAvatar]}
+                >
+                  <Image source={getProfileAvatarSource(path)} style={styles.avatarImage} />
+                  <Text style={styles.avatarLabel}>{label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          {isPending && <ActivityIndicator accessibilityLabel="Guardando avatar" />}
+          {isError && (
+            <Text accessibilityRole="alert" style={styles.avatarLabel}>
+              No se pudo guardar el avatar. Inténtalo de nuevo.
+            </Text>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            disabled={isPending}
+            onPress={() => bottomSheetRef.current?.dismiss()}
+            style={styles.cancelButton}
+          >
             <Text style={styles.cancelText}>Cancelar</Text>
           </Pressable>
-        </BottomSheetView>
-      </BottomSheet>
+        </BottomSheetScrollView>
+      </BottomSheetModal>
     </>
   );
 }
@@ -197,47 +156,52 @@ const styles = StyleSheet.create((theme) => ({
     fontSize: 16,
     marginTop: 2,
   },
+  sheetBackground: {
+    backgroundColor: theme.surface.background,
+  },
   sheetContent: {
+    gap: 12,
     paddingBottom: 28,
     paddingHorizontal: 20,
   },
   sheetTitle: {
-    color: "#232629",
+    color: theme.text.Body,
     fontFamily: theme.fonts.heavy,
     fontSize: 20,
   },
-  sheetDescription: {
-    color: "#6A727B",
-    fontFamily: theme.fonts.regular,
-    fontSize: 14,
-    marginBottom: 16,
-    marginTop: 4,
-  },
-  action: {
-    alignItems: "center",
+  avatarGrid: {
     flexDirection: "row",
-    minHeight: 52,
+    flexWrap: "wrap",
+    gap: 8,
   },
-  actionIcon: {
+  avatarOption: {
     alignItems: "center",
-    backgroundColor: "#EEF2FF",
-    borderRadius: 12,
-    height: 40,
-    justifyContent: "center",
-    marginRight: 12,
-    width: 40,
+    borderWidth: 2,
+    borderColor: "transparent",
+    borderRadius: theme.size_rounded.md,
+    gap: 4,
+    padding: 4,
   },
-  actionText: {
-    color: "#232629",
+  selectedAvatar: {
+    borderColor: theme.surface.brand,
+  },
+  avatarImage: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: "#FFB21A",
+  },
+  avatarLabel: {
+    color: theme.text.Body,
     fontFamily: theme.fonts.regular,
-    fontSize: 16,
+    fontSize: 13,
   },
   cancelButton: {
     alignItems: "center",
     borderTopColor: "#EFF2F5",
     borderTopWidth: 1,
-    marginTop: 8,
-    paddingTop: 14,
+    justifyContent: "center",
+    minHeight: 44,
   },
   cancelText: {
     color: theme.surface.brand,

@@ -29,7 +29,6 @@ export const useCompleteProfile = () => {
         uid: user.uid,
         nickname: validated.nickname,
         fullName: validated.fullName,
-        photoUrl: user.photoURL ?? "",
       });
       await refreshUserProfile();
     },

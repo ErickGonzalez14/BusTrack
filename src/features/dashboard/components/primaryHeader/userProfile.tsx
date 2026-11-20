@@ -1,3 +1,4 @@
+import { getProfileAvatarSource } from "@/src/features/auth/components/profileAvatarSource";
 import { useAuth } from "@/src/features/auth/context/authContext";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
@@ -13,10 +14,7 @@ export default function UserProfile({ userName }: UserProfileProps) {
     <View style={styles.Profile}>
       <View style={styles.imageContainer}>
         <Image
-          source={
-            profile?.photo?.url ||
-            "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-          }
+          source={getProfileAvatarSource(profile?.photo?.url)}
           style={styles.userImage}
         />
       </View>
@@ -48,9 +46,8 @@ export const styles = StyleSheet.create((theme) => ({
     fontFamily: theme.fonts.heavy,
   },
   userImage: {
-    width: 40,
-    height: 40,
-    transform: [{ translateY: 9 }, { translateX: 5 }],
+    width: "100%",
+    height: "100%",
   },
   imageContainer: {
     width: 50,

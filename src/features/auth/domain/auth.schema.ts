@@ -27,17 +27,18 @@ export const signInSchema = z
 
 export type SignInInput = z.infer<typeof signInSchema>;
 
-export const completeProfileSchema = z.object({
-  nickname: z
-    .string()
-    .trim()
-    .min(3, "El nombre de usuario debe tener mínimo 3 caracteres")
-    .max(30, "El nombre de usuario debe tener máximo 30 caracteres")
-    .regex(
-      /^[a-zA-Z0-9_áéíóúÁÉÍÓÚñÑ]+$/,
-      "Solo puede contener letras, números y guion bajo",
-    ),
+export const nicknameSchema = z
+  .string()
+  .trim()
+  .min(3, "El nombre de usuario debe tener mínimo 3 caracteres")
+  .max(30, "El nombre de usuario debe tener máximo 30 caracteres")
+  .regex(
+    /^[a-zA-Z0-9_áéíóúÁÉÍÓÚñÑ]+$/,
+    "Solo puede contener letras, números y guion bajo",
+  );
 
+export const completeProfileSchema = z.object({
+  nickname: nicknameSchema,
   fullName: z
     .string()
     .trim()

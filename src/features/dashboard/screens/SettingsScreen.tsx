@@ -1,3 +1,4 @@
+import { getProfileAvatarSource } from "@/src/features/auth/components/profileAvatarSource";
 import { useAuth } from "@/src/features/auth/context/authContext";
 import { useActiveBusiness } from "@/src/features/business/hooks/useBusinessProfile";
 import { useActiveBus } from "@/src/features/tracking/hooks/useDriverApplication";
@@ -41,10 +42,7 @@ export default function Settings() {
           <ProfileLabel
             userName={profile?.fullName || "Usuario"}
             greeting="Buenos Días"
-            imageUrl={
-              profile?.photo?.url ||
-              "https://res.cloudinary.com/snvvb5aq/image/upload/v1784917188/image_1_eosede.png"
-            }
+            imageSource={getProfileAvatarSource(profile?.photo?.url)}
             onTouch={() => router.push("/Settings/editProfile")}
           />
         </View>

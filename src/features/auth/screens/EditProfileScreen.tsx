@@ -1,20 +1,17 @@
 import EditPhoto from "@/src/features/auth/components/editPhoto";
+import EditNicknameModal from "@/src/features/auth/components/EditNicknameModal";
+import { useAuth } from "@/src/features/auth/context/authContext";
 import AlternativeHeader from "@/src/shared/ui/headers/alternativeHeader";
 import OptionLabel from "@/src/shared/ui/Labels/optionLabel";
-import { useAuth } from "@/src/features/auth/context/authContext";
 import { router } from "expo-router";
-import {
-  Lock,
-  LogOut,
-  ShieldCheck,
-  Translate,
-  User,
-} from "iconoir-react-native";
+import { LogOut, User } from "iconoir-react-native";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function EditProfile() {
-  const { logOut } = useAuth();
+  const { logOut, profile } = useAuth();
+  const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
 
   const handleLogOut = async () => {
     try {
@@ -46,39 +43,7 @@ export default function EditProfile() {
               iconColor="#1B2CC1"
               isToggle={false}
               separator={true}
-            />
-            <OptionLabel
-              settingsName="Cambiar Contraseña"
-              icon={Lock}
-              iconColor="#5856D6"
-              isToggle={false}
-              separator={false}
-            />
-          </View>
-        </View>
-        {/* Seccion de Seguridad*/}
-        <View style={styles.settingsContainer}>
-          <Text style={styles.text}>Seguridad</Text>
-          <View style={styles.settings}>
-            <OptionLabel
-              settingsName="Autenticación de 2 Factores"
-              icon={ShieldCheck}
-              iconColor="#34C759"
-              isToggle={true}
-              separator={false}
-            />
-          </View>
-        </View>
-        {/* Seccion de Preferencias*/}
-        <View style={styles.settingsContainer}>
-          <Text style={styles.text}>Preferencias</Text>
-          <View style={styles.settings}>
-            <OptionLabel
-              settingsName="Idioma"
-              icon={Translate}
-              iconColor="#FF9500"
-              isToggle={false}
-              separator={true}
+              onPress={() => setIsNicknameModalOpen(true)}
             />
             <OptionLabel
               settingsName="Cerrar sesión"
@@ -90,8 +55,12 @@ export default function EditProfile() {
             />
           </View>
         </View>
+
         <Pressable></Pressable>
       </ScrollView>
+      {isNicknameModalOpen && profile && (
+        <EditNicknameModal key={profile.uid} onClose={() => setIsNicknameModalOpen(false)} />
+      )}
     </View>
   );
 }
