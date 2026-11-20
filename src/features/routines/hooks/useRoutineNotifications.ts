@@ -18,16 +18,6 @@ import {
 
 const supported = Platform.OS !== "web" &&
   Constants.executionEnvironment !== ExecutionEnvironment.StoreClient;
-if (supported) {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowBanner: true,
-      shouldShowList: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
-}
 
 export function useRoutineNotifications(userId?: string) {
   const navigationKey = useRootNavigationState()?.key;

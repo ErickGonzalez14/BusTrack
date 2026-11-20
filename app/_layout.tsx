@@ -2,6 +2,7 @@ import { AuthProvider, useAuth } from "@/src/features/auth/context/authContext";
 import { useLocationPermission } from "@/src/shared/hooks/useLocationPermission";
 import { useRoutineNotifications } from "@/src/features/routines/hooks/useRoutineNotifications";
 import { queryClient } from "@/src/shared/lib/queryClient";
+import "@/src/shared/lib/notificationPresentation";
 import { useAppTheme, useRestoreAppTheme } from "@/src/shared/theme/useAppTheme";
 import {
   Roboto_300Light,

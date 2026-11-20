@@ -10,6 +10,10 @@ import { getAuth } from "@react-native-firebase/auth";
 import { doc, getDoc, getFirestore } from "@react-native-firebase/firestore";
 import * as Location from "expo-location";
 import { Platform } from "react-native";
+import {
+  dismissBusTrackingNotification,
+  notifyBusTrackingStarted,
+} from "./busTrackingNotifications.service";
 
 export async function startBusTracking(busId: string) {
   if (Platform.OS === "web") {
@@ -69,6 +73,10 @@ export async function startBusTracking(busId: string) {
     await removeLiveBusLocation(userId).catch(() => undefined);
     throw error;
   }
+
+  await notifyBusTrackingStarted().catch((error) => {
+    console.warn("No se pudo mostrar el aviso de ubicación:", error);
+  });
 }
 
 export async function stopBusTracking() {
@@ -79,6 +87,9 @@ export async function stopBusTracking() {
   ) {
     await Location.stopLocationUpdatesAsync(BUS_LOCATION_TASK);
   }
+  await dismissBusTrackingNotification().catch((error) => {
+    console.warn("No se pudo retirar el aviso de ubicación:", error);
+  });
   await clearActiveBusTracking();
   if (tracking && getAuth().currentUser?.uid === tracking.userId) {
     try {
