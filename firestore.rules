@@ -18,6 +18,7 @@ service cloud.firestore {
         && collection != 'communityTrips'
         && collection != 'trafficUsage'
         && collection != 'roadTrafficDaily'
+        && collection != 'routes'
         && collection != 'crowdSoarcingRoutes'
         && collection != 'routines'
         && collection != 'Users'
@@ -30,8 +31,29 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    match /Users/{uid} {
+    function isDashboardAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.get('admin', false) == true;
+    }
+
+    match /routes/{routeId} {
+      allow create: if isDashboardAdmin();
+      allow read, update, delete: if request.time < timestamp.date(2026, 12, 13);
+    }
+
+    match /routes/{routeId}/{routeCollection}/{document=**} {
       allow read, write: if request.time < timestamp.date(2026, 12, 13);
+    }
+
+    match /Users/{uid} {
+      allow read: if request.time < timestamp.date(2026, 12, 13);
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow create: if request.time < timestamp.date(2026, 12, 13)
+        && request.resource.data.get('admin', false) == false;
+      allow update: if request.time < timestamp.date(2026, 12, 13)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['admin']);
+      allow delete: if request.time < timestamp.date(2026, 12, 13)
+        && resource.data.get('admin', false) != true;
 
       match /favoriteSites/{siteId} {
         allow read, write: if signedIn() && request.auth.uid == uid;
@@ -92,6 +114,7 @@ service cloud.firestore {
     }
 
     match /crowdSoarcingRoutes/{proposalId} {
+      allow get, list: if isDashboardAdmin();
       allow create: if signedIn() && validCrowdRouteProposal(request.resource.data);
     }
 

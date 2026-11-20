@@ -3,22 +3,14 @@ import {
   doc,
   getFirestore,
   onSnapshot,
-  type Timestamp,
 } from "@react-native-firebase/firestore";
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
-
-type PremiumSubscription = {
-  entitlement: "premium";
-  status: "active" | "grace_period" | "expired";
-  expiresAt: Timestamp | null;
-  gracePeriodExpiresAt: Timestamp | null;
-  willRenew: boolean;
-};
+import { premiumAccessEnd, type PremiumSubscription } from "../domain/premiumSubscription";
 
 type SubscriptionState =
   | { uid: string; status: "error" }
-  | { uid: string; status: "ready"; subscription: PremiumSubscription | null };
+  | { uid: string; status: "ready"; subscription: PremiumSubscription | null; fromCache: boolean };
 
 export function usePremiumSubscription() {
   const { user } = useAuth();
@@ -32,11 +24,13 @@ export function usePremiumSubscription() {
     const ref = doc(getFirestore(), "userSubscriptions", uid);
     return onSnapshot(
       ref,
+      { includeMetadataChanges: true },
       (snapshot) => {
         setNow(Date.now());
         setState({
           uid,
           status: "ready",
+          fromCache: snapshot.metadata.fromCache,
           subscription: snapshot.exists()
             ? (snapshot.data() as PremiumSubscription)
             : null,
@@ -48,11 +42,7 @@ export function usePremiumSubscription() {
 
   const current = uid && state?.uid === uid ? state : undefined;
   const subscription = current?.status === "ready" ? current.subscription : null;
-  const expiresAt = subscription?.expiresAt?.toMillis() ?? 0;
-  const graceEndsAt = subscription?.gracePeriodExpiresAt?.toMillis() ?? 0;
-  const accessEndsAt = subscription?.status === "grace_period"
-    ? Math.max(expiresAt, graceEndsAt)
-    : expiresAt;
+  const accessEndsAt = premiumAccessEnd(subscription);
 
   useEffect(() => {
     if (accessEndsAt <= now) return;
@@ -70,13 +60,13 @@ export function usePremiumSubscription() {
     };
   }, [accessEndsAt, now]);
 
-  const hasAccess = subscription?.entitlement === "premium" &&
-    subscription.status !== "expired" && accessEndsAt > now;
+  const hasAccess = accessEndsAt > now;
 
   return {
     status: current?.status ?? "loading",
     subscription,
     hasAccess,
     accessEndsAt,
+    isFromServer: current?.status === "ready" && !current.fromCache,
   };
 }

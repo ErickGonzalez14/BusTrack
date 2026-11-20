@@ -1,5 +1,6 @@
 import type { BusinessListing } from "@/src/features/business/data/businessDirectory";
 import PremiumAwareBanner from "@/src/features/premium/components/PremiumAwareBanner";
+import ButtonSecondary from "@/src/shared/ui/buttons/buttonSecundary";
 import type { Coordinate, GooglePlace, RouteRecommendation } from "../domain/transport.type";
 import { buildJourneySimulation } from "../domain/journeySimulation";
 import { isBusAvailableForRoute } from "../domain/mapRouting";
@@ -11,6 +12,7 @@ import { useStopContribution } from "../hooks/useStopContribution";
 import { useMapBusinesses } from "../hooks/useMapBusinesses";
 import { useMapNavigationRequest } from "../hooks/useMapNavigationRequest";
 import { useMapTransport } from "../hooks/useMapTransport";
+import { useDownloadedRoutes } from "../hooks/useDownloadedRoutes";
 import { useWalkingSimulation } from "../hooks/useWalkingSimulation";
 import { PrimaryBottomSheetRef } from "@/src/shared/ui/bottomSheet/primaryBottomSheet";
 import FinishRouteCard from "@/src/features/transit-map/components/finishRouteCard";
@@ -22,6 +24,7 @@ import { useMapLocation } from "@/src/features/transit-map/hooks/useMapLocation"
 import { usePassengerJourney } from "@/src/features/transit-map/hooks/usePassengerJourney";
 import { usePlaceSearch } from "@/src/features/transit-map/hooks/usePlaceSearch";
 import {
+  router,
   useFocusEffect,
   useNavigation,
 } from "expo-router";
@@ -54,6 +57,7 @@ export default function Map() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { feedbackRoute, openFeedback, handleRateRoute, dismissFeedback, isSubmitting } = useJourneyFeedback();
   const { stopsQuery, routesQuery, busesQuery, simulatedBuses, liveBuses, prefetchCatalog } = useMapTransport();
+  const offline = useDownloadedRoutes();
   const { userLocation, setUserLocation, getFreshUserLocation } =
     useMapLocation({ requestPermissionOnMount: true });
 
@@ -334,21 +338,37 @@ export default function Map() {
     handleLightBusinessPress(nearbyBusiness);
   }, [nearbyBusiness, closePopup, handleLightBusinessPress]);
 
-  const isLoading = stopsQuery.isLoading || routesQuery.isLoading;
+  const isLoading = stopsQuery.isPending || routesQuery.isPending;
   const isError = stopsQuery.isLoadingError || routesQuery.isLoadingError;
 
-  if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+  function openDownloads(routeId?: string) {
+    router.push({ pathname: "/offlineRoutes", params: routeId ? { routeId } : {} });
   }
 
-  if (isError) {
+  const catalogRoute = visibleRoute?.route;
+  const isDownloaded = offline.routes.some(({ id }) => id === catalogRoute?.id);
+  const downloadAction = offline.canOpen && catalogRoute ? {
+    text: isDownloaded ? "Ver ruta descargada" : "Descargar ruta",
+    isLoading: offline.download.isPending,
+    onPress: () => {
+      if (isDownloaded) {
+        openDownloads(catalogRoute.id);
+        return;
+      }
+      offline.download.mutate({ route: catalogRoute, stops: stopsQuery.data ?? [] }, {
+        onSuccess: () => Alert.alert("Ruta descargada", "Puedes abrirla sin conexión desde Rutas descargadas."),
+        onError: (error) => Alert.alert("No se pudo descargar la ruta", error.message),
+      });
+    },
+  } : undefined;
+
+  if (isLoading || isError) {
     return (
       <View style={styles.centered}>
-        <Text>No se pudieron cargar las paradas y rutas.</Text>
+        {isError ? (
+          <Text style={styles.catalogMessage}>No se pudieron cargar las paradas y rutas.</Text>
+        ) : <ActivityIndicator size="large" accessibilityLabel="Cargando mapa" />}
+        <ButtonSecondary title="Rutas descargadas" onPress={() => openDownloads()} />
       </View>
     );
   }
@@ -395,6 +415,9 @@ export default function Map() {
       >
         <Position width={25} height={25} color="#FFFFFF" />
       </Pressable>
+      <View style={styles.downloadsButton}>
+        <ButtonSecondary title="Rutas descargadas" onPress={() => openDownloads()} />
+      </View>
       {proBusinesses.length > 0 && (
         <Pressable
           style={styles.proBusinessButton}
@@ -457,6 +480,7 @@ export default function Map() {
                 : visibleRoute?.bus ? "Sin ubicación en vivo" : "Sin bus asignado"
         }
         hasLiveBus={displayedBusIsLive || !!activeSimulation || !!simulatedBusCoordinate}
+        downloadAction={downloadAction}
         error={routePlanner.error ?? roadRoute.error ?? placeSearch.error ??
           (busesQuery.isLoadingError ? "No se pudo cargar el registro de buses." : null)}
         onFindRoute={() => {
@@ -502,6 +526,19 @@ export default function Map() {
 const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
+  },
+  downloadsButton: {
+    position: "absolute",
+    top: 140,
+    left: 16,
+    zIndex: 5,
+    elevation: 5,
+  },
+  catalogMessage: {
+    fontFamily: theme.fonts.regular,
+    color: theme.text.Body,
+    textAlign: "center",
+    marginBottom: 12,
   },
   locationButton: {
     position: "absolute",
@@ -649,5 +686,7 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: theme.surface.neutral,
+    padding: 20,
   },
 }));

@@ -32,6 +32,7 @@ type MapDetailsSheetProps = {
   timeNearestBus: string;
   hasLiveBus: boolean;
   error: string | null;
+  downloadAction?: { text: string; onPress: () => void; isLoading: boolean };
   onFindRoute: () => void;
   onStartRoute: () => void;
   onCancelRoute: () => void;
@@ -62,6 +63,7 @@ export default function MapDetailsSheet({
   timeNearestBus,
   hasLiveBus,
   error,
+  downloadAction,
   onFindRoute,
   onStartRoute,
   onCancelRoute,
@@ -169,6 +171,9 @@ export default function MapDetailsSheet({
                 recommendation.direction === "outbound" ? "Ida" : "Regreso"
               }
             />
+            {downloadAction && (
+              <PrimaryAction {...downloadAction} disabled={downloadAction.isLoading} />
+            )}
             {isRouteActive ? (
               <JourneyStatus
                 phase={passengerPhase}

@@ -39,7 +39,7 @@ describe("Anuncios y Premium", () => {
     "anuncios=$showsAds con Firestore $status y store=$entitlement",
     ({ status, hasAccess, isSuccess, entitlement, showsAds }) => {
       jest.mocked(usePremiumSubscription).mockReturnValue({
-        status, hasAccess, subscription: null, accessEndsAt: 0,
+        status, hasAccess, subscription: null, accessEndsAt: 0, isFromServer: false,
       });
       jest.mocked(useQuery).mockReturnValue({
         isSuccess, data: entitlement, refetch: jest.fn(),

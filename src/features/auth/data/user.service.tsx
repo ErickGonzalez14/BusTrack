@@ -9,6 +9,7 @@ import { getAuth } from "@react-native-firebase/auth";
 import {
   doc,
   getDoc,
+  getDocFromCache,
   getFirestore,
   runTransaction,
   serverTimestamp,
@@ -162,8 +163,10 @@ export const userProfileExists = async (uid: string) => {
 
 export const getUserProfile = async (
   uid: string,
+  source: "default" | "cache" = "default",
 ): Promise<UserProfile | null> => {
-  const snapshot = await getDoc(doc(db, "Users", uid));
+  const reference = doc(db, "Users", uid);
+  const snapshot = await (source === "cache" ? getDocFromCache(reference) : getDoc(reference));
   const email = auth.currentUser?.email ?? null;
 
   if (!snapshot.exists()) {

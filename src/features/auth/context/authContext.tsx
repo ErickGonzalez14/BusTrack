@@ -58,26 +58,24 @@ export function AuthProvider({ children }: PropsWithChildren) {
         setUser(null);
         return;
       }
-      const currentProfile = await getUserProfile(currentUser.uid);
-      setUser(currentUser);
-      setProfile(currentProfile);
-      setIsAuthLoading(false);
+      const cachedProfile = await getUserProfile(currentUser.uid, "cache").catch(() => null);
+      if (currentRevision !== authRevision) return;
+      if (cachedProfile) {
+        setProfile(cachedProfile);
+        setIsAuthLoading(false);
+      }
 
       try {
-        const profileExists = await getUserProfile(currentUser.uid);
+        const currentProfile = await getUserProfile(currentUser.uid);
 
         if (currentRevision === authRevision) {
-          setProfile(profileExists);
+          setProfile((profile) => profile === cachedProfile ? currentProfile : profile);
         }
       } catch (profileError) {
         console.error(
           "No se pudo consultar el perfil del usuario:",
           profileError,
         );
-
-        if (currentRevision === authRevision) {
-          setProfile(null);
-        }
       } finally {
         if (currentRevision === authRevision) {
           setIsAuthLoading(false);
@@ -85,7 +83,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     });
 
-    return unsubscribe;
+    return () => {
+      authRevision++;
+      unsubscribe();
+    };
   }, []);
 
   const refreshUserProfile = useCallback(async (): Promise<boolean> => {

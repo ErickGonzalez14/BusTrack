@@ -7,7 +7,7 @@ import {
   DEFAULT_PROFILE_AVATAR,
   type ProfileAvatarPath,
 } from "@/src/features/auth/domain/profileAvatar";
-import { getDoc, runTransaction, updateDoc } from "@react-native-firebase/firestore";
+import { getDoc, getDocFromCache, runTransaction, updateDoc } from "@react-native-firebase/firestore";
 
 jest.mock("@react-native-firebase/auth", () => ({
   getAuth: () => ({ currentUser: { uid: "user-1" } }),
@@ -17,6 +17,7 @@ jest.mock("@react-native-firebase/firestore", () => ({
   getFirestore: () => "firestore",
   doc: (_db: string, ...path: string[]) => path.join("/"),
   getDoc: jest.fn(),
+  getDocFromCache: jest.fn(),
   runTransaction: jest.fn(),
   serverTimestamp: () => "server-time",
   updateDoc: jest.fn(),
@@ -68,5 +69,19 @@ describe("Avatar de perfil", () => {
     } as Awaited<ReturnType<typeof getDoc>>);
 
     expect((await getUserProfile("user-1"))?.photo?.url).toBe(expected);
+  });
+
+  test("recupera el perfil de la sesión guardada sin consultar el servidor", async () => {
+    jest.mocked(getDocFromCache).mockResolvedValueOnce({
+      id: "user-1",
+      exists: () => true,
+      data: () => ({ fullName: "Ana" }),
+    } as Awaited<ReturnType<typeof getDocFromCache>>);
+
+    expect(await getUserProfile("user-1", "cache")).toMatchObject({
+      uid: "user-1",
+      fullName: "Ana",
+    });
+    expect(getDoc).not.toHaveBeenCalled();
   });
 });

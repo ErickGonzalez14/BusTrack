@@ -138,6 +138,10 @@ function RootNavigator() {
               name="productCatalog"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="offlineRoutes"
+              options={{ headerShown: false }}
+            />
           </Stack.Protected>
         </Stack>
       </BottomSheetModalProvider>
