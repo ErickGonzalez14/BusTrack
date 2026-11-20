@@ -5,16 +5,15 @@ import { useBusinessPublications } from "@/src/features/business/hooks/useBusine
 import PrimaryHeader from "@/src/features/dashboard/components/primaryHeader/primaryHeader";
 import FavoriteCard from "@/src/features/favorites/components/favoriteCard";
 import { useFavoriteSites } from "@/src/features/favorites/hooks/useFavoriteSites";
+import PremiumAwareBanner from "@/src/features/premium/components/PremiumAwareBanner";
 import { useGetRoutines } from "@/src/features/routines/hooks/useRoutine";
 import Empty from "@/src/shared/ui/empty";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Dimensions, Pressable, ScrollView, Text, View } from "react-native";
-import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 export default function Home() {
   const { sites, isLoading, error } = useFavoriteSites();
-  const windowWidth = Dimensions.get("window").width;
   const { businessPublications } = useBusinessPublications();
   const { routines } = useGetRoutines();
   const { theme } = useUnistyles();
@@ -42,13 +41,7 @@ export default function Home() {
         showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.mainTabContainer}
       >
-        <BannerAd
-          unitId="ca-app-pub-3940256099942544/6300978111"
-          size={`${Math.floor(windowWidth)}x50` as BannerAdSize}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
+        <PremiumAwareBanner />
         <View style={styles.container}>
           <View
             style={{

@@ -1,5 +1,6 @@
 import {
   isPremiumTestStore,
+  premiumEntitlementQueryKey,
   premiumPurchasesAvailable,
   premiumPurchasesConfigured,
   withPremiumPurchases,
@@ -92,6 +93,9 @@ export function usePremiumCheckout(enabled = true) {
         return customerInfo.entitlements.active.premium;
       });
       if (premium) {
+        const entitlementKey = premiumEntitlementQueryKey(uid);
+        await queryClient.cancelQueries({ queryKey: entitlementKey, exact: true });
+        queryClient.setQueryData(entitlementKey, premium);
         await queryClient.cancelQueries({ queryKey, exact: true });
         queryClient.setQueryData<CheckoutOffer>(queryKey, { monthly: null, premium });
       } else {

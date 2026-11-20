@@ -21,6 +21,16 @@ const apiKey = testApiKey
 
 export const premiumPurchasesConfigured = premiumPurchasesAvailable && Boolean(apiKey);
 
+export const premiumEntitlementQueryKey = (uid?: string) =>
+  ["premium-entitlement", uid] as const;
+
+export function getPremiumEntitlement(uid: string) {
+  return withPremiumPurchases(uid, async (sdk) => {
+    const customer = await sdk.getCustomerInfo();
+    return customer.entitlements.active.premium ?? null;
+  });
+}
+
 let pending: Promise<unknown> = Promise.resolve();
 
 export function withPremiumPurchases<T>(

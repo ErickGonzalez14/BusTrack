@@ -20,7 +20,7 @@ export default function UserProfile({ userName }: UserProfileProps) {
       </View>
       <View style={styles.userInformation}>
         <Text style={styles.greeting}>Buenos Días</Text>
-        <Text style={styles.userName}>{profile?.fullName || userName}</Text>
+        <Text style={styles.userName}>{profile?.nickname || userName}</Text>
       </View>
     </View>
   );

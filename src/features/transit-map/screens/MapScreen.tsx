@@ -1,4 +1,5 @@
 import type { BusinessListing } from "@/src/features/business/data/businessDirectory";
+import PremiumAwareBanner from "@/src/features/premium/components/PremiumAwareBanner";
 import type { Coordinate, GooglePlace, RouteRecommendation } from "../domain/transport.type";
 import { buildJourneySimulation } from "../domain/journeySimulation";
 import { isBusAvailableForRoute } from "../domain/mapRouting";
@@ -29,17 +30,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Dimensions,
   Pressable,
   Text,
   View,
 } from "react-native";
-import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import MapView, { PoiClickEvent } from "react-native-maps";
 import { StyleSheet } from "react-native-unistyles";
 
 const DEFAULT_LOCATION = { latitude: 8.4821, longitude: -82.6178 };
-const windowWidth = Dimensions.get("window").width;
 
 type ActiveJourney = {
   route: RouteRecommendation;
@@ -357,13 +355,7 @@ export default function Map() {
 
   return (
     <View style={styles.container}>
-      <BannerAd
-        unitId="ca-app-pub-3940256099942544/6300978111"
-        size={`${Math.floor(windowWidth)}x50` as BannerAdSize}
-        requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
-        }}
-      />
+      <PremiumAwareBanner />
       <TransitMap
         mapRef={mapRef}
         stops={stopsQuery.data ?? []}
